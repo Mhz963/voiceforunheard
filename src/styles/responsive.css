@@ -1,0 +1,204 @@
+/* Global responsive fixes */
+
+html {
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+body.nav-open {
+  overflow: hidden;
+  touch-action: none;
+}
+
+#root {
+  overflow-x: hidden;
+  min-width: 0;
+}
+
+/* Prevent grid blowout on narrow screens */
+.programs-grid,
+.advantages-grid,
+.info-grid,
+.solution-grid,
+.resource-grid,
+.pillars-grid,
+.principles-grid,
+.testimonials-grid,
+.stats-highlight,
+.impact-grid {
+  min-width: 0;
+}
+
+/* Touch devices: use tap styles from cards-mobile.css instead of hover lift */
+@media (hover: none) {
+  .interactive-card:hover {
+    transform: none;
+    box-shadow: inherit;
+  }
+
+  .interactive-card:hover::before {
+    opacity: inherit;
+    animation: none;
+  }
+
+  .card-shine:hover::after {
+    left: inherit;
+  }
+
+  .btn--primary:hover,
+  .btn--cta:hover,
+  .header__cta:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --header-height: 80px;
+  }
+
+  .container {
+    padding: 0 var(--space-sm);
+  }
+
+  .page-hero {
+    padding: calc(var(--header-height) + var(--space-md)) 0 var(--space-md);
+  }
+
+  .section-header__title {
+    font-size: clamp(1.5rem, 6vw, 1.85rem);
+  }
+
+  .section-header__subtitle {
+    font-size: 1rem;
+  }
+
+  .programs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .advantages-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pillars-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .principles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .solution-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .resource-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .btn {
+    min-height: 44px;
+  }
+
+  .hero__actions .btn {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  .stat-card__value {
+    font-size: 1.85rem;
+  }
+
+  .program-detail__content {
+    grid-template-columns: 1fr !important;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .educator-hero {
+    grid-template-columns: 1fr !important;
+    text-align: center;
+  }
+
+  .educator-avatar {
+    width: 140px !important;
+    height: 140px !important;
+    font-size: 3rem !important;
+    margin: 0 auto;
+  }
+
+  .age-card__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .reason-card {
+    flex-direction: column;
+  }
+
+  .reason-card__number {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .feature-banner__actions {
+    max-width: none;
+    width: 100%;
+  }
+
+  .feature-banner__actions .btn {
+    width: 100%;
+  }
+
+  .home-stats__grid,
+  .stats-highlight,
+  .impact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero__title {
+    font-size: clamp(1.75rem, 8vw, 2.25rem);
+  }
+
+  .hero__orb--1,
+  .hero__orb--2 {
+    width: 180px;
+    height: 180px;
+  }
+
+  .hero__card {
+    max-width: 100%;
+    padding: var(--space-md);
+  }
+
+  .accordion__trigger {
+    font-size: 0.95rem;
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .accordion__item {
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 16px var(--color-shadow);
+    border-color: rgba(42, 157, 143, 0.15);
+  }
+
+  .accordion__item--open {
+    border-color: var(--color-teal);
+    box-shadow: 0 6px 20px var(--color-shadow-strong);
+  }
+}

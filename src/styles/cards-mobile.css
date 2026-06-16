@@ -1,0 +1,260 @@
+/* Mobile & touch card styling — visible polish without relying on hover */
+
+@media (max-width: 768px) {
+  /* Base interactive card — always styled on mobile */
+  .interactive-card {
+    box-shadow:
+      0 4px 6px rgba(26, 77, 109, 0.04),
+      0 12px 28px rgba(26, 77, 109, 0.1);
+    border-color: rgba(42, 157, 143, 0.22);
+    background: linear-gradient(145deg, #ffffff 0%, #fafcfb 100%);
+  }
+
+  .interactive-card::before {
+    opacity: 0.45;
+  }
+
+  /* Soft static shine on mobile */
+  .card-shine::after {
+    left: 60%;
+    opacity: 0.25;
+    width: 40%;
+  }
+
+  /* Stat cards */
+  .stat-card.interactive-card {
+    border-top-width: 4px;
+    border-top-color: var(--color-accent);
+    padding: var(--space-md) var(--space-md) var(--space-sm);
+  }
+
+  .stat-card .stat-card__value {
+    color: var(--color-teal);
+    font-size: 2rem;
+  }
+
+  /* Program cards */
+  .program-card.interactive-card {
+    padding: var(--space-md);
+    gap: 0.75rem;
+  }
+
+  .program-card .program-card__icon {
+    flex-shrink: 0;
+    align-self: flex-start;
+  }
+
+  .program-card .program-card__title {
+    font-size: 1.15rem;
+    line-height: 1.3;
+  }
+
+  .program-card .program-card__meta span {
+    background: rgba(42, 157, 143, 0.1);
+    color: var(--color-primary);
+    font-weight: 500;
+    border: 1px solid rgba(42, 157, 143, 0.15);
+  }
+
+  .program-card .program-card__link {
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--color-border);
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  /* Advantage cards */
+  .advantage-card.interactive-card {
+    padding: var(--space-md);
+  }
+
+  .advantage-card .icon-badge {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-teal));
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(26, 77, 109, 0.2);
+  }
+
+  /* Testimonial cards */
+  .testimonial-card.interactive-card {
+    border-left: 4px solid var(--color-teal);
+    padding-left: calc(var(--space-md) - 2px);
+  }
+
+  .testimonial-card .testimonial-card__icon {
+    opacity: 0.85;
+    color: var(--color-accent);
+  }
+
+  /* Info & impact cards */
+  .info-card.interactive-card {
+    border-left: 4px solid var(--color-teal);
+  }
+
+  .impact-card.interactive-card {
+    padding: var(--space-md) var(--space-sm);
+  }
+
+  .impact-card .icon-badge {
+    margin-bottom: 0.25rem;
+  }
+
+  /* Reason cards */
+  .reason-card.interactive-card {
+    gap: var(--space-sm);
+  }
+
+  .reason-card .reason-card__number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    background: linear-gradient(135deg, rgba(224, 122, 95, 0.15), rgba(244, 162, 97, 0.2));
+    border-radius: 12px;
+    font-size: 1.25rem;
+    opacity: 1;
+    color: var(--color-accent);
+  }
+
+  /* Pillar cards */
+  .pillar-card.interactive-card .pillar-card__step {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+    box-shadow: 0 4px 12px rgba(26, 77, 109, 0.2);
+  }
+
+  /* Philosophy & solution cards */
+  .philosophy-card.interactive-card,
+  .solution-card.interactive-card {
+    padding: var(--space-md);
+  }
+
+  .solution-card.interactive-card {
+    border-top: 3px solid var(--color-accent);
+  }
+
+  /* Resource cards */
+  .resource-card.interactive-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .resource-card .resource-card__link {
+    margin-top: auto;
+    padding-top: 0.5rem;
+    color: var(--color-teal);
+    font-weight: 600;
+  }
+
+  /* Age timeline cards */
+  .age-card__content.interactive-card {
+    margin-bottom: var(--space-md);
+  }
+
+  /* Unique items */
+  .unique-item.interactive-card {
+    border-left: 4px solid var(--color-teal);
+  }
+
+  /* Principle items */
+  .principle-item.interactive-card {
+    border-left: 3px solid var(--color-accent);
+  }
+
+  /* Sidebar */
+  .sidebar-card.interactive-card {
+    box-shadow: 0 8px 32px rgba(26, 77, 109, 0.12);
+  }
+
+  /* Hero floating card — animation defined in animations.css for mobile */
+  .hero__card.interactive-card {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Icon badges — always vivid on mobile cards */
+  .interactive-card .icon-badge {
+    align-self: flex-start;
+  }
+
+  .interactive-card .icon-badge--soft {
+    background: linear-gradient(135deg, rgba(26, 77, 109, 0.12), rgba(42, 157, 143, 0.15));
+    color: var(--color-primary);
+    border: 1px solid rgba(42, 157, 143, 0.2);
+  }
+
+  .interactive-card .icon-badge--outline {
+    border-color: var(--color-teal);
+    box-shadow: 0 2px 8px rgba(42, 157, 143, 0.15);
+  }
+}
+
+/* Touch tap feedback — preserve transforms without blocking reveal animations */
+@media (max-width: 768px) and (hover: none) {
+  .interactive-card.reveal--visible:active,
+  .stagger.reveal--visible > .interactive-card:active {
+    transform: scale(0.985);
+  }
+
+  .interactive-card:active {
+    transform: scale(0.985);
+    box-shadow:
+      0 2px 8px rgba(26, 77, 109, 0.08),
+      0 6px 16px rgba(26, 77, 109, 0.06);
+    border-color: var(--color-teal);
+    transition-duration: 0.12s;
+  }
+
+  .interactive-card:active::before {
+    opacity: 0.75;
+  }
+
+  .interactive-card:active .icon-badge {
+    transform: scale(1.05);
+  }
+
+  .program-card:active .program-card__arrow {
+    transform: translateX(4px);
+  }
+
+  .stat-card:active .stat-card__value {
+    transform: scale(1.03);
+    color: var(--color-accent);
+  }
+
+  .resource-card:active .resource-card__link svg {
+    transform: translateX(4px);
+  }
+}
+
+@media (max-width: 480px) {
+  .interactive-card {
+    border-radius: var(--radius-sm);
+  }
+
+  .program-card.interactive-card,
+  .stat-card.interactive-card,
+  .advantage-card.interactive-card {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .stagger > * + * {
+    margin-top: 0;
+  }
+
+  .programs-grid,
+  .advantages-grid,
+  .testimonials-grid,
+  .info-grid,
+  .impact-grid,
+  .solution-grid,
+  .resource-grid,
+  .pillars-grid {
+    gap: var(--space-sm);
+  }
+}
