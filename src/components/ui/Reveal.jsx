@@ -48,7 +48,6 @@ export default function Reveal({
 
     if (tryShow()) return undefined
 
-    const isMobile = window.matchMedia('(max-width: 768px)').matches
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -57,8 +56,8 @@ export default function Reveal({
         }
       },
       {
-        threshold: isMobile ? [0, 0.05, 0.1] : [0, 0.1, 0.2],
-        rootMargin: isMobile ? '0px 0px 12% 0px' : '0px 0px -40px 0px',
+        threshold: [0, 0.05, 0.1, 0.2],
+        rootMargin: '0px 0px 8% 0px',
       },
     )
 
@@ -81,7 +80,7 @@ export default function Reveal({
     const failSafe = window.setTimeout(() => {
       show()
       observer.disconnect()
-    }, 2000)
+    }, 1200)
 
     return () => {
       observer.disconnect()
