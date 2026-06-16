@@ -78,11 +78,17 @@ export default function Reveal({
       }, ms),
     )
 
+    const failSafe = window.setTimeout(() => {
+      show()
+      observer.disconnect()
+    }, 2000)
+
     return () => {
       observer.disconnect()
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
       timers.forEach(clearTimeout)
+      clearTimeout(failSafe)
     }
   }, [location.pathname])
 
