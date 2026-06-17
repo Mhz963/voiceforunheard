@@ -29,8 +29,10 @@
   height: auto;
   max-height: 96px;
   width: auto;
-  max-width: 300px;
+  max-width: 375px;
   object-fit: contain;
+  transform: scaleX(1.12);
+  transform-origin: left center;
 }
 
 .footer__logo svg {
@@ -87,6 +89,6 @@
 
   .footer__logo-img {
     max-height: 80px;
-    max-width: 260px;
+    max-width: 325px;
   }
 }

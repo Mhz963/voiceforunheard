@@ -1,0 +1,293 @@
+.superadmin-dashboard__header {
+  padding: calc(var(--header-height) + var(--space-lg)) 0 var(--space-md);
+  background: linear-gradient(135deg, #0f3349 0%, #1a4d6d 50%, #2a6f8f 100%);
+  color: #fff;
+}
+
+.superadmin-dashboard__header-inner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.superadmin-dashboard__badge {
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.superadmin-dashboard__header h1 {
+  color: #fff;
+  margin: 0 0 0.35rem;
+}
+
+.superadmin-dashboard__header p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.superadmin-dashboard__logout {
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.superadmin-dashboard__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.superadmin-dashboard__tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1rem;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.superadmin-dashboard__tabs button:hover {
+  background: rgba(15, 51, 73, 0.06);
+  color: var(--color-primary);
+}
+
+.superadmin-dashboard__tab--active {
+  background: rgba(15, 51, 73, 0.1) !important;
+  color: var(--color-primary) !important;
+  font-weight: 600 !important;
+}
+
+.superadmin-dashboard__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.superadmin-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: var(--space-md);
+  text-align: left;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+
+.superadmin-stat:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(15, 51, 73, 0.12);
+}
+
+.superadmin-stat strong {
+  font-size: 2rem;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.superadmin-stat span {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.superadmin-stat em {
+  font-size: 0.8rem;
+  color: var(--color-teal);
+  font-style: normal;
+  font-weight: 600;
+}
+
+.superadmin-dashboard__section {
+  margin-top: var(--space-lg);
+}
+
+.superadmin-dashboard__section h3 {
+  margin-bottom: var(--space-md);
+}
+
+.superadmin-system__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.superadmin-system__panel {
+  padding: var(--space-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.superadmin-system__panel--wide {
+  grid-column: 1 / -1;
+}
+
+.superadmin-system__panel h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.superadmin-system__desc {
+  margin: 0 0 var(--space-md);
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.superadmin-codes {
+  list-style: none;
+  margin: 0 0 var(--space-md);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.superadmin-codes li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: rgba(15, 51, 73, 0.05);
+  border-radius: var(--radius-sm);
+}
+
+.superadmin-codes code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.9rem;
+  color: var(--color-primary);
+}
+
+.superadmin-codes__remove {
+  background: none;
+  border: none;
+  color: var(--color-accent);
+  cursor: pointer;
+  padding: 0.25rem;
+  font-size: 1rem;
+}
+
+.superadmin-codes__add {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.superadmin-codes__add input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: ui-monospace, monospace;
+}
+
+.superadmin-system__success {
+  margin-top: 0.75rem;
+  color: var(--color-teal);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.superadmin-system__roles {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+
+.superadmin-system__roles h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.superadmin-system__roles ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.superadmin-system__roles li {
+  padding: 0.35rem 0;
+}
+
+.superadmin-activity {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.superadmin-activity__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.65rem;
+  padding: 0.65rem 0.85rem;
+  background: rgba(15, 51, 73, 0.04);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+}
+
+.superadmin-activity__time {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  width: 100%;
+}
+
+.superadmin-activity__role {
+  padding: 0.15rem 0.5rem;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 100px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.superadmin-activity__detail {
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 900px) {
+  .superadmin-dashboard__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .superadmin-system__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .superadmin-dashboard__stats {
+    grid-template-columns: 1fr;
+  }
+}

@@ -38,6 +38,7 @@ export default function Footer() {
 
         <div className="footer__col">
           <h4>Connect</h4>
+          <Link to="/signin">Sign In</Link>
           <Link to="/contact">Contact Us</Link>
           <a href="https://www.who.int/news-room/fact-sheets/detail/deafness-and-hearing-loss" target="_blank" rel="noopener noreferrer">
             WHO Hearing Loss Data
