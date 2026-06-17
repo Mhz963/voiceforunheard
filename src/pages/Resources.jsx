@@ -2,7 +2,6 @@ import { HiArrowRight } from 'react-icons/hi'
 import SectionHeader from '../components/ui/SectionHeader'
 import Reveal from '../components/ui/Reveal'
 import { resources } from '../data/content'
-import './Resources.css'
 
 export default function Resources() {
   return (

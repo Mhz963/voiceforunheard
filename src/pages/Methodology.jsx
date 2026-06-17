@@ -1,7 +1,6 @@
 import SectionHeader from '../components/ui/SectionHeader'
 import Reveal from '../components/ui/Reveal'
 import { methodology } from '../data/content'
-import './Methodology.css'
 
 export default function Methodology() {
   return (

@@ -5,7 +5,6 @@ import SectionHeader from '../../components/ui/SectionHeader'
 import Reveal from '../../components/ui/Reveal'
 import { useParentAuth } from '../../context/ParentAuthContext'
 import { parentPortalConfig } from '../../data/parentPortal'
-import './ParentPortal.css'
 
 export default function ParentPortal() {
   const { login, isAuthenticated } = useParentAuth()

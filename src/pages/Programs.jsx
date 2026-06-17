@@ -2,8 +2,6 @@ import SectionHeader from '../components/ui/SectionHeader'
 import ProgramCard from '../components/ui/ProgramCard'
 import Reveal from '../components/ui/Reveal'
 import { programCategories } from '../data/content'
-import './Programs.css'
-
 export default function Programs() {
   return (
     <div className="page programs-page">

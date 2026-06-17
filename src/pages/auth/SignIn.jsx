@@ -12,8 +12,6 @@ import { useParentAuth } from '../../context/ParentAuthContext'
 import { useAdminAuth } from '../../context/AdminAuthContext'
 import { useSuperAdminAuth } from '../../context/SuperAdminAuthContext'
 import { portalConfig } from '../../data/parentPortal'
-import './SignIn.css'
-
 const ROLE_META = {
   parent: {
     icon: HiUserGroup,

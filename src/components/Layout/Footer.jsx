@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { FaHeart } from 'react-icons/fa6'
 import { siteInfo } from '../../data/content'
-import './Footer.css'
 
 export default function Footer() {
   const year = new Date().getFullYear()

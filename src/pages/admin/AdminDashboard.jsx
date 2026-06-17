@@ -18,8 +18,6 @@ import {
   updateConcernStatus,
   updateMeetingStatus,
 } from '../../services/parentStorage'
-import '../parents/ParentPortal.css'
-import './AdminPortal.css'
 
 function formatDate(dateStr) {
   return new Date(`${dateStr}T12:00:00`).toLocaleDateString('en-US', {

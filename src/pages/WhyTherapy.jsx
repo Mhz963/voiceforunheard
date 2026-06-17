@@ -5,8 +5,6 @@ import IconBadge from '../components/ui/IconBadge'
 import Reveal from '../components/ui/Reveal'
 import { FaChartLine } from '../utils/icons'
 import { whySpeechTherapy, systemAdvantages } from '../data/content'
-import '../components/ui/IconBadge.css'
-import './WhyTherapy.css'
 
 export default function WhyTherapy() {
   return (

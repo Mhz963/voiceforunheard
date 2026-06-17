@@ -4,8 +4,6 @@ import IconBadge from '../components/ui/IconBadge'
 import Reveal from '../components/ui/Reveal'
 import { getProgramIcon } from '../utils/icons'
 import { programCategories } from '../data/content'
-import '../components/ui/IconBadge.css'
-import './ProgramDetail.css'
 
 export default function ProgramDetail() {
   const { programId } = useParams()

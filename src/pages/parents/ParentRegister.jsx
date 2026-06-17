@@ -2,8 +2,6 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Reveal from '../../components/ui/Reveal'
 import { useParentAuth } from '../../context/ParentAuthContext'
-import './ParentPortal.css'
-
 export default function ParentRegister() {
   const { register } = useParentAuth()
   const navigate = useNavigate()

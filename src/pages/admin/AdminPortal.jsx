@@ -5,8 +5,6 @@ import SectionHeader from '../../components/ui/SectionHeader'
 import Reveal from '../../components/ui/Reveal'
 import { useAdminAuth } from '../../context/AdminAuthContext'
 import { parentPortalConfig } from '../../data/parentPortal'
-import '../parents/ParentPortal.css'
-import './AdminPortal.css'
 
 export default function AdminPortal() {
   const { login, isAuthenticated } = useAdminAuth()

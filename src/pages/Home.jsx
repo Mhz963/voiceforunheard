@@ -14,8 +14,6 @@ import {
   programCategories,
   testimonials,
 } from '../data/content'
-import '../components/ui/IconBadge.css'
-import './Home.css'
 
 export default function Home() {
   const featuredPrograms = programCategories.slice(0, 6)

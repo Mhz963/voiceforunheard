@@ -6,8 +6,6 @@ import IconBadge from '../components/ui/IconBadge'
 import Reveal from '../components/ui/Reveal'
 import { getPhilosophyIcon } from '../utils/icons'
 import { siteInfo, systemAdvantages } from '../data/content'
-import '../components/ui/IconBadge.css'
-import './Educator.css'
 
 const philosophyItems = [
   {

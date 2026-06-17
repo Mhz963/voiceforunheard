@@ -4,8 +4,6 @@ import IconBadge from '../components/ui/IconBadge'
 import Reveal from '../components/ui/Reveal'
 import { getImpactIcon, FaExclamationTriangle } from '../utils/icons'
 import { globalStatistics, heroStats } from '../data/content'
-import '../components/ui/IconBadge.css'
-import './Statistics.css'
 
 export default function Statistics() {
   return (

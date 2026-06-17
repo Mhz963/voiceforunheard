@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import { HiArrowRight } from 'react-icons/hi'
 import IconBadge from './IconBadge'
 import { getProgramIcon } from '../../utils/icons'
-import './IconBadge.css'
 
 export default function ProgramCard({ program }) {
   const Icon = getProgramIcon(program.id)

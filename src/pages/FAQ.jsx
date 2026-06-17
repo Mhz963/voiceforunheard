@@ -2,8 +2,6 @@ import SectionHeader from '../components/ui/SectionHeader'
 import Accordion from '../components/ui/Accordion'
 import Reveal from '../components/ui/Reveal'
 import { faqItems } from '../data/content'
-import './FAQ.css'
-
 export default function FAQ() {
   return (
     <div className="page faq-page">

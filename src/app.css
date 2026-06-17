@@ -1,4 +1,31 @@
+/* Global foundation */
 @import './index.css';
 @import './styles/animations.css';
 @import './styles/responsive.css';
 @import './styles/cards-mobile.css';
+
+/* Layout */
+@import './components/Layout/Layout.css';
+@import './components/Layout/Header.css';
+@import './components/Layout/Footer.css';
+
+/* Shared UI */
+@import './components/ui/IconBadge.css';
+
+/* Marketing pages */
+@import './pages/Home.css';
+@import './pages/Statistics.css';
+@import './pages/WhyTherapy.css';
+@import './pages/Programs.css';
+@import './pages/ProgramDetail.css';
+@import './pages/AgeGroups.css';
+@import './pages/Methodology.css';
+@import './pages/Educator.css';
+@import './pages/Resources.css';
+@import './pages/Contact.css';
+
+/* Auth & portals */
+@import './pages/auth/SignIn.css';
+@import './pages/parents/ParentPortal.css';
+@import './pages/admin/AdminPortal.css';
+@import './pages/superadmin/SuperAdminPortal.css';

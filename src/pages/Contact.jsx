@@ -3,7 +3,6 @@ import { HiMail, HiPhone, HiLocationMarker, HiCheckCircle } from 'react-icons/hi
 import SectionHeader from '../components/ui/SectionHeader'
 import Reveal from '../components/ui/Reveal'
 import { siteInfo } from '../data/content'
-import './Contact.css'
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false)

@@ -3,8 +3,6 @@ import IconBadge from '../components/ui/IconBadge'
 import Reveal from '../components/ui/Reveal'
 import { getAgeGroupIcon } from '../utils/icons'
 import { ageGroups } from '../data/content'
-import '../components/ui/IconBadge.css'
-import './AgeGroups.css'
 
 export default function AgeGroups() {
   return (
