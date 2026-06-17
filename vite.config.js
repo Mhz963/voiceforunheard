@@ -1,34 +1,31 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-    // Inject CSS through the JS bundle so styles cannot be blocked by a
-    // poisoned browser cache on a separate crossorigin stylesheet request.
-    cssInjectedByJsPlugin({
-      topExecutionPriority: true,
-    }),
     {
-      name: 'strip-asset-crossorigin',
+      name: 'fix-production-html',
       transformIndexHtml: {
         order: 'post',
         handler(html) {
-          return html
-            .replace(
-              /(<link rel="stylesheet") crossorigin href="\/assets\//g,
-              '$1 href="/assets/',
+          let result = html
+            .replace(/ crossorigin href="\/assets\//g, ' href="/assets/')
+            .replace(/ crossorigin src="\/assets\//g, ' src="/assets/')
+
+          const bundleCss = result.match(/<link rel="stylesheet" href="\/assets\/[^"]+\.css">/)
+          const bundleJs = result.match(/<script type="module" src="\/assets\/[^"]+\.js"><\/script>/)
+
+          if (bundleCss && bundleJs) {
+            result = result.replace(bundleCss[0], '').replace(bundleJs[0], '')
+            result = result.replace(
+              '</title>',
+              `</title>\n    ${bundleCss[0]}\n    ${bundleJs[0]}`,
             )
-            .replace(
-              /(<script type="module") crossorigin src="\/assets\//g,
-              '$1 src="/assets/',
-            )
-            .replace(
-              /(<link rel="modulepreload") crossorigin href="\/assets\//g,
-              '$1 href="/assets/',
-            )
+          }
+
+          return result
         },
       },
     },
@@ -40,7 +37,7 @@ export default defineConfig({
     modulePreload: false,
     rollupOptions: {
       output: {
-        assetFileNames: 'assets/[name]-[hash][extname]',
+        assetFileNames: 'assets/app-[hash][extname]',
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
       },
