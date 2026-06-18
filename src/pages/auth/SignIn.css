@@ -355,16 +355,18 @@ body.signin-modal-open {
 
   .signin-modal {
     padding: var(--space-sm);
-    align-items: flex-end;
+    align-items: center;
   }
 
   .signin-modal__dialog {
     width: 100%;
+    max-height: calc(100dvh - var(--space-md) * 2);
+    overflow-y: auto;
   }
 
   .signin-panel {
     padding: var(--space-sm) var(--space-sm) var(--space-md);
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-radius: var(--radius-lg);
   }
 
   .signin-panel__intro {
