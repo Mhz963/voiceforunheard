@@ -16,7 +16,6 @@ import Resources from './pages/Resources'
 import FAQ from './pages/FAQ'
 import Contact from './pages/Contact'
 import SignIn from './pages/auth/SignIn'
-import ParentRegister from './pages/parents/ParentRegister'
 import ParentDashboard from './pages/parents/ParentDashboard'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import SuperAdminDashboard from './pages/superadmin/SuperAdminDashboard'
@@ -39,38 +38,39 @@ export default function App() {
           <Route path="faq" element={<FAQ />} />
           <Route path="contact" element={<Contact />} />
           <Route path="signin" element={<SignIn />} />
-          <Route path="signin/register" element={<ParentRegister />} />
-          <Route
-            path="portal/parent"
-            element={
-              <ProtectedParentRoute>
-                <ParentDashboard />
-              </ProtectedParentRoute>
-            }
-          />
-          <Route
-            path="portal/admin"
-            element={
-              <ProtectedAdminRoute>
-                <AdminDashboard />
-              </ProtectedAdminRoute>
-            }
-          />
-          <Route
-            path="portal/superadmin"
-            element={
-              <ProtectedSuperAdminRoute>
-                <SuperAdminDashboard />
-              </ProtectedSuperAdminRoute>
-            }
-          />
+          <Route path="signin/register" element={<Navigate to="/signin" replace />} />
           {/* Legacy redirects */}
           <Route path="parents" element={<Navigate to="/signin" replace />} />
-          <Route path="parents/register" element={<Navigate to="/signin/register" replace />} />
+          <Route path="parents/register" element={<Navigate to="/signin" replace />} />
           <Route path="parents/dashboard" element={<Navigate to="/portal/parent" replace />} />
           <Route path="admin" element={<Navigate to="/signin" replace />} />
           <Route path="admin/dashboard" element={<Navigate to="/portal/admin" replace />} />
         </Route>
+
+        <Route
+          path="portal/parent"
+          element={
+            <ProtectedParentRoute>
+              <ParentDashboard />
+            </ProtectedParentRoute>
+          }
+        />
+        <Route
+          path="portal/admin"
+          element={
+            <ProtectedAdminRoute>
+              <AdminDashboard />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="portal/superadmin"
+          element={
+            <ProtectedSuperAdminRoute>
+              <SuperAdminDashboard />
+            </ProtectedSuperAdminRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   )

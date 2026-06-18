@@ -1,6 +1,8 @@
 export const siteInfo = {
   name: 'VoiceForUnheard',
   tagline: 'Giving Voice to the Unheard',
+  logo: '/logo1.png',
+  favicon: '/icon1.png',
   description:
     'A complete speech education ecosystem designed by a Speech Education Teacher for hearing impaired children, families, and educators worldwide.',
   educator: {

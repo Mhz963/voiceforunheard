@@ -11,6 +11,8 @@
 
 /* Shared UI */
 @import './components/ui/IconBadge.css';
+@import './components/ui/BrandLogo.css';
+@import './components/voice/VoiceInput.css';
 
 /* Marketing pages */
 @import './pages/Home.css';
@@ -26,6 +28,7 @@
 
 /* Auth & portals */
 @import './pages/auth/SignIn.css';
+@import './components/portal/PortalLayout.css';
 @import './pages/parents/ParentPortal.css';
 @import './pages/admin/AdminPortal.css';
 @import './pages/superadmin/SuperAdminPortal.css';

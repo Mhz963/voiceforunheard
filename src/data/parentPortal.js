@@ -60,6 +60,41 @@ export const portalConfig = {
     { id: 'completed', label: 'Completed' },
     { id: 'cancelled', label: 'Cancelled' },
   ],
+
+  grades: Array.from({ length: 10 }, (_, i) => ({
+    id: i + 1,
+    label: `Grade ${i + 1}`,
+  })),
+
+  subjects: [
+    'Mathematics',
+    'English Language Arts',
+    'Science',
+    'Social Studies',
+    'Reading',
+    'Writing',
+    'Homework Support',
+    'General Study Skills',
+  ],
+
+  tuitionRequestTypes: [
+    { id: 'homework', label: 'Homework help' },
+    { id: 'tuition', label: 'Tuition / tutoring' },
+    { id: 'both', label: 'Homework & tuition' },
+  ],
+
+  tuitionStatuses: [
+    { id: 'pending', label: 'Pending review' },
+    { id: 'offered', label: 'Offer arranged' },
+    { id: 'scheduled', label: 'Scheduled' },
+    { id: 'completed', label: 'Completed' },
+    { id: 'declined', label: 'Declined' },
+  ],
+
+  guidancePriorities: [
+    { id: 'normal', label: 'General guidance' },
+    { id: 'important', label: 'Important — action needed' },
+  ],
 }
 
 // Legacy aliases used by seed data and existing portals

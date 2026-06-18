@@ -67,7 +67,7 @@ export default function ProgramDetail() {
             <div className="sidebar-card interactive-card card-shine">
               <h3>Ready to Enroll?</h3>
               <p>Speak with our team to find the right starting point for your learner.</p>
-              <Link to="/contact" className="btn btn--cta btn--block">
+              <Link to="/signin" className="btn btn--cta btn--block">
                 <span>Get Started</span>
                 <span className="btn__cta-icon">
                   <HiArrowRight />

@@ -427,3 +427,210 @@
     justify-content: center;
   }
 }
+
+/* ——— Academics (Grades 1–10) ——— */
+
+.academics-panel__grade-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, rgba(42, 157, 143, 0.12), rgba(26, 77, 109, 0.08));
+  border: 1px solid rgba(42, 157, 143, 0.25);
+}
+
+.academics-panel__grade-banner svg {
+  flex-shrink: 0;
+  font-size: 1.5rem;
+  color: var(--color-teal);
+  margin-top: 0.15rem;
+}
+
+.academics-panel__grade-banner strong {
+  display: block;
+  color: var(--color-primary-dark);
+  margin-bottom: 0.25rem;
+}
+
+.academics-panel__grade-banner span {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.academics-panel__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: var(--space-lg);
+}
+
+.academics-panel__tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 100px;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    color var(--transition);
+}
+
+.academics-panel__tabs button:hover {
+  border-color: var(--color-teal-light);
+  color: var(--color-primary);
+}
+
+.academics-panel__tab--active {
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: #fff !important;
+}
+
+.academics-panel__tab-badge {
+  min-width: 1.25rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.25);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.academics-panel__tab--active .academics-panel__tab-badge {
+  background: var(--color-accent);
+}
+
+.academics-panel__feed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.academics-panel__actions {
+  margin-bottom: var(--space-sm);
+}
+
+.academics-panel__form-card {
+  max-width: 720px;
+}
+
+.academics-panel__subject-field {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm);
+  margin: 0;
+}
+
+.academics-panel__subject-field legend {
+  padding: 0 0.35rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+
+.academics-panel__subject-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.academics-panel__subject-check {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.88rem;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.academics-card {
+  padding: var(--space-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.academics-card--unread {
+  border-color: var(--color-teal);
+  box-shadow: 0 0 0 1px rgba(42, 157, 143, 0.15);
+}
+
+.academics-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.academics-card__header h4 {
+  margin: 0;
+}
+
+.academics-card h4 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  color: var(--color-primary-dark);
+}
+
+.academics-card p {
+  margin: 0 0 0.5rem;
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+.academics-card__subjects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.65rem;
+}
+
+.academics-card__subject {
+  padding: 0.2rem 0.55rem;
+  border-radius: 100px;
+  background: rgba(42, 157, 143, 0.12);
+  color: var(--color-teal);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.academics-card__homework,
+.academics-card__offer {
+  margin-top: 0.75rem;
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-alt);
+  border-left: 3px solid var(--color-teal);
+}
+
+.academics-card__homework strong,
+.academics-card__offer strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--color-primary-dark);
+}
+
+.academics-card__homework p,
+.academics-card__offer p {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.academics-card__footer {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}

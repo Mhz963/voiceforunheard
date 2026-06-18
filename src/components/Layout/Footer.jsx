@@ -1,20 +1,17 @@
 import { Link } from 'react-router-dom'
 import { FaHeart } from 'react-icons/fa6'
+import BrandLogo from '../ui/BrandLogo'
 import { siteInfo } from '../../data/content'
 
 export default function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="footer">
+    <footer className="footer" data-brand-surface="dark">
       <div className="footer__grid">
         <div className="footer__brand">
           <div className="footer__logo">
-            <img
-              src="/vfu.png"
-              alt={siteInfo.name}
-              className="footer__logo-img"
-            />
+            <BrandLogo className="footer__logo-img" onDark />
           </div>
           <p>{siteInfo.description}</p>
         </div>

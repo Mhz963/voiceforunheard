@@ -2,10 +2,23 @@ import { useState } from 'react'
 import { HiMail, HiPhone, HiLocationMarker, HiCheckCircle } from 'react-icons/hi'
 import SectionHeader from '../components/ui/SectionHeader'
 import Reveal from '../components/ui/Reveal'
+import { VoiceHelpBanner, VoiceLabel } from '../components/voice/VoiceInput'
+import { appendSpeechText } from '../hooks/useSpeechRecognition'
 import { siteInfo } from '../data/content'
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false)
+  const [form, setForm] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    role: '',
+    message: '',
+  })
+
+  function update(field, value) {
+    setForm((prev) => ({ ...prev, [field]: value }))
+  }
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -67,23 +80,54 @@ export default function Contact() {
               </div>
             ) : (
               <form className="contact-form" onSubmit={handleSubmit}>
+                <VoiceHelpBanner />
                 <div className="form-row">
                   <label>
-                    First Name
-                    <input type="text" name="firstName" required placeholder="Your first name" />
+                    <VoiceLabel onTranscript={(text) => update('firstName', appendSpeechText(form.firstName, text))}>
+                      First Name
+                    </VoiceLabel>
+                    <input
+                      type="text"
+                      name="firstName"
+                      value={form.firstName}
+                      onChange={(e) => update('firstName', e.target.value)}
+                      required
+                      placeholder="Your first name"
+                    />
                   </label>
                   <label>
-                    Last Name
-                    <input type="text" name="lastName" required placeholder="Your last name" />
+                    <VoiceLabel onTranscript={(text) => update('lastName', appendSpeechText(form.lastName, text))}>
+                      Last Name
+                    </VoiceLabel>
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={form.lastName}
+                      onChange={(e) => update('lastName', e.target.value)}
+                      required
+                      placeholder="Your last name"
+                    />
                   </label>
                 </div>
                 <label>
                   Email Address
-                  <input type="email" name="email" required placeholder="you@example.com" />
+                  <input
+                    type="email"
+                    name="email"
+                    value={form.email}
+                    onChange={(e) => update('email', e.target.value)}
+                    required
+                    placeholder="you@example.com"
+                  />
                 </label>
                 <label>
                   I am a
-                  <select name="role" required defaultValue="">
+                  <select
+                    name="role"
+                    value={form.role}
+                    onChange={(e) => update('role', e.target.value)}
+                    required
+                  >
                     <option value="" disabled>Select your role</option>
                     <option value="parent">Parent or Guardian</option>
                     <option value="educator">Educator or Teacher</option>
@@ -93,10 +137,14 @@ export default function Contact() {
                   </select>
                 </label>
                 <label>
-                  Message
+                  <VoiceLabel onTranscript={(text) => update('message', appendSpeechText(form.message, text))}>
+                    Message
+                  </VoiceLabel>
                   <textarea
                     name="message"
                     rows={5}
+                    value={form.message}
+                    onChange={(e) => update('message', e.target.value)}
                     required
                     placeholder="Tell us about your learner and how we can help..."
                   />

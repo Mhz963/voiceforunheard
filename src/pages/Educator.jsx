@@ -92,7 +92,7 @@ export default function Educator() {
             ))}
           </Reveal>
           <Reveal className="section-cta" delay={150}>
-            <Link to="/contact" className="btn btn--cta">
+            <Link to="/signin" className="btn btn--cta">
               <span>Work With Us</span>
               <span className="btn__cta-icon">
                 <HiArrowRight />

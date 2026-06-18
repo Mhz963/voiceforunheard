@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { HiMenu, HiX, HiLogin } from 'react-icons/hi'
-import { siteInfo } from '../../data/content'
+import BrandLogo from '../ui/BrandLogo'
 const navLinks = [
   { to: '/', label: 'Home', end: true },
   { to: '/statistics', label: 'Statistics' },
@@ -48,11 +48,7 @@ export default function Header() {
     <header className={`header ${scrolled ? 'header--scrolled' : ''} ${menuOpen ? 'header--menu-open' : ''}`}>
       <div className="header__inner">
         <Link to="/" className="header__logo" onClick={() => setMenuOpen(false)}>
-          <img
-            src="/vfu.png"
-            alt={siteInfo.name}
-            className="header__logo-img"
-          />
+          <BrandLogo className="header__logo-img" />
         </Link>
 
         <div

@@ -7,15 +7,15 @@ import {
   HiCog,
   HiDatabase,
   HiKey,
-  HiLogout,
   HiPlus,
-  HiShieldCheck,
   HiTrash,
   HiUserGroup,
+  HiViewGrid,
   HiX,
 } from 'react-icons/hi'
 import { useSuperAdminAuth } from '../../context/SuperAdminAuthContext'
 import { portalConfig } from '../../data/parentPortal'
+import PortalLayout from '../../components/portal/PortalLayout'
 import {
   addAccessCode,
   approveParent,
@@ -106,166 +106,149 @@ export default function SuperAdminDashboard() {
     }
   }
 
-  const tabs = [
-    { id: 'overview', label: 'Overview', icon: HiShieldCheck },
-    { id: 'families', label: `Families (${parents.length})`, icon: HiUserGroup },
-    { id: 'concerns', label: `Concerns (${concerns.length})`, icon: HiClipboardList },
-    { id: 'meetings', label: 'Sessions', icon: HiCalendar },
+  const pageCopy = {
+    overview: { title: 'Overview', description: 'Platform health at a glance.' },
+    families: { title: 'Families', description: 'All registered families and access status.' },
+    concerns: { title: 'Concerns', description: 'Every concern submitted across the platform.' },
+    meetings: { title: 'Sessions', description: 'Scheduled and completed video sessions.' },
+    system: { title: 'System', description: 'Access codes, exports, and activity log.' },
+  }[tab]
+
+  const navItems = [
+    { id: 'overview', label: 'Overview', icon: HiViewGrid },
+    { id: 'families', label: 'Families', icon: HiUserGroup, badge: pendingParents.length },
+    { id: 'concerns', label: 'Concerns', icon: HiClipboardList, badge: urgentConcerns.length },
+    { id: 'meetings', label: 'Sessions', icon: HiCalendar, badge: upcomingMeetings.length },
     { id: 'system', label: 'System', icon: HiCog },
   ]
 
   return (
-    <div className="page superadmin-portal superadmin-dashboard">
-      <section className="superadmin-dashboard__header">
-        <div className="container superadmin-dashboard__header-inner">
-          <div>
-            <span className="superadmin-dashboard__badge">Super Admin</span>
-            <h1>Platform Control Center</h1>
-            <p>Signed in as {superadmin.name} — full system access</p>
+    <PortalLayout
+      variant="superadmin"
+      portalLabel="Super Admin"
+      userName={superadmin.name}
+      userMeta="Full system access"
+      navItems={navItems}
+      activeId={tab}
+      onNavigate={setTab}
+      onLogout={handleLogout}
+      pageTitle={pageCopy.title}
+      pageDescription={pageCopy.description}
+    >
+      {tab === 'overview' && (
+        <div className="portal-page">
+          <div className="portal-page__stats">
+            <button type="button" className="portal-stat portal-stat--clickable" onClick={() => setTab('families')}>
+              <strong>{parents.length}</strong>
+              <span>Total families</span>
+              <em>{pendingParents.length} pending</em>
+            </button>
+            <button type="button" className="portal-stat portal-stat--clickable" onClick={() => setTab('concerns')}>
+              <strong>{concerns.length}</strong>
+              <span>Concerns logged</span>
+              <em>{urgentConcerns.length} urgent open</em>
+            </button>
+            <button type="button" className="portal-stat portal-stat--clickable" onClick={() => setTab('meetings')}>
+              <strong>{upcomingMeetings.length}</strong>
+              <span>Upcoming sessions</span>
+            </button>
+            <button type="button" className="portal-stat portal-stat--clickable" onClick={() => setTab('system')}>
+              <strong>{accessCodes.length}</strong>
+              <span>Active access codes</span>
+            </button>
           </div>
-          <button type="button" className="btn btn--outline superadmin-dashboard__logout" onClick={handleLogout}>
-            <HiLogout /> Sign Out
-          </button>
-        </div>
-      </section>
 
-      <section className="section section--compact">
-        <div className="container">
-          <nav className="superadmin-dashboard__tabs" aria-label="Super admin sections">
-            {tabs.map((t) => {
-              const Icon = t.icon
-              return (
-                <button
-                  key={t.id}
-                  type="button"
-                  className={tab === t.id ? 'superadmin-dashboard__tab--active' : ''}
-                  onClick={() => setTab(t.id)}
-                >
-                  <Icon aria-hidden="true" /> {t.label}
-                </button>
-              )
-            })}
-          </nav>
-
-          {tab === 'overview' && (
-            <div className="superadmin-dashboard__overview">
-              <div className="superadmin-dashboard__stats">
-                <button type="button" className="superadmin-stat interactive-card" onClick={() => setTab('families')}>
-                  <strong>{parents.length}</strong>
-                  <span>Total families</span>
-                  <em>{pendingParents.length} pending</em>
-                </button>
-                <button type="button" className="superadmin-stat interactive-card" onClick={() => setTab('concerns')}>
-                  <strong>{concerns.length}</strong>
-                  <span>Concerns logged</span>
-                  <em>{urgentConcerns.length} urgent open</em>
-                </button>
-                <button type="button" className="superadmin-stat interactive-card" onClick={() => setTab('meetings')}>
-                  <strong>{upcomingMeetings.length}</strong>
-                  <span>Upcoming sessions</span>
-                </button>
-                <button type="button" className="superadmin-stat interactive-card" onClick={() => setTab('system')}>
-                  <strong>{accessCodes.length}</strong>
-                  <span>Active access codes</span>
-                </button>
-              </div>
-
-              {pendingParents.length > 0 && (
-                <div className="superadmin-dashboard__section">
-                  <h3>Requires Action — Pending Families</h3>
-                  {pendingParents.slice(0, 2).map((p) => (
-                    <FamilyCard
-                      key={p.id}
-                      parent={p}
-                      concerns={concerns}
-                      meetings={meetings}
-                      onApprove={() => handleApprove(p.id)}
-                      onReject={() => handleReject(p.id)}
-                    />
-                  ))}
-                </div>
-              )}
-
-              {activity.length > 0 && (
-                <div className="superadmin-dashboard__section">
-                  <h3>Recent Activity</h3>
-                  <ActivityList entries={activity.slice(0, 5)} />
-                </div>
-              )}
+          {pendingParents.length > 0 && (
+            <div className="portal-page__section">
+              <h3>Requires Action — Pending Families</h3>
+              {pendingParents.slice(0, 2).map((p) => (
+                <FamilyCard
+                  key={p.id}
+                  parent={p}
+                  concerns={concerns}
+                  meetings={meetings}
+                  onApprove={() => handleApprove(p.id)}
+                  onReject={() => handleReject(p.id)}
+                />
+              ))}
             </div>
           )}
 
-          {tab === 'families' && (
-            <div className="admin-dashboard__list">
-              <h3>All Registered Families</h3>
-              {parents.length === 0 ? (
-                <p className="parent-dashboard__empty">No families registered yet.</p>
-              ) : (
-                parents.map((p) => (
-                  <FamilyCard
-                    key={p.id}
-                    parent={p}
-                    concerns={concerns}
-                    meetings={meetings}
-                    onApprove={() => handleApprove(p.id)}
-                    onReject={() => handleReject(p.id)}
-                  />
-                ))
-              )}
+          {activity.length > 0 && (
+            <div className="portal-page__section">
+              <h3>Recent Activity</h3>
+              <ActivityList entries={activity.slice(0, 5)} />
             </div>
-          )}
-
-          {tab === 'concerns' && (
-            <div className="admin-dashboard__list">
-              <h3>All Concerns</h3>
-              {concerns.length === 0 ? (
-                <p className="parent-dashboard__empty">No concerns yet.</p>
-              ) : (
-                concerns.map((c) => (
-                  <ConcernCard
-                    key={c.id}
-                    concern={c}
-                    onUpdate={() => {
-                      act('Updated concern', c.title)
-                    }}
-                  />
-                ))
-              )}
-            </div>
-          )}
-
-          {tab === 'meetings' && (
-            <div className="admin-dashboard__list">
-              <h3>All Video Sessions</h3>
-              {meetings.length === 0 ? (
-                <p className="parent-dashboard__empty">No sessions scheduled.</p>
-              ) : (
-                meetings.map((m) => (
-                  <MeetingCard
-                    key={m.id}
-                    meeting={m}
-                    onUpdate={() => {
-                      act('Updated meeting', `${m.parentName} — ${formatDate(m.date)}`)
-                    }}
-                  />
-                ))
-              )}
-            </div>
-          )}
-
-          {tab === 'system' && (
-            <SystemTab
-              accessCodes={accessCodes}
-              activity={activity}
-              onCodesChange={() => {
-                act('Updated access codes', 'Access code list modified')
-              }}
-              onRefresh={refresh}
-            />
           )}
         </div>
-      </section>
-    </div>
+      )}
+
+      {tab === 'families' && (
+        <div className="portal-page__list">
+          {parents.length === 0 ? (
+            <p className="portal-page__empty">No families registered yet.</p>
+          ) : (
+            parents.map((p) => (
+              <FamilyCard
+                key={p.id}
+                parent={p}
+                concerns={concerns}
+                meetings={meetings}
+                onApprove={() => handleApprove(p.id)}
+                onReject={() => handleReject(p.id)}
+              />
+            ))
+          )}
+        </div>
+      )}
+
+      {tab === 'concerns' && (
+        <div className="portal-page__list">
+          {concerns.length === 0 ? (
+            <p className="portal-page__empty">No concerns yet.</p>
+          ) : (
+            concerns.map((c) => (
+              <ConcernCard
+                key={c.id}
+                concern={c}
+                onUpdate={() => {
+                  act('Updated concern', c.title)
+                }}
+              />
+            ))
+          )}
+        </div>
+      )}
+
+      {tab === 'meetings' && (
+        <div className="portal-page__list">
+          {meetings.length === 0 ? (
+            <p className="portal-page__empty">No sessions scheduled.</p>
+          ) : (
+            meetings.map((m) => (
+              <MeetingCard
+                key={m.id}
+                meeting={m}
+                onUpdate={() => {
+                  act('Updated meeting', `${m.parentName} — ${formatDate(m.date)}`)
+                }}
+              />
+            ))
+          )}
+        </div>
+      )}
+
+      {tab === 'system' && (
+        <SystemTab
+          accessCodes={accessCodes}
+          activity={activity}
+          onCodesChange={() => {
+            act('Updated access codes', 'Access code list modified')
+          }}
+          onRefresh={refresh}
+        />
+      )}
+    </PortalLayout>
   )
 }
 
@@ -483,7 +466,7 @@ function SystemTab({ accessCodes, activity, onCodesChange, onRefresh }) {
       <div className="superadmin-system__panel superadmin-system__panel--wide">
         <h3><HiClipboardList /> Activity Log</h3>
         {activity.length === 0 ? (
-          <p className="parent-dashboard__empty">No activity recorded yet.</p>
+          <p className="portal-page__empty">No activity recorded yet.</p>
         ) : (
           <ActivityList entries={activity} />
         )}

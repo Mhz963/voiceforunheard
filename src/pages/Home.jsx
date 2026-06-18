@@ -118,7 +118,7 @@ export default function Home() {
                 </p>
               </div>
               <div className="feature-banner__actions">
-                <Link to="/contact" className="btn btn--cta">
+                <Link to="/signin" className="btn btn--cta">
                   <span>Start Your Journey</span>
                   <span className="btn__cta-icon">
                     <HiArrowRight />

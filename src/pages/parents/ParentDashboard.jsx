@@ -1,22 +1,29 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
+  HiBookOpen,
   HiCalendar,
   HiChatAlt2,
-  HiLogout,
   HiPlus,
   HiVideoCamera,
+  HiViewGrid,
   HiX,
 } from 'react-icons/hi'
 import { useParentAuth } from '../../context/ParentAuthContext'
 import { parentPortalConfig } from '../../data/parentPortal'
+import PortalLayout from '../../components/portal/PortalLayout'
+import ParentAcademics from '../../components/academics/ParentAcademics'
+import { SpeakButton, VoiceLabel } from '../../components/voice/VoiceInput'
+import { appendSpeechText } from '../../hooks/useSpeechRecognition'
 import {
   addConcern,
   addMeeting,
   cancelMeeting,
   getAllMeetingsForSlot,
   getConcerns,
+  getLessonUpdatesForParent,
   getMeetings,
+  getSchoolworkGuidance,
 } from '../../services/parentStorage'
 
 function createId(prefix) {
@@ -71,6 +78,9 @@ export default function ParentDashboard() {
 
   const concerns = useMemo(() => getConcerns(parent.id), [parent.id, refreshKey])
   const meetings = useMemo(() => getMeetings(parent.id), [parent.id, refreshKey])
+  const lessons = useMemo(() => getLessonUpdatesForParent(parent), [parent, refreshKey])
+  const guidance = useMemo(() => getSchoolworkGuidance(parent.id), [parent.id, refreshKey])
+  const unreadGuidance = guidance.filter((g) => !g.read).length
 
   const upcomingMeetings = meetings.filter(
     (m) => ['scheduled', 'confirmed'].includes(m.status) && new Date(`${m.date}T${m.time}`) >= new Date(),
@@ -85,88 +95,99 @@ export default function ParentDashboard() {
     navigate('/signin')
   }
 
+  const pageCopy = {
+    overview: {
+      title: 'Overview',
+      description: `Supporting ${parent.childName} (${parent.childAge})`,
+    },
+    concerns: {
+      title: 'Share a Concern',
+      description: 'Tell your educator about challenges at home or in school.',
+    },
+    meetings: {
+      title: 'Video Sessions',
+      description: 'Schedule and join Google Meet sessions with your educator.',
+    },
+    academics: {
+      title: 'Academics',
+      description: `Grades 1–10 support, daily lessons, homework help, and schoolwork guidance for ${parent.childName}.`,
+    },
+  }[tab]
+
+  const navItems = [
+    { id: 'overview', label: 'Overview', icon: HiViewGrid },
+    { id: 'academics', label: 'Academics', icon: HiBookOpen, badge: unreadGuidance },
+    { id: 'concerns', label: 'Concerns', icon: HiChatAlt2, badge: concerns.length },
+    { id: 'meetings', label: 'Sessions', icon: HiCalendar, badge: upcomingMeetings.length },
+  ]
+
   return (
-    <div className="page parent-portal parent-dashboard">
-      <section className="parent-dashboard__header">
-        <div className="container parent-dashboard__header-inner">
-          <div>
-            <span className="parent-dashboard__badge">Parent Portal</span>
-            <h1>Welcome, {parent.name.split(' ')[0]}</h1>
-            <p>
-              Managing support for <strong>{parent.childName}</strong> ({parent.childAge})
-            </p>
-          </div>
-          <button type="button" className="btn btn--outline parent-dashboard__logout" onClick={handleLogout}>
-            <HiLogout /> Sign Out
-          </button>
-        </div>
-      </section>
-
-      <section className="section section--compact">
-        <div className="container">
-          <nav className="parent-dashboard__tabs" aria-label="Portal sections">
-            <button
-              type="button"
-              className={tab === 'overview' ? 'parent-dashboard__tab--active' : ''}
-              onClick={() => setTab('overview')}
-            >
-              Overview
-            </button>
-            <button
-              type="button"
-              className={tab === 'concerns' ? 'parent-dashboard__tab--active' : ''}
-              onClick={() => setTab('concerns')}
-            >
-              <HiChatAlt2 /> Share a Concern
-            </button>
-            <button
-              type="button"
-              className={tab === 'meetings' ? 'parent-dashboard__tab--active' : ''}
-              onClick={() => setTab('meetings')}
-            >
-              <HiCalendar /> Schedule Meeting
-            </button>
-          </nav>
-
-          {tab === 'overview' && (
-            <OverviewTab
-              concerns={concerns}
-              upcomingMeetings={upcomingMeetings}
-              onGoConcerns={() => setTab('concerns')}
-              onGoMeetings={() => setTab('meetings')}
-            />
-          )}
-          {tab === 'concerns' && <ConcernsTab parent={parent} onSubmitted={refresh} concerns={concerns} />}
-          {tab === 'meetings' && (
-            <MeetingsTab
-              parent={parent}
-              meetings={meetings}
-              onScheduled={refresh}
-              onCancel={refresh}
-            />
-          )}
-        </div>
-      </section>
-    </div>
+    <PortalLayout
+      variant="parent"
+      portalLabel="Parent Portal"
+      userName={parent.name}
+      userMeta={`Child: ${parent.childName}`}
+      navItems={navItems}
+      activeId={tab}
+      onNavigate={setTab}
+      onLogout={handleLogout}
+      pageTitle={pageCopy.title}
+      pageDescription={pageCopy.description}
+    >
+      {tab === 'overview' && (
+        <OverviewTab
+          concerns={concerns}
+          upcomingMeetings={upcomingMeetings}
+          lessons={lessons}
+          unreadGuidance={unreadGuidance}
+          onGoConcerns={() => setTab('concerns')}
+          onGoMeetings={() => setTab('meetings')}
+          onGoAcademics={() => setTab('academics')}
+        />
+      )}
+      {tab === 'academics' && (
+        <ParentAcademics parent={parent} refreshKey={refreshKey} onRefresh={refresh} />
+      )}
+      {tab === 'concerns' && <ConcernsTab parent={parent} onSubmitted={refresh} concerns={concerns} />}
+      {tab === 'meetings' && (
+        <MeetingsTab
+          parent={parent}
+          meetings={meetings}
+          onScheduled={refresh}
+          onCancel={refresh}
+        />
+      )}
+    </PortalLayout>
   )
 }
 
-function OverviewTab({ concerns, upcomingMeetings, onGoConcerns, onGoMeetings }) {
+function OverviewTab({ concerns, upcomingMeetings, lessons, unreadGuidance, onGoConcerns, onGoMeetings, onGoAcademics }) {
   return (
-    <div className="parent-dashboard__overview">
-      <div className="parent-dashboard__stat-row">
-        <div className="parent-dashboard__stat interactive-card">
+    <div className="portal-page">
+      <div className="portal-page__stats">
+        <div className="portal-stat">
+          <strong>{lessons.length}</strong>
+          <span>Lesson updates</span>
+        </div>
+        <div className="portal-stat">
+          <strong>{unreadGuidance}</strong>
+          <span>New guidance</span>
+        </div>
+        <div className="portal-stat">
           <strong>{concerns.length}</strong>
           <span>Concerns shared</span>
         </div>
-        <div className="parent-dashboard__stat interactive-card">
+        <div className="portal-stat">
           <strong>{upcomingMeetings.length}</strong>
           <span>Upcoming sessions</span>
         </div>
       </div>
 
-      <div className="parent-dashboard__actions">
-        <button type="button" className="btn btn--primary" onClick={onGoConcerns}>
+      <div className="portal-page__actions">
+        <button type="button" className="btn btn--primary" onClick={onGoAcademics}>
+          <HiBookOpen /> View Academics
+        </button>
+        <button type="button" className="btn btn--outline" onClick={onGoConcerns}>
           <HiPlus /> Share a New Concern
         </button>
         <button type="button" className="btn btn--outline" onClick={onGoMeetings}>
@@ -174,15 +195,39 @@ function OverviewTab({ concerns, upcomingMeetings, onGoConcerns, onGoMeetings })
         </button>
       </div>
 
+      {lessons.length > 0 && (
+        <div className="portal-page__section">
+          <h3>Today&apos;s Lesson</h3>
+          <article className="academics-card interactive-card">
+            <header className="academics-card__header">
+              <span className="parent-dashboard__tag">{lessons[0].topics}</span>
+            </header>
+            <p>{lessons[0].summary}</p>
+          </article>
+        </div>
+      )}
+
+      {unreadGuidance > 0 && (
+        <div className="portal-page__section">
+          <h3>Schoolwork Reminder</h3>
+          <p className="admin-card__detail">
+            You have {unreadGuidance} new guidance notification{unreadGuidance === 1 ? '' : 's'} from your educator.
+          </p>
+          <button type="button" className="btn btn--outline btn--sm" onClick={onGoAcademics}>
+            View guidance
+          </button>
+        </div>
+      )}
+
       {upcomingMeetings.length > 0 && (
-        <div className="parent-dashboard__section">
+        <div className="portal-page__section">
           <h3>Next Session</h3>
           <MeetingCard meeting={upcomingMeetings[0]} />
         </div>
       )}
 
       {concerns.length > 0 && (
-        <div className="parent-dashboard__section">
+        <div className="portal-page__section">
           <h3>Latest Concern</h3>
           <ConcernCard concern={concerns[0]} />
         </div>
@@ -227,11 +272,12 @@ function ConcernsTab({ parent, onSubmitted, concerns }) {
   }
 
   return (
-    <div className="parent-dashboard__split">
+    <div className="portal-page__split">
       <div className="parent-portal__auth-card">
         <h2>Share a Concern or Problem</h2>
         <p className="parent-portal__auth-sub">
           Tell your educator about challenges your child is facing. This helps prepare for your next session.
+          You can tap <strong>Speak</strong> and say your message instead of typing.
         </p>
 
         {submitted && (
@@ -250,7 +296,9 @@ function ConcernsTab({ parent, onSubmitted, concerns }) {
             </select>
           </label>
           <label>
-            Brief Title
+            <VoiceLabel onTranscript={(text) => update('title', appendSpeechText(form.title, text))}>
+              Brief Title
+            </VoiceLabel>
             <input
               type="text"
               value={form.title}
@@ -260,7 +308,9 @@ function ConcernsTab({ parent, onSubmitted, concerns }) {
             />
           </label>
           <label>
-            Describe the Problem
+            <VoiceLabel onTranscript={(text) => update('description', appendSpeechText(form.description, text))}>
+              Describe the Problem
+            </VoiceLabel>
             <textarea
               rows={5}
               value={form.description}
@@ -281,10 +331,10 @@ function ConcernsTab({ parent, onSubmitted, concerns }) {
         </form>
       </div>
 
-      <div className="parent-dashboard__list">
+      <div className="portal-page__list">
         <h3>Your Submitted Concerns</h3>
         {concerns.length === 0 ? (
-          <p className="parent-dashboard__empty">No concerns submitted yet.</p>
+          <p className="portal-page__empty">No concerns submitted yet.</p>
         ) : (
           concerns.map((c) => <ConcernCard key={c.id} concern={c} />)
         )}
@@ -346,7 +396,7 @@ function MeetingsTab({ parent, meetings, onScheduled, onCancel }) {
   }
 
   return (
-    <div className="parent-dashboard__split">
+    <div className="portal-page__split">
       <div className="parent-portal__auth-card">
         <h2>Schedule a Video Session</h2>
         <p className="parent-portal__auth-sub">
@@ -376,7 +426,9 @@ function MeetingsTab({ parent, meetings, onScheduled, onCancel }) {
             </select>
           </label>
           <label>
-            What would you like to discuss?
+            <VoiceLabel onTranscript={(text) => update('agenda', appendSpeechText(form.agenda, text))}>
+              What would you like to discuss?
+            </VoiceLabel>
             <textarea
               rows={4}
               value={form.agenda}
@@ -391,10 +443,10 @@ function MeetingsTab({ parent, meetings, onScheduled, onCancel }) {
         </form>
       </div>
 
-      <div className="parent-dashboard__list">
+      <div className="portal-page__list">
         <h3>Your Scheduled Sessions</h3>
         {meetings.filter((m) => ['scheduled', 'confirmed'].includes(m.status)).length === 0 ? (
-          <p className="parent-dashboard__empty">No meetings scheduled yet.</p>
+          <p className="portal-page__empty">No meetings scheduled yet.</p>
         ) : (
           meetings
             .filter((m) => ['scheduled', 'confirmed'].includes(m.status))
@@ -421,10 +473,12 @@ function ConcernCard({ concern }) {
       </div>
       <h4>{concern.title}</h4>
       <p>{concern.description}</p>
+      <SpeakButton text={`${concern.title}. ${concern.description}`} />
       {concern.adminNote && (
-        <p className="parent-dashboard__educator-note">
+        <div className="parent-dashboard__educator-note">
           <strong>Educator note:</strong> {concern.adminNote}
-        </p>
+          <SpeakButton text={concern.adminNote} label="Listen to note" />
+        </div>
       )}
       <footer>
         Submitted {new Date(concern.createdAt).toLocaleDateString()} · Status:{' '}

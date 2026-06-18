@@ -71,7 +71,7 @@ export default function ParentPortal() {
             <h2>Parent Sign In</h2>
             <p className="parent-portal__auth-sub">
               New family?{' '}
-              <Link to="/parents/register">Request portal access</Link>
+              <Link to="/signin">Sign in to the portal</Link>
               {' · '}
               <Link to="/admin">Educator admin</Link>
             </p>

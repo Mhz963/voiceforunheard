@@ -154,6 +154,14 @@ ul {
   margin: 0 auto var(--space-md);
 }
 
+.section-header__logo {
+  height: auto;
+  max-height: 68px;
+  width: auto;
+  max-width: min(260px, 65vw);
+  margin: 0 auto var(--space-sm);
+}
+
 .section-header__badge {
   display: inline-block;
   padding: 0.4rem 1rem;

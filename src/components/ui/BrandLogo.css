@@ -1,0 +1,21 @@
+.brand-logo {
+  display: block;
+  object-fit: contain;
+}
+
+/* White logo on blue / dark branded surfaces */
+.brand-logo--on-dark,
+[data-brand-surface='dark'] .brand-logo,
+.page-hero .brand-logo,
+.signin-hero .brand-logo,
+.hero--branded .brand-logo {
+  filter: brightness(0) invert(1);
+}
+
+.brand-logo--on-dark:hover,
+[data-brand-surface='dark'] .brand-logo:hover,
+.page-hero .brand-logo:hover,
+.signin-hero .brand-logo:hover,
+.hero--branded .brand-logo:hover {
+  filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(255, 255, 255, 0.35));
+}

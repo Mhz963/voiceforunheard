@@ -2,6 +2,9 @@ const KEYS = {
   parents: 'vfu_parents',
   concerns: 'vfu_concerns',
   meetings: 'vfu_meetings',
+  lessonUpdates: 'vfu_lesson_updates',
+  tuitionRequests: 'vfu_tuition_requests',
+  schoolworkGuidance: 'vfu_schoolwork_guidance',
   parentSession: 'vfu_parent_session',
   adminSession: 'vfu_admin_session',
   superAdminSession: 'vfu_superadmin_session',
@@ -130,6 +133,92 @@ export function updateMeetingStatus(meetingId, status, parentId = null, adminNot
   }
   writeList(KEYS.meetings, meetings)
   return meetings[index]
+}
+
+// ——— Lesson updates ———
+
+export function getAllLessonUpdates() {
+  return readList(KEYS.lessonUpdates).sort(
+    (a, b) => new Date(b.date) - new Date(a.date) || new Date(b.createdAt) - new Date(a.createdAt),
+  )
+}
+
+export function getLessonUpdatesForParent(parent) {
+  const grade = Number(parent.childGrade)
+  return getAllLessonUpdates().filter(
+    (u) =>
+      u.parentId === parent.id ||
+      (u.audience === 'grade' && Number(u.grade) === grade),
+  )
+}
+
+export function addLessonUpdate(update) {
+  const items = readList(KEYS.lessonUpdates)
+  items.push(update)
+  writeList(KEYS.lessonUpdates, items)
+  return update
+}
+
+// ——— Tuition / homework requests ———
+
+export function getAllTuitionRequests() {
+  return readList(KEYS.tuitionRequests).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+}
+
+export function getTuitionRequests(parentId) {
+  return getAllTuitionRequests().filter((r) => r.parentId === parentId)
+}
+
+export function addTuitionRequest(request) {
+  const items = readList(KEYS.tuitionRequests)
+  items.push(request)
+  writeList(KEYS.tuitionRequests, items)
+  return request
+}
+
+export function updateTuitionRequest(requestId, patch) {
+  const items = readList(KEYS.tuitionRequests)
+  const index = items.findIndex((r) => r.id === requestId)
+  if (index < 0) return null
+  items[index] = {
+    ...items[index],
+    ...patch,
+    updatedAt: new Date().toISOString(),
+  }
+  writeList(KEYS.tuitionRequests, items)
+  return items[index]
+}
+
+// ——— Schoolwork guidance ———
+
+export function getAllSchoolworkGuidance() {
+  return readList(KEYS.schoolworkGuidance).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+}
+
+export function getSchoolworkGuidance(parentId) {
+  return getAllSchoolworkGuidance().filter((g) => g.parentId === parentId)
+}
+
+export function addSchoolworkGuidance(guidance) {
+  const items = readList(KEYS.schoolworkGuidance)
+  items.push(guidance)
+  writeList(KEYS.schoolworkGuidance, items)
+  return guidance
+}
+
+export function markGuidanceRead(guidanceId, parentId) {
+  const items = readList(KEYS.schoolworkGuidance)
+  const index = items.findIndex((g) => g.id === guidanceId && g.parentId === parentId)
+  if (index < 0) return null
+  items[index] = { ...items[index], read: true }
+  writeList(KEYS.schoolworkGuidance, items)
+  return items[index]
+}
+
+export function markAllGuidanceRead(parentId) {
+  const items = readList(KEYS.schoolworkGuidance)
+  const updated = items.map((g) => (g.parentId === parentId ? { ...g, read: true } : g))
+  writeList(KEYS.schoolworkGuidance, updated)
 }
 
 // ——— Parent session ———

@@ -42,7 +42,7 @@ export function ParentAuthProvider({ children }) {
     return account
   }
 
-  function register({ name, email, password, childName, childAge, relationship, accessCode }) {
+  function register({ name, email, password, childName, childAge, childGrade, relationship, accessCode }) {
     if (findParentByEmail(email)) {
       throw new Error('An account with this email already exists. Please sign in.')
     }
@@ -57,6 +57,7 @@ export function ParentAuthProvider({ children }) {
       password,
       childName: childName.trim(),
       childAge: childAge.trim(),
+      childGrade: Number(childGrade) || 1,
       relationship,
       approved: codeValid,
       createdAt: new Date().toISOString(),

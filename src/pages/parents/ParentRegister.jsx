@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Reveal from '../../components/ui/Reveal'
+import SectionHeader from '../../components/ui/SectionHeader'
+import { VoiceHelpBanner, VoiceLabel } from '../../components/voice/VoiceInput'
+import { appendSpeechText } from '../../hooks/useSpeechRecognition'
 import { useParentAuth } from '../../context/ParentAuthContext'
 export default function ParentRegister() {
   const { register } = useParentAuth()
@@ -12,6 +15,7 @@ export default function ParentRegister() {
     confirmPassword: '',
     childName: '',
     childAge: '',
+    childGrade: 1,
     relationship: 'parent',
     accessCode: '',
   })
@@ -76,10 +80,14 @@ export default function ParentRegister() {
             {error && <div className="parent-portal__alert parent-portal__alert--error">{error}</div>}
             {success && <div className="parent-portal__alert parent-portal__alert--success">{success}</div>}
 
+            <VoiceHelpBanner />
+
             <form className="parent-portal__form" onSubmit={handleSubmit}>
               <div className="parent-portal__form-row">
                 <label>
-                  Your Full Name
+                  <VoiceLabel onTranscript={(text) => update('name', appendSpeechText(form.name, text))}>
+                    Your Full Name
+                  </VoiceLabel>
                   <input
                     type="text"
                     value={form.name}
@@ -127,7 +135,9 @@ export default function ParentRegister() {
 
               <div className="parent-portal__form-row">
                 <label>
-                  Child&apos;s Name
+                  <VoiceLabel onTranscript={(text) => update('childName', appendSpeechText(form.childName, text))}>
+                    Child&apos;s Name
+                  </VoiceLabel>
                   <input
                     type="text"
                     value={form.childName}
@@ -137,7 +147,9 @@ export default function ParentRegister() {
                   />
                 </label>
                 <label>
-                  Child&apos;s Age
+                  <VoiceLabel onTranscript={(text) => update('childAge', appendSpeechText(form.childAge, text))}>
+                    Child&apos;s Age
+                  </VoiceLabel>
                   <input
                     type="text"
                     value={form.childAge}
@@ -147,6 +159,19 @@ export default function ParentRegister() {
                   />
                 </label>
               </div>
+
+              <label>
+                Child&apos;s Grade (1–10)
+                <select
+                  value={form.childGrade}
+                  onChange={(e) => update('childGrade', Number(e.target.value))}
+                  required
+                >
+                  {Array.from({ length: 10 }, (_, i) => (
+                    <option key={i + 1} value={i + 1}>Grade {i + 1}</option>
+                  ))}
+                </select>
+              </label>
 
               <div className="parent-portal__form-row">
                 <label>
