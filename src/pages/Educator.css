@@ -1,45 +1,10 @@
-.educator-hero {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--space-lg);
-  align-items: center;
-}
-
-.educator-hero__visual {
-  display: flex;
-  justify-content: center;
-}
-
-.educator-avatar {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 4rem;
-  color: #fff;
-  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
-  animation: pulseGlow 3s ease-in-out infinite;
-}
-
-.educator-avatar:hover {
-  transform: scale(1.05);
-}
-
-.educator-bio {
-  font-size: 1.1rem;
-  line-height: 1.8;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: var(--space-md);
-}
-
 .educator-badges {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: var(--space-sm);
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 .educator-badges span {
@@ -57,12 +22,6 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-md);
-}
-
-.educator-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
 }
 
 .philosophy-card {
@@ -112,15 +71,6 @@
 }
 
 @media (max-width: 768px) {
-  .educator-hero {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-
-  .educator-badges {
-    justify-content: center;
-  }
-
   .philosophy-grid,
   .unique-list {
     grid-template-columns: 1fr;

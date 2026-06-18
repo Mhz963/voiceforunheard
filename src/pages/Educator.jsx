@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { HiArrowRight } from 'react-icons/hi'
-import { FaGraduationCap, FaAward, FaHeart } from 'react-icons/fa'
+import { FaAward, FaHeart } from 'react-icons/fa'
 import SectionHeader from '../components/ui/SectionHeader'
 import IconBadge from '../components/ui/IconBadge'
 import Reveal from '../components/ui/Reveal'
@@ -32,26 +32,17 @@ export default function Educator() {
   return (
     <div className="page educator-page">
       <section className="page-hero page-hero--educator">
-        <div className="container educator-hero">
-          <Reveal variant="scale" className="educator-hero__visual">
-            <div className="educator-avatar">
-              <FaGraduationCap />
-            </div>
+        <div className="container">
+          <SectionHeader
+            badge="Meet Your Guide"
+            title="A Speech Education Teacher Who Understands"
+            subtitle={siteInfo.educator.bio}
+            light
+          />
+          <Reveal delay={100} className="educator-badges">
+            <span><FaAward /> {siteInfo.educator.title}</span>
+            <span><FaHeart /> {siteInfo.educator.role}</span>
           </Reveal>
-          <div className="educator-hero__text">
-            <SectionHeader
-              badge="Meet Your Guide"
-              title="A Speech Education Teacher Who Understands"
-              light
-            />
-            <Reveal delay={100}>
-              <p className="educator-bio">{siteInfo.educator.bio}</p>
-            </Reveal>
-            <Reveal delay={200} className="educator-badges">
-              <span><FaAward /> {siteInfo.educator.title}</span>
-              <span><FaHeart /> {siteInfo.educator.role}</span>
-            </Reveal>
-          </div>
         </div>
       </section>
 

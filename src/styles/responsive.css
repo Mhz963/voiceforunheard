@@ -125,18 +125,6 @@ body.nav-open {
     grid-template-columns: 1fr !important;
   }
 
-  .educator-hero {
-    grid-template-columns: 1fr !important;
-    text-align: center;
-  }
-
-  .educator-avatar {
-    width: 140px !important;
-    height: 140px !important;
-    font-size: 3rem !important;
-    margin: 0 auto;
-  }
-
   .age-card__header {
     flex-direction: column;
     align-items: flex-start;
