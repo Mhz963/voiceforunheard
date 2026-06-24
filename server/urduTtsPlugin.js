@@ -37,7 +37,7 @@ async function handleTtsRequest(req, res) {
   }
 
   try {
-    const { synthesizeUrduSpeech } = await import('./synthesizeUrdu.js')
+    const { synthesizeUrduSpeech } = await import('../api/_lib/synthesizeUrdu.js')
     const { text, rate } = await parseTtsInput(req)
 
     if (!text) {

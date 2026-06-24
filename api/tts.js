@@ -1,52 +1,41 @@
-import { synthesizeUrduSpeech } from '../server/synthesizeUrdu.js'
+import { synthesizeUrduSpeech } from './_lib/synthesizeUrdu.js'
 
 function parseRate(value) {
   const rate = Number(value)
   return Number.isFinite(rate) ? rate : 0.92
 }
 
-async function readJsonBody(request) {
-  try {
-    return await request.json()
-  } catch {
-    return null
-  }
-}
-
-export default async function handler(request) {
-  if (request.method !== 'GET' && request.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 })
+export default async function handler(req, res) {
+  if (req.method !== 'GET' && req.method !== 'POST') {
+    res.status(405).end('Method not allowed')
+    return
   }
 
   try {
     let text = ''
     let rate = 0.92
 
-    if (request.method === 'POST') {
-      const body = await readJsonBody(request)
-      text = body?.text?.trim() ?? ''
-      rate = parseRate(body?.rate)
+    if (req.method === 'POST') {
+      const body = req.body ?? {}
+      text = (typeof body.text === 'string' ? body.text : '').trim()
+      rate = parseRate(body.rate)
     } else {
-      const url = new URL(request.url)
-      text = url.searchParams.get('text')?.trim() ?? ''
-      rate = parseRate(url.searchParams.get('rate'))
+      text = (typeof req.query.text === 'string' ? req.query.text : '').trim()
+      rate = parseRate(req.query.rate)
     }
 
     if (!text) {
-      return new Response('Missing text', { status: 400 })
+      res.status(400).end('Missing text')
+      return
     }
 
     const audio = await synthesizeUrduSpeech(text, { rate })
 
-    return new Response(audio, {
-      status: 200,
-      headers: {
-        'Content-Type': 'audio/mpeg',
-        'Cache-Control': 'public, max-age=604800',
-      },
-    })
+    res.setHeader('Content-Type', 'audio/mpeg')
+    res.setHeader('Cache-Control', 'public, max-age=604800')
+    res.status(200).send(audio)
   } catch (error) {
     console.error('Urdu TTS error:', error)
-    return new Response('TTS failed', { status: 500 })
+    res.status(500).end('TTS failed')
   }
 }
