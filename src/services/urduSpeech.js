@@ -24,8 +24,11 @@ export function stopUrduSpeech() {
 }
 
 async function fetchUrduAudio(chunk, rate) {
-  const params = new URLSearchParams({ text: chunk, rate: String(rate) })
-  const response = await fetch(`/api/tts?${params.toString()}`)
+  const response = await fetch('/api/tts', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: chunk, rate }),
+  })
   if (!response.ok) throw new Error('Urdu TTS request failed')
   return response.blob()
 }

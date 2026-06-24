@@ -138,29 +138,29 @@ export default function ParentDashboard() {
       pageTitle={pageCopy.title}
       pageDescription={pageCopy.description}
     >
-      {tab === 'overview' && (
-        <OverviewTab
-          concerns={concerns}
-          upcomingMeetings={upcomingMeetings}
+          {tab === 'overview' && (
+            <OverviewTab
+              concerns={concerns}
+              upcomingMeetings={upcomingMeetings}
           lessons={lessons}
           unreadGuidance={unreadGuidance}
-          onGoConcerns={() => setTab('concerns')}
-          onGoMeetings={() => setTab('meetings')}
+              onGoConcerns={() => setTab('concerns')}
+              onGoMeetings={() => setTab('meetings')}
           onGoAcademics={() => setTab('academics')}
-        />
-      )}
+            />
+          )}
       {tab === 'academics' && (
         <ParentAcademics parent={parent} refreshKey={refreshKey} onRefresh={refresh} />
       )}
-      {tab === 'concerns' && <ConcernsTab parent={parent} onSubmitted={refresh} concerns={concerns} />}
-      {tab === 'meetings' && (
-        <MeetingsTab
-          parent={parent}
-          meetings={meetings}
-          onScheduled={refresh}
-          onCancel={refresh}
-        />
-      )}
+          {tab === 'concerns' && <ConcernsTab parent={parent} onSubmitted={refresh} concerns={concerns} />}
+          {tab === 'meetings' && (
+            <MeetingsTab
+              parent={parent}
+              meetings={meetings}
+              onScheduled={refresh}
+              onCancel={refresh}
+            />
+          )}
     </PortalLayout>
   )
 }
