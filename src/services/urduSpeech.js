@@ -2,7 +2,7 @@ import { splitUrduText } from '../../shared/splitUrduText.js'
 
 let activeAudio = null
 let activeObjectUrl = null
-let aborted = false
+let speechGeneration = 0
 
 function revokeObjectUrl() {
   if (activeObjectUrl) {
@@ -12,7 +12,7 @@ function revokeObjectUrl() {
 }
 
 export function stopUrduSpeech() {
-  aborted = true
+  speechGeneration += 1
   if (activeAudio) {
     activeAudio.pause()
     activeAudio.onended = null
@@ -35,7 +35,9 @@ async function fetchUrduAudio(chunk, rate) {
 
 export function speakUrdu(text, { rate = 0.92, onEnd, onError } = {}) {
   stopUrduSpeech()
-  aborted = false
+  const generation = speechGeneration
+
+  const isCurrent = () => generation === speechGeneration
 
   const chunks = splitUrduText(text)
   let index = 0
@@ -44,17 +46,22 @@ export function speakUrdu(text, { rate = 0.92, onEnd, onError } = {}) {
   audio.playbackRate = Math.min(Math.max(rate, 0.75), 1.25)
 
   const fail = () => {
+    if (!isCurrent()) return
     stopUrduSpeech()
     onError?.()
   }
 
   const finish = () => {
-    stopUrduSpeech()
+    if (!isCurrent()) return
+    if (activeAudio === audio) {
+      activeAudio = null
+    }
+    revokeObjectUrl()
     onEnd?.()
   }
 
   const playNext = async () => {
-    if (aborted) return
+    if (!isCurrent()) return
 
     if (index >= chunks.length) {
       finish()
@@ -66,7 +73,7 @@ export function speakUrdu(text, { rate = 0.92, onEnd, onError } = {}) {
 
     try {
       const blob = await fetchUrduAudio(chunk, rate)
-      if (aborted) return
+      if (!isCurrent()) return
 
       revokeObjectUrl()
       activeObjectUrl = URL.createObjectURL(blob)

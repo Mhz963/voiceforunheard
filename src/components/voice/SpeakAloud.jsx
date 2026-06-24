@@ -1,14 +1,13 @@
-import { useCallback, useEffect, useId, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { HiVolumeUp } from 'react-icons/hi'
 import { useLanguage } from '../../i18n/LanguageContext'
 import {
   isSpeakSupported,
+  registerSpeechUIListener,
   speakText,
   speechLangForLocale,
   stopSpeech,
 } from '../../hooks/useSpeechRecognition'
-
-const activeListeners = new Set()
 
 function textFromNode(node) {
   if (node == null || typeof node === 'boolean') return ''
@@ -43,20 +42,14 @@ export default function SpeakAloud({
 }) {
   const { t, locale } = useLanguage()
   const [active, setActive] = useState(false)
-  const listenerId = useId()
 
   const speakContent = joinSpeakParts(text)
 
   const deactivate = useCallback(() => {
     setActive(false)
-    activeListeners.delete(listenerId)
-  }, [listenerId])
+  }, [])
 
-  useEffect(() => {
-    return () => {
-      activeListeners.delete(listenerId)
-    }
-  }, [listenerId])
+  useEffect(() => registerSpeechUIListener(deactivate), [deactivate])
 
   if (!speakContent || !isSpeakSupported(locale)) return null
 
@@ -68,21 +61,17 @@ export default function SpeakAloud({
 
     if (active) {
       stopSpeech()
-      deactivate()
       return
     }
-
-    activeListeners.forEach((listener) => listener())
-    activeListeners.clear()
-    activeListeners.add(deactivate)
-    setActive(true)
 
     speakText(speakContent, {
       lang: speechLangForLocale(locale),
       rate: locale === 'ur' ? 0.88 : 0.92,
       onEnd: deactivate,
       onError: deactivate,
-    }).catch(deactivate)
+    })
+      .catch(deactivate)
+    setActive(true)
   }
 
   return (

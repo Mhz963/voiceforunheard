@@ -129,15 +129,55 @@ function speakWithSynthesis(trimmed, { lang, rate, onEnd, onError }) {
   return utterance
 }
 
+const speechUIListeners = new Set()
+let speakSession = 0
+
+export function registerSpeechUIListener(listener) {
+  speechUIListeners.add(listener)
+  return () => speechUIListeners.delete(listener)
+}
+
+function clearSpeechUI() {
+  speechUIListeners.forEach((listener) => listener())
+}
+
+function cancelAudio() {
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    window.speechSynthesis.cancel()
+  }
+  stopUrduSpeech()
+}
+
+function stopAudioOnly() {
+  speakSession += 1
+  cancelAudio()
+}
+
 export function speakText(text, { lang = 'en-US', rate = 0.95, onEnd, onError } = {}) {
   if (!text?.trim()) return Promise.resolve(null)
 
+  stopAudioOnly()
+  clearSpeechUI()
+
+  const session = speakSession
   const trimmed = text.trim()
   const isUrdu = lang.toLowerCase().startsWith('ur')
 
+  const wrappedEnd = () => {
+    if (session !== speakSession) return
+    clearSpeechUI()
+    onEnd?.()
+  }
+  const wrappedError = () => {
+    if (session !== speakSession) return
+    clearSpeechUI()
+    onError?.()
+  }
+
   if (isUrdu) {
-    stopSpeech()
-    return Promise.resolve(speakUrdu(trimmed, { rate, onEnd, onError }))
+    return Promise.resolve(
+      speakUrdu(trimmed, { rate, onEnd: wrappedEnd, onError: wrappedError }),
+    )
   }
 
   if (typeof window === 'undefined' || !window.speechSynthesis) {
@@ -145,10 +185,15 @@ export function speakText(text, { lang = 'en-US', rate = 0.95, onEnd, onError } 
   }
 
   return preloadSpeechVoices().then(() => {
-    window.speechSynthesis.cancel()
-    stopUrduSpeech()
+    if (session !== speakSession) return null
 
-    const start = () => speakWithSynthesis(trimmed, { lang, rate, onEnd, onError })
+    const start = () =>
+      speakWithSynthesis(trimmed, {
+        lang,
+        rate,
+        onEnd: wrappedEnd,
+        onError: wrappedError,
+      })
 
     if (typeof requestAnimationFrame === 'function') {
       return new Promise((resolve) => {
@@ -161,10 +206,8 @@ export function speakText(text, { lang = 'en-US', rate = 0.95, onEnd, onError } 
 }
 
 export function stopSpeech() {
-  if (typeof window !== 'undefined' && window.speechSynthesis) {
-    window.speechSynthesis.cancel()
-  }
-  stopUrduSpeech()
+  stopAudioOnly()
+  clearSpeechUI()
 }
 
 export default function useSpeechRecognition({ lang = 'en-US', continuous = true } = {}) {

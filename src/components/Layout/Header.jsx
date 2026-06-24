@@ -19,7 +19,7 @@ const navLinks = [
 ]
 
 export default function Header() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const location = useLocation()
@@ -27,6 +27,10 @@ export default function Header() {
   useEffect(() => {
     setMenuOpen(false)
   }, [location.pathname])
+
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [locale])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
