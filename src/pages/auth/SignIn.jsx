@@ -12,31 +12,22 @@ import {
 import { useParentAuth } from '../../context/ParentAuthContext'
 import { useAdminAuth } from '../../context/AdminAuthContext'
 import { useSuperAdminAuth } from '../../context/SuperAdminAuthContext'
-import { portalConfig } from '../../data/parentPortal'
+import { usePortalConfig } from '../../i18n/usePortalConfig'
+import { useLanguage } from '../../i18n/LanguageContext'
 import BrandLogo from '../../components/ui/BrandLogo'
+import SpeakAloud from '../../components/voice/SpeakAloud'
 
-const ROLE_META = {
-  parent: {
-    icon: HiUserGroup,
-    title: 'Parent',
-    description: 'Share concerns, schedule video sessions, and track your child\'s progress.',
-    features: ['Submit concerns', 'Book Google Meet sessions', 'View educator feedback'],
-  },
-  admin: {
-    icon: HiAcademicCap,
-    title: 'Educator Admin',
-    description: 'Review family requests, respond to concerns, and manage session schedules.',
-    features: ['Approve parent access', 'Review concerns', 'Confirm meetings'],
-  },
-  superadmin: {
-    icon: HiShieldCheck,
-    title: 'Super Admin',
-    description: 'Full system oversight — users, access codes, activity, and platform health.',
-    features: ['Manage all families', 'Control access codes', 'System activity log'],
-  },
+const ROLE_ICONS = {
+  parent: HiUserGroup,
+  admin: HiAcademicCap,
+  superadmin: HiShieldCheck,
 }
 
+const ROLE_KEYS = ['parent', 'admin', 'superadmin']
+
 export default function SignIn() {
+  const { t } = useLanguage()
+  const portalConfig = usePortalConfig()
   const navigate = useNavigate()
   const parentAuth = useParentAuth()
   const adminAuth = useAdminAuth()
@@ -52,8 +43,8 @@ export default function SignIn() {
   const [shake, setShake] = useState(false)
 
   const roleConfig = selectedRole ? portalConfig.roles[selectedRole] : null
-  const meta = selectedRole ? ROLE_META[selectedRole] : null
-  const RoleIcon = meta?.icon
+  const roleInfo = selectedRole ? t(`signIn.roles.${selectedRole}`) : null
+  const RoleIcon = selectedRole ? ROLE_ICONS[selectedRole] : null
 
   useEffect(() => {
     if (parentAuth.isAuthenticated) navigate('/portal/parent', { replace: true })
@@ -134,20 +125,18 @@ export default function SignIn() {
       <section className="signin-hero" data-brand-surface="dark">
         <div className="container signin-hero__inner">
           <BrandLogo className="signin-hero__logo" />
-          <span className="signin-hero__badge">Secure Portal Access</span>
-          <h1>Sign In to Your Portal</h1>
-          <p>
-            Choose your role below to access the VoiceForUnheard platform. Each portal is tailored
-            to your responsibilities as a parent, educator, or system administrator.
-          </p>
+          <span className="signin-hero__badge">{t('signIn.badge')}</span>
+          <h1>{t('signIn.title')}</h1>
+          <p>{t('signIn.subtitle')}</p>
         </div>
       </section>
 
       <section className="section section--compact signin-roles-section">
         <div className="container">
           <div className="signin-roles" role="list" aria-label="Sign in roles">
-            {Object.entries(ROLE_META).map(([role, info]) => {
-              const Icon = info.icon
+            {ROLE_KEYS.map((role) => {
+              const info = t(`signIn.roles.${role}`)
+              const Icon = ROLE_ICONS[role]
               return (
                 <button
                   key={role}
@@ -161,7 +150,7 @@ export default function SignIn() {
                   </span>
                   <strong>{info.title}</strong>
                   <span className="signin-role-card__hint">{info.description}</span>
-                  <span className="signin-role-card__action">Sign in →</span>
+                  <span className="signin-role-card__action">{t('signIn.signInAction')}</span>
                 </button>
               )
             })}
@@ -169,7 +158,7 @@ export default function SignIn() {
         </div>
       </section>
 
-      {modalOpen && selectedRole && roleConfig && meta && RoleIcon && (
+      {modalOpen && selectedRole && roleConfig && roleInfo && RoleIcon && (
         <div
           className="signin-modal"
           role="dialog"
@@ -180,7 +169,7 @@ export default function SignIn() {
             type="button"
             className="signin-modal__backdrop"
             onClick={closeModal}
-            aria-label="Close sign in dialog"
+            aria-label={t('signIn.closeDialog')}
           />
 
           <div className={`signin-modal__dialog ${shake ? 'signin-modal__dialog--shake' : ''}`}>
@@ -188,7 +177,7 @@ export default function SignIn() {
               type="button"
               className="signin-modal__close"
               onClick={closeModal}
-              aria-label="Close"
+              aria-label={t('common.close')}
               disabled={loading}
             >
               <HiX aria-hidden="true" />
@@ -200,8 +189,13 @@ export default function SignIn() {
                   <RoleIcon aria-hidden="true" />
                 </div>
                 <div>
-                  <h2 id="signin-modal-title">{meta.title} Sign In</h2>
-                  <p>{meta.description}</p>
+                  <div className="signin-modal__title-row">
+                    <h2 id="signin-modal-title">{t('signIn.signInAs', { role: roleInfo.title })}</h2>
+                    <SpeakAloud
+                      text={[t('signIn.signInAs', { role: roleInfo.title }), roleInfo.description].join('. ')}
+                    />
+                  </div>
+                  <p>{roleInfo.description}</p>
                 </div>
               </div>
 
@@ -213,7 +207,7 @@ export default function SignIn() {
 
               <form className="signin-form" onSubmit={handleSubmit}>
                 <label>
-                  Email address
+                  {t('signIn.email')}
                   <input
                     type="email"
                     value={email}
@@ -225,7 +219,7 @@ export default function SignIn() {
                   />
                 </label>
                 <label>
-                  Password
+                  {t('signIn.password')}
                   <span className="signin-form__password-wrap">
                     <input
                       type={showPassword ? 'text' : 'password'}
@@ -238,7 +232,7 @@ export default function SignIn() {
                       type="button"
                       className="signin-form__toggle-pw"
                       onClick={() => setShowPassword((v) => !v)}
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      aria-label={showPassword ? t('signIn.hidePassword') : t('signIn.showPassword')}
                     >
                       {showPassword ? <HiEyeOff /> : <HiEye />}
                     </button>
@@ -247,17 +241,19 @@ export default function SignIn() {
 
                 <div className="signin-form__actions">
                   <button type="submit" className="btn btn--primary btn--block" disabled={loading}>
-                    {loading ? 'Signing in…' : `Sign in as ${meta.title}`}
+                    {loading
+                      ? t('signIn.signingIn')
+                      : t('signIn.signInAs', { role: roleInfo.title })}
                   </button>
                   <button type="button" className="btn btn--outline btn--block" onClick={fillDemo}>
-                    <HiKey aria-hidden="true" /> Use demo credentials
+                    <HiKey aria-hidden="true" /> {t('signIn.useDemo')}
                   </button>
                 </div>
               </form>
 
               <div className="signin-demo-creds">
                 <p>
-                  <strong>Demo:</strong> {roleConfig.email} / {roleConfig.password}
+                  <strong>{t('signIn.demoCreds')}</strong> {roleConfig.email} / {roleConfig.password}
                 </p>
               </div>
             </div>

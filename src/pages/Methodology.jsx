@@ -1,16 +1,21 @@
 import SectionHeader from '../components/ui/SectionHeader'
 import Reveal from '../components/ui/Reveal'
-import { methodology } from '../data/content'
+import { useLanguage } from '../i18n/LanguageContext'
+import { useLocalizedContent } from '../i18n/useLocalizedContent'
+import { SpeakHeading } from '../components/voice/SpeakAloud'
 
 export default function Methodology() {
+  const { t } = useLanguage()
+  const { methodology } = useLocalizedContent()
+
   return (
     <div className="page methodology-page">
       <section className="page-hero page-hero--method">
         <div className="container">
           <SectionHeader
-            badge="Our Framework"
-            title="The VoiceForUnheard Methodology"
-            subtitle="A proven five pillar approach that transforms assessment data into measurable communication growth."
+            badge={t('pages.methodology.badge')}
+            title={t('pages.methodology.title')}
+            subtitle={t('pages.methodology.subtitle')}
             light
           />
         </div>
@@ -18,11 +23,18 @@ export default function Methodology() {
 
       <section className="section">
         <div className="container">
+          <SectionHeader title={t('methodologyPage.pillarsTitle')} />
           <Reveal className="pillars-grid stagger">
             {methodology.pillars.map((pillar, index) => (
               <article key={pillar.title} className="pillar-card interactive-card card-shine">
                 <span className="pillar-card__step">{index + 1}</span>
-                <h3>{pillar.title}</h3>
+                <SpeakHeading
+                  as="h3"
+                  body={pillar.description}
+                  extra={pillar.steps}
+                >
+                  {pillar.title}
+                </SpeakHeading>
                 <p>{pillar.description}</p>
                 <ul>
                   {pillar.steps.map((step) => (
@@ -37,15 +49,12 @@ export default function Methodology() {
 
       <section className="section section--alt">
         <div className="container">
-          <SectionHeader
-            badge="Core Beliefs"
-            title="Principles That Guide Everything We Do"
-          />
+          <SectionHeader title={t('methodologyPage.principlesTitle')} />
           <Reveal className="principles-grid stagger">
             {methodology.principles.map((principle) => (
               <div key={principle} className="principle-item interactive-card">
                 <span className="principle-item__dot" />
-                <p>{principle}</p>
+                <SpeakHeading as="p" className="principle-item__content">{principle}</SpeakHeading>
               </div>
             ))}
           </Reveal>

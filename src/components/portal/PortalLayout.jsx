@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { HiHome, HiLogout, HiMenu, HiX } from 'react-icons/hi'
+import { useLanguage } from '../../i18n/LanguageContext'
 import BrandLogo from '../ui/BrandLogo'
+import LanguageSwitcher from '../ui/LanguageSwitcher'
 import { VoiceHelpBanner } from '../voice/VoiceInput'
+import SpeakAloud from '../voice/SpeakAloud'
 
 export default function PortalLayout({
   variant = 'parent',
@@ -17,6 +20,7 @@ export default function PortalLayout({
   pageDescription,
   children,
 }) {
+  const { t } = useLanguage()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
@@ -73,7 +77,7 @@ export default function PortalLayout({
           </div>
           <button type="button" className="portal-sidebar__logout" onClick={onLogout}>
             <HiLogout aria-hidden="true" />
-            Sign out
+            {t('common.signOut')}
           </button>
         </div>
       </aside>
@@ -84,19 +88,26 @@ export default function PortalLayout({
             type="button"
             className="portal-topbar__menu"
             onClick={() => setSidebarOpen((open) => !open)}
-            aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
+            aria-label={sidebarOpen ? t('nav.closeMenu') : t('nav.openMenu')}
           >
             {sidebarOpen ? <HiX /> : <HiMenu />}
           </button>
 
           <div className="portal-topbar__titles">
-            <h1>{pageTitle}</h1>
+            <div className="portal-topbar__title-row">
+              <h1>{pageTitle}</h1>
+              <SpeakAloud
+                text={[pageTitle, pageDescription].filter(Boolean).join('. ')}
+                variant="on-light"
+              />
+            </div>
             {pageDescription && <p>{pageDescription}</p>}
           </div>
 
+          <LanguageSwitcher variant="on-dark" />
           <Link to="/" className="portal-topbar__home">
             <HiHome aria-hidden="true" />
-            <span>Main site</span>
+            <span>{t('common.mainSite')}</span>
           </Link>
         </header>
 

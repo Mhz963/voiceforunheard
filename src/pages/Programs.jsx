@@ -1,16 +1,21 @@
 import SectionHeader from '../components/ui/SectionHeader'
 import ProgramCard from '../components/ui/ProgramCard'
 import Reveal from '../components/ui/Reveal'
-import { programCategories } from '../data/content'
+import { useLanguage } from '../i18n/LanguageContext'
+import { useLocalizedContent } from '../i18n/useLocalizedContent'
+
 export default function Programs() {
+  const { t } = useLanguage()
+  const { programCategories } = useLocalizedContent()
+
   return (
     <div className="page programs-page">
       <section className="page-hero page-hero--programs">
         <div className="container">
           <SectionHeader
-            badge="12 Specialized Tracks"
-            title="Complete Program Categories"
-            subtitle="Every communication pathway, every developmental stage, every learning need. VoiceForUnheard offers the most comprehensive speech education system for hearing impaired learners available today."
+            badge={t('pages.programs.badge')}
+            title={t('pages.programs.title')}
+            subtitle={t('pages.programs.subtitle')}
             light
           />
         </div>

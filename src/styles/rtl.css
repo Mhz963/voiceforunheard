@@ -1,0 +1,166 @@
+/* RTL layout for Urdu */
+html[dir='rtl'] .header__logo-img {
+  transform-origin: right center;
+}
+
+html[dir='rtl'] .portal-sidebar {
+  left: auto;
+  right: 0;
+  border-right: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+html[dir='rtl'] .portal-main {
+  margin-left: 0;
+  margin-right: var(--portal-sidebar-width);
+}
+
+html[dir='rtl'] .portal-sidebar__link--active {
+  box-shadow: inset -3px 0 0 var(--color-accent);
+}
+
+html[dir='rtl'] .portal-sidebar__badge {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+html[dir='rtl'] .footer__logo-img {
+  transform-origin: right center;
+}
+
+html[dir='rtl'] .signin-form__password-wrap input {
+  padding-right: 1rem;
+  padding-left: 2.75rem;
+}
+
+html[dir='rtl'] .signin-form__toggle-pw {
+  right: auto;
+  left: 0.5rem;
+}
+
+html[dir='rtl'] .academics-card__homework,
+html[dir='rtl'] .academics-card__offer {
+  border-inline-start: 3px solid var(--color-teal);
+  border-inline-end: none;
+}
+
+html[dir='rtl'] .age-card {
+  direction: rtl;
+}
+
+html[dir='rtl'] .age-card__content {
+  text-align: right;
+}
+
+html[dir='rtl'] .pillar-card ul,
+html[dir='rtl'] .age-card__content ul {
+  direction: rtl;
+}
+
+@media (min-width: 769px) {
+  html[dir='rtl'] .feature-list li {
+    flex-direction: row-reverse;
+    text-align: right;
+  }
+
+  html[dir='rtl'] .reason-card {
+    flex-direction: row-reverse;
+    text-align: right;
+  }
+
+  html[dir='rtl'] .principle-item {
+    flex-direction: row-reverse;
+    text-align: right;
+  }
+}
+
+html[dir='rtl'] .info-card,
+html[dir='rtl'] .unique-item {
+  text-align: right;
+}
+
+@media (max-width: 1200px) {
+  html[dir='rtl'] .header__nav {
+    inset-inline-end: auto;
+    inset-inline-start: 0;
+    transform: translateX(-100%);
+    box-shadow: 12px 0 40px rgba(15, 51, 73, 0.18);
+  }
+
+  html[dir='rtl'] .header__nav--open {
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 960px) {
+  html[dir='rtl'] .portal-main {
+    margin-right: 0;
+  }
+
+  html[dir='rtl'] .portal-sidebar {
+    transform: translateX(100%);
+  }
+
+  html[dir='rtl'] .portal-sidebar--open {
+    transform: translateX(0);
+  }
+}
+
+/* RTL typography & controls */
+html[dir='rtl'] .lang-switch__select {
+  padding: 0.35rem 0.5rem 0.35rem 1.45rem;
+  background-position: left 0.55rem center;
+}
+
+html[dir='rtl'] .signin-modal__close {
+  right: auto;
+  left: 0.75rem;
+}
+
+html[dir='rtl'] .signin-panel__intro {
+  padding-right: 0;
+  padding-left: 2rem;
+}
+
+html[dir='rtl'] .portal-sidebar__link {
+  text-align: right;
+}
+
+html[dir='rtl'] .portal-stat {
+  text-align: right;
+}
+
+html[dir='rtl'] .accordion__trigger {
+  text-align: right;
+}
+
+html[dir='rtl'] .header__cta:hover .header__cta-icon {
+  transform: translateX(-2px);
+}
+
+html[dir='rtl'] .program-card:hover .program-card__arrow,
+html[dir='rtl'] .program-card:active .program-card__arrow {
+  transform: translateX(-4px);
+}
+
+html[dir='rtl'] .resource-card:active .resource-card__link svg {
+  transform: translateX(-4px);
+}
+
+@media (max-width: 768px) {
+  html[dir='rtl'] .reason-card,
+  html[dir='rtl'] .principle-item {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: right;
+  }
+
+  html[dir='rtl'] .feature-list li {
+    flex-direction: row;
+    text-align: right;
+  }
+
+  html[dir='rtl'] .signin-panel__intro {
+    padding-left: 1.5rem;
+  }
+}

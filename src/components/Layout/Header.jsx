@@ -1,21 +1,25 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { HiMenu, HiX, HiLogin } from 'react-icons/hi'
+import { useLanguage } from '../../i18n/LanguageContext'
 import BrandLogo from '../ui/BrandLogo'
+import LanguageSwitcher from '../ui/LanguageSwitcher'
+
 const navLinks = [
-  { to: '/', label: 'Home', end: true },
-  { to: '/statistics', label: 'Statistics' },
-  { to: '/why-therapy', label: 'Why Therapy' },
-  { to: '/programs', label: 'Programs' },
-  { to: '/age-groups', label: 'Age Groups' },
-  { to: '/methodology', label: 'Methodology' },
-  { to: '/educator', label: 'Educator' },
-  { to: '/resources', label: 'Resources' },
-  { to: '/faq', label: 'FAQ' },
-  { to: '/contact', label: 'Contact' },
+  { to: '/', labelKey: 'nav.home', end: true },
+  { to: '/statistics', labelKey: 'nav.statistics' },
+  { to: '/why-therapy', labelKey: 'nav.whyTherapy' },
+  { to: '/programs', labelKey: 'nav.programs' },
+  { to: '/age-groups', labelKey: 'nav.ageGroups' },
+  { to: '/methodology', labelKey: 'nav.methodology' },
+  { to: '/educator', labelKey: 'nav.educator' },
+  { to: '/resources', labelKey: 'nav.resources' },
+  { to: '/faq', labelKey: 'nav.faq' },
+  { to: '/contact', labelKey: 'nav.contact' },
 ]
 
 export default function Header() {
+  const { t } = useLanguage()
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const location = useLocation()
@@ -51,6 +55,27 @@ export default function Header() {
           <BrandLogo className="header__logo-img" />
         </Link>
 
+        <div className="header__desktop-actions">
+          <LanguageSwitcher />
+          <Link to="/signin" className="header__cta header__cta--bar" onClick={() => setMenuOpen(false)}>
+            <span>{t('nav.signIn')}</span>
+            <span className="header__cta-icon">
+              <HiLogin aria-hidden="true" />
+            </span>
+          </Link>
+        </div>
+
+        <button
+          type="button"
+          className={`header__toggle ${menuOpen ? 'header__toggle--open' : ''}`}
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-label={menuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
+          aria-expanded={menuOpen}
+          aria-controls="main-navigation"
+        >
+          {menuOpen ? <HiX aria-hidden="true" /> : <HiMenu aria-hidden="true" />}
+        </button>
+
         <div
           className={`header__backdrop ${menuOpen ? 'header__backdrop--visible' : ''}`}
           onClick={() => setMenuOpen(false)}
@@ -60,50 +85,33 @@ export default function Header() {
         <nav
           id="main-navigation"
           className={`header__nav ${menuOpen ? 'header__nav--open' : ''}`}
-          aria-label="Main navigation"
+          aria-label={t('nav.mainNav')}
         >
-          <div className="header__nav-links">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                end={link.end}
-                className={({ isActive }) =>
-                  `header__link ${isActive ? 'header__link--active' : ''}`
-                }
-                onClick={() => setMenuOpen(false)}
-              >
-                {link.label}
-              </NavLink>
-            ))}
+          <div className="header__nav-scroll">
+            <div className="header__nav-links">
+              {navLinks.map((link) => (
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  end={link.end}
+                  className={({ isActive }) =>
+                    `header__link ${isActive ? 'header__link--active' : ''}`
+                  }
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {t(link.labelKey)}
+                </NavLink>
+              ))}
+            </div>
+            <LanguageSwitcher />
           </div>
           <Link to="/signin" className="header__cta header__cta--drawer" onClick={() => setMenuOpen(false)}>
-            <span>Sign In</span>
+            <span>{t('nav.signIn')}</span>
             <span className="header__cta-icon">
               <HiLogin aria-hidden="true" />
             </span>
           </Link>
         </nav>
-
-        <div className="header__actions">
-          <Link to="/signin" className="header__cta header__cta--bar" onClick={() => setMenuOpen(false)}>
-            <span>Sign In</span>
-            <span className="header__cta-icon">
-              <HiLogin aria-hidden="true" />
-            </span>
-          </Link>
-
-          <button
-            type="button"
-            className={`header__toggle ${menuOpen ? 'header__toggle--open' : ''}`}
-            onClick={() => setMenuOpen((open) => !open)}
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={menuOpen}
-            aria-controls="main-navigation"
-          >
-            {menuOpen ? <HiX aria-hidden="true" /> : <HiMenu aria-hidden="true" />}
-          </button>
-        </div>
       </div>
     </header>
   )

@@ -4,16 +4,21 @@ import SectionHeader from '../components/ui/SectionHeader'
 import IconBadge from '../components/ui/IconBadge'
 import Reveal from '../components/ui/Reveal'
 import { FaChartLine } from '../utils/icons'
-import { whySpeechTherapy, systemAdvantages } from '../data/content'
+import { useLanguage } from '../i18n/LanguageContext'
+import { useLocalizedContent } from '../i18n/useLocalizedContent'
+import { SpeakHeading } from '../components/voice/SpeakAloud'
 
 export default function WhyTherapy() {
+  const { t } = useLanguage()
+  const { whySpeechTherapy, systemAdvantages } = useLocalizedContent()
+
   return (
     <div className="page why-page">
       <section className="page-hero page-hero--therapy">
         <div className="container">
           <SectionHeader
-            badge="The Science of Communication"
-            title="Why Speech Therapy Matters for Hearing Impaired Learners"
+            badge={t('pages.whyTherapy.badge')}
+            title={t('pages.whyTherapy.title')}
             subtitle={whySpeechTherapy.introduction}
             light
           />
@@ -23,17 +28,19 @@ export default function WhyTherapy() {
       <section className="section">
         <div className="container">
           <SectionHeader
-            badge="Evidence Based"
-            title="Six Reasons Speech Therapy Is Essential"
+            badge={t('pages.whyTherapy.badge')}
+            title={t('pages.whyTherapy.title')}
           />
           <Reveal className="reasons-list stagger">
             {whySpeechTherapy.reasons.map((reason, index) => (
               <article key={reason.title} className="reason-card interactive-card card-shine">
                 <span className="reason-card__number">{String(index + 1).padStart(2, '0')}</span>
                 <div>
-                  <h3>{reason.title}</h3>
+                  <SpeakHeading as="h3" body={`${reason.content}. ${t('whyTherapyPage.evidenceLabel')} ${reason.evidence}`}>
+                    {reason.title}
+                  </SpeakHeading>
                   <p>{reason.content}</p>
-                  <cite>Evidence: {reason.evidence}</cite>
+                  <cite>{t('whyTherapyPage.evidenceLabel')} {reason.evidence}</cite>
                 </div>
               </article>
             ))}
@@ -49,7 +56,9 @@ export default function WhyTherapy() {
                 <IconBadge icon={FaChartLine} size="lg" variant="light" />
               </div>
               <div className="feature-banner__content">
-                <h3>Growing Global Demand</h3>
+                <SpeakHeading as="h3" body={whySpeechTherapy.marketGrowth}>
+                  {t('whyTherapyPage.marketTitle')}
+                </SpeakHeading>
                 <p>{whySpeechTherapy.marketGrowth}</p>
               </div>
             </div>
@@ -60,21 +69,21 @@ export default function WhyTherapy() {
       <section className="section">
         <div className="container">
           <SectionHeader
-            badge="Our Solution"
-            title="How VoiceForUnheard Delivers What Traditional Therapy Cannot"
-            subtitle="A complete ecosystem designed by an educator who bridges clinical practice and classroom reality."
+            badge={t('home.advantagesBadge')}
+            title={t('home.advantagesTitle')}
+            subtitle={t('home.advantagesSubtitle')}
           />
           <Reveal className="solution-grid stagger">
             {systemAdvantages.map((item) => (
               <article key={item.title} className="solution-card interactive-card card-shine">
-                <h3>{item.title}</h3>
+                <SpeakHeading as="h3" body={item.description}>{item.title}</SpeakHeading>
                 <p>{item.description}</p>
               </article>
             ))}
           </Reveal>
           <Reveal className="section-cta" delay={150}>
             <Link to="/programs" className="btn btn--primary">
-              Explore Our Programs <HiArrowRight />
+              {t('common.explorePrograms')} <HiArrowRight />
             </Link>
           </Reveal>
         </div>

@@ -14,8 +14,11 @@ import {
   HiX,
 } from 'react-icons/hi'
 import { useSuperAdminAuth } from '../../context/SuperAdminAuthContext'
-import { portalConfig } from '../../data/parentPortal'
+import { portalConfig as basePortalConfig } from '../../data/parentPortal'
+import { useLanguage } from '../../i18n/LanguageContext'
+import { usePortalConfig } from '../../i18n/usePortalConfig'
 import PortalLayout from '../../components/portal/PortalLayout'
+import { SpeakHeading } from '../../components/voice/SpeakAloud'
 import {
   addAccessCode,
   approveParent,
@@ -53,6 +56,8 @@ function labelFor(list, id) {
 }
 
 export default function SuperAdminDashboard() {
+  const { t } = useLanguage()
+  const portalConfig = usePortalConfig()
   const { superadmin, logout } = useSuperAdminAuth()
   const navigate = useNavigate()
   const [tab, setTab] = useState('overview')
@@ -63,7 +68,7 @@ export default function SuperAdminDashboard() {
   const meetings = useMemo(() => getAllMeetings(), [refreshKey])
   const activity = useMemo(() => getActivityLog(), [refreshKey])
   const accessCodes = useMemo(
-    () => getAccessCodes() || portalConfig.accessCodes,
+    () => getAccessCodes() || basePortalConfig.accessCodes,
     [refreshKey],
   )
 
@@ -107,27 +112,27 @@ export default function SuperAdminDashboard() {
   }
 
   const pageCopy = {
-    overview: { title: 'Overview', description: 'Platform health at a glance.' },
-    families: { title: 'Families', description: 'All registered families and access status.' },
-    concerns: { title: 'Concerns', description: 'Every concern submitted across the platform.' },
-    meetings: { title: 'Sessions', description: 'Scheduled and completed video sessions.' },
-    system: { title: 'System', description: 'Access codes, exports, and activity log.' },
+    overview: { title: t('superadminPortal.overviewTitle'), description: t('superadminPortal.overviewDesc') },
+    families: { title: t('superadminPortal.familiesTitle'), description: t('superadminPortal.familiesDesc') },
+    concerns: { title: t('superadminPortal.concernsTitle'), description: t('superadminPortal.concernsDesc') },
+    meetings: { title: t('superadminPortal.sessionsTitle'), description: t('superadminPortal.sessionsDesc') },
+    system: { title: t('superadminPortal.systemTitle'), description: t('superadminPortal.systemDesc') },
   }[tab]
 
   const navItems = [
-    { id: 'overview', label: 'Overview', icon: HiViewGrid },
-    { id: 'families', label: 'Families', icon: HiUserGroup, badge: pendingParents.length },
-    { id: 'concerns', label: 'Concerns', icon: HiClipboardList, badge: urgentConcerns.length },
-    { id: 'meetings', label: 'Sessions', icon: HiCalendar, badge: upcomingMeetings.length },
-    { id: 'system', label: 'System', icon: HiCog },
+    { id: 'overview', label: t('superadminPortal.overview'), icon: HiViewGrid },
+    { id: 'families', label: t('superadminPortal.families'), icon: HiUserGroup, badge: pendingParents.length },
+    { id: 'concerns', label: t('superadminPortal.concerns'), icon: HiClipboardList, badge: urgentConcerns.length },
+    { id: 'meetings', label: t('superadminPortal.sessions'), icon: HiCalendar, badge: upcomingMeetings.length },
+    { id: 'system', label: t('superadminPortal.system'), icon: HiCog },
   ]
 
   return (
     <PortalLayout
       variant="superadmin"
-      portalLabel="Super Admin"
+      portalLabel={t('portal.superadminLabel')}
       userName={superadmin.name}
-      userMeta="Full system access"
+      userMeta={t('portal.fullAccess')}
       navItems={navItems}
       activeId={tab}
       onNavigate={setTab}
@@ -140,27 +145,27 @@ export default function SuperAdminDashboard() {
           <div className="portal-page__stats">
             <button type="button" className="portal-stat portal-stat--clickable" onClick={() => setTab('families')}>
               <strong>{parents.length}</strong>
-              <span>Total families</span>
-              <em>{pendingParents.length} pending</em>
+              <span>{t('superadminPortal.totalFamilies')}</span>
+              <em>{pendingParents.length} {t('superadminPortal.pending')}</em>
             </button>
             <button type="button" className="portal-stat portal-stat--clickable" onClick={() => setTab('concerns')}>
               <strong>{concerns.length}</strong>
-              <span>Concerns logged</span>
-              <em>{urgentConcerns.length} urgent open</em>
+              <span>{t('superadminPortal.concernsLogged')}</span>
+              <em>{urgentConcerns.length} {t('superadminPortal.urgentOpen')}</em>
             </button>
             <button type="button" className="portal-stat portal-stat--clickable" onClick={() => setTab('meetings')}>
               <strong>{upcomingMeetings.length}</strong>
-              <span>Upcoming sessions</span>
+              <span>{t('superadminPortal.upcomingSessions')}</span>
             </button>
             <button type="button" className="portal-stat portal-stat--clickable" onClick={() => setTab('system')}>
               <strong>{accessCodes.length}</strong>
-              <span>Active access codes</span>
+              <span>{t('superadminPortal.activeCodes')}</span>
             </button>
           </div>
 
           {pendingParents.length > 0 && (
             <div className="portal-page__section">
-              <h3>Requires Action — Pending Families</h3>
+              <SpeakHeading as="h3">{t('superadminPortal.requiresAction')}</SpeakHeading>
               {pendingParents.slice(0, 2).map((p) => (
                 <FamilyCard
                   key={p.id}
@@ -176,7 +181,7 @@ export default function SuperAdminDashboard() {
 
           {activity.length > 0 && (
             <div className="portal-page__section">
-              <h3>Recent Activity</h3>
+              <SpeakHeading as="h3">{t('superadminPortal.recentActivity')}</SpeakHeading>
               <ActivityList entries={activity.slice(0, 5)} />
             </div>
           )}
@@ -186,7 +191,7 @@ export default function SuperAdminDashboard() {
       {tab === 'families' && (
         <div className="portal-page__list">
           {parents.length === 0 ? (
-            <p className="portal-page__empty">No families registered yet.</p>
+            <p className="portal-page__empty">{t('superadminPortal.noFamilies')}</p>
           ) : (
             parents.map((p) => (
               <FamilyCard
@@ -205,7 +210,7 @@ export default function SuperAdminDashboard() {
       {tab === 'concerns' && (
         <div className="portal-page__list">
           {concerns.length === 0 ? (
-            <p className="portal-page__empty">No concerns yet.</p>
+            <p className="portal-page__empty">{t('superadminPortal.noConcerns')}</p>
           ) : (
             concerns.map((c) => (
               <ConcernCard
@@ -223,7 +228,7 @@ export default function SuperAdminDashboard() {
       {tab === 'meetings' && (
         <div className="portal-page__list">
           {meetings.length === 0 ? (
-            <p className="portal-page__empty">No sessions scheduled.</p>
+            <p className="portal-page__empty">{t('superadminPortal.noSessions')}</p>
           ) : (
             meetings.map((m) => (
               <MeetingCard
@@ -242,6 +247,7 @@ export default function SuperAdminDashboard() {
         <SystemTab
           accessCodes={accessCodes}
           activity={activity}
+          portalConfig={portalConfig}
           onCodesChange={() => {
             act('Updated access codes', 'Access code list modified')
           }}
@@ -253,6 +259,7 @@ export default function SuperAdminDashboard() {
 }
 
 function FamilyCard({ parent, concerns, meetings, onApprove, onReject }) {
+  const { t } = useLanguage()
   const parentConcerns = concerns.filter((c) => c.parentId === parent.id)
   const parentMeetings = meetings.filter((m) => m.parentId === parent.id)
 
@@ -260,24 +267,24 @@ function FamilyCard({ parent, concerns, meetings, onApprove, onReject }) {
     <article className="admin-card interactive-card">
       <div className="admin-card__meta">
         <span className={`admin-badge ${parent.approved ? 'admin-badge--ok' : 'admin-badge--pending'}`}>
-          {parent.approved ? 'Approved' : 'Pending'}
+          {parent.approved ? t('adminPortal.approved') : t('adminPortal.pending')}
         </span>
         <span className="parent-dashboard__tag">{parent.relationship}</span>
       </div>
       <h4>{parent.name}</h4>
       <p className="admin-card__detail">
-        {parent.email} · Child: {parent.childName} ({parent.childAge})
+        {parent.email} · {t('common.child')}: {parent.childName} ({parent.childAge})
       </p>
       <p className="admin-card__detail">
-        {parentConcerns.length} concerns · {parentMeetings.length} sessions
+        {parentConcerns.length} {t('superadminPortal.concerns').toLowerCase()} · {parentMeetings.length} {t('superadminPortal.sessions').toLowerCase()}
       </p>
       {!parent.approved && (
         <div className="admin-card__actions">
           <button type="button" className="btn btn--primary btn--sm" onClick={onApprove}>
-            <HiCheck /> Approve
+            <HiCheck /> {t('adminPortal.approve')}
           </button>
           <button type="button" className="btn btn--ghost btn--sm" onClick={onReject}>
-            <HiX /> Remove
+            <HiX /> {t('superadminPortal.remove')}
           </button>
         </div>
       )}
@@ -286,6 +293,8 @@ function FamilyCard({ parent, concerns, meetings, onApprove, onReject }) {
 }
 
 function ConcernCard({ concern, onUpdate }) {
+  const { t } = useLanguage()
+  const portalConfig = usePortalConfig()
   const [note, setNote] = useState(concern.adminNote || '')
 
   return (
@@ -298,10 +307,10 @@ function ConcernCard({ concern, onUpdate }) {
         <span className="admin-badge">{labelFor(portalConfig.concernStatuses, concern.status)}</span>
       </div>
       <h4>{concern.title}</h4>
-      <p className="admin-card__detail">From {concern.parentName} · Re: {concern.childName}</p>
+      <p className="admin-card__detail">{t('common.from')} {concern.parentName} · {t('common.regarding')}: {concern.childName}</p>
       <p>{concern.description}</p>
       <label className="admin-card__note">
-        Admin note
+        {t('adminPortal.educatorNote')}
         <textarea rows={2} value={note} onChange={(e) => setNote(e.target.value)} />
       </label>
       <div className="admin-card__actions">
@@ -310,14 +319,14 @@ function ConcernCard({ concern, onUpdate }) {
           className="btn btn--outline btn--sm"
           onClick={() => { updateConcernStatus(concern.id, 'reviewed', note); onUpdate() }}
         >
-          Under Review
+          {t('adminPortal.markUnderReview')}
         </button>
         <button
           type="button"
           className="btn btn--primary btn--sm"
           onClick={() => { updateConcernStatus(concern.id, 'resolved', note); onUpdate() }}
         >
-          <HiCheck /> Resolved
+          <HiCheck /> {t('adminPortal.markResolved')}
         </button>
       </div>
     </article>
@@ -325,6 +334,8 @@ function ConcernCard({ concern, onUpdate }) {
 }
 
 function MeetingCard({ meeting, onUpdate }) {
+  const { t } = useLanguage()
+  const portalConfig = usePortalConfig()
   const [note, setNote] = useState(meeting.adminNote || '')
 
   return (
@@ -343,7 +354,7 @@ function MeetingCard({ meeting, onUpdate }) {
             className="btn btn--primary btn--sm"
             onClick={() => { updateMeetingStatus(meeting.id, 'confirmed', null, note); onUpdate() }}
           >
-            Confirm
+            {t('adminPortal.confirm')}
           </button>
         )}
         {meeting.status !== 'cancelled' && meeting.status !== 'completed' && (
@@ -352,7 +363,7 @@ function MeetingCard({ meeting, onUpdate }) {
             className="btn btn--ghost btn--sm"
             onClick={() => { updateMeetingStatus(meeting.id, 'cancelled', null, note); onUpdate() }}
           >
-            <HiX /> Cancel
+            <HiX /> {t('common.cancel')}
           </button>
         )}
       </div>
@@ -360,7 +371,8 @@ function MeetingCard({ meeting, onUpdate }) {
   )
 }
 
-function SystemTab({ accessCodes, activity, onCodesChange, onRefresh }) {
+function SystemTab({ accessCodes, activity, portalConfig, onCodesChange, onRefresh }) {
+  const { t } = useLanguage()
   const [newCode, setNewCode] = useState('')
   const [exportMsg, setExportMsg] = useState('')
 
@@ -381,7 +393,7 @@ function SystemTab({ accessCodes, activity, onCodesChange, onRefresh }) {
 
   function handleResetCodes() {
     if (window.confirm('Reset access codes to defaults?')) {
-      setAccessCodes([...portalConfig.accessCodes])
+      setAccessCodes([...basePortalConfig.accessCodes])
       onCodesChange()
       onRefresh()
     }
@@ -402,7 +414,7 @@ function SystemTab({ accessCodes, activity, onCodesChange, onRefresh }) {
     a.download = `vfu-platform-export-${Date.now()}.json`
     a.click()
     URL.revokeObjectURL(url)
-    setExportMsg('Platform data exported successfully.')
+    setExportMsg(t('superadminPortal.exportSuccess'))
     setTimeout(() => setExportMsg(''), 3000)
   }
 
@@ -410,15 +422,21 @@ function SystemTab({ accessCodes, activity, onCodesChange, onRefresh }) {
     <div className="superadmin-system">
       <div className="superadmin-system__grid">
         <div className="superadmin-system__panel">
-          <h3><HiKey /> Access Codes</h3>
+          <SpeakHeading
+            as="h3"
+            speak={`${t('superadminPortal.accessCodesTitle')}. ${t('superadminPortal.accessCodesDesc')}`}
+            body={t('superadminPortal.accessCodesDesc')}
+          >
+            <HiKey aria-hidden="true" /> {t('superadminPortal.accessCodesTitle')}
+          </SpeakHeading>
           <p className="superadmin-system__desc">
-            Families with a valid code are auto-approved on registration.
+            {t('superadminPortal.accessCodesDesc')}
           </p>
           <ul className="superadmin-codes">
             {accessCodes.map((code) => (
               <li key={code}>
                 <code>{code}</code>
-                <button type="button" className="superadmin-codes__remove" onClick={() => handleRemove(code)} aria-label={`Remove ${code}`}>
+                <button type="button" className="superadmin-codes__remove" onClick={() => handleRemove(code)} aria-label={`${t('superadminPortal.removeCode')} ${code}`}>
                   <HiTrash />
                 </button>
               </li>
@@ -429,29 +447,35 @@ function SystemTab({ accessCodes, activity, onCodesChange, onRefresh }) {
               type="text"
               value={newCode}
               onChange={(e) => setNewCode(e.target.value.toUpperCase())}
-              placeholder="NEW-CODE-2026"
+              placeholder={t('superadminPortal.newCodePlaceholder')}
             />
             <button type="submit" className="btn btn--primary btn--sm">
-              <HiPlus /> Add
+              <HiPlus /> {t('superadminPortal.addCode')}
             </button>
           </form>
           <button type="button" className="btn btn--ghost btn--sm" onClick={handleResetCodes}>
-            Reset to defaults
+            {t('superadminPortal.resetCodes')}
           </button>
         </div>
 
         <div className="superadmin-system__panel">
-          <h3><HiDatabase /> Data Export</h3>
+          <SpeakHeading
+            as="h3"
+            speak={`${t('superadminPortal.dataExportTitle')}. ${t('superadminPortal.dataExportDesc')}`}
+            body={t('superadminPortal.dataExportDesc')}
+          >
+            <HiDatabase aria-hidden="true" /> {t('superadminPortal.dataExportTitle')}
+          </SpeakHeading>
           <p className="superadmin-system__desc">
-            Download a snapshot of all families, concerns, meetings, and access codes.
+            {t('superadminPortal.dataExportDesc')}
           </p>
           <button type="button" className="btn btn--primary" onClick={handleExport}>
-            <HiDatabase /> Export Platform Data
+            <HiDatabase /> {t('superadminPortal.exportData')}
           </button>
           {exportMsg && <p className="superadmin-system__success">{exportMsg}</p>}
 
           <div className="superadmin-system__roles">
-            <h4>Portal Accounts (demo)</h4>
+            <h4>{t('superadminPortal.portalAccountsTitle')}</h4>
             <ul>
               {Object.entries(portalConfig.roles).map(([role, cfg]) => (
                 <li key={role}>
@@ -464,9 +488,11 @@ function SystemTab({ accessCodes, activity, onCodesChange, onRefresh }) {
       </div>
 
       <div className="superadmin-system__panel superadmin-system__panel--wide">
-        <h3><HiClipboardList /> Activity Log</h3>
+        <SpeakHeading as="h3" speak={t('superadminPortal.activityLogTitle')}>
+          <HiClipboardList aria-hidden="true" /> {t('superadminPortal.activityLogTitle')}
+        </SpeakHeading>
         {activity.length === 0 ? (
-          <p className="portal-page__empty">No activity recorded yet.</p>
+          <p className="portal-page__empty">{t('superadminPortal.noActivity')}</p>
         ) : (
           <ActivityList entries={activity} />
         )}

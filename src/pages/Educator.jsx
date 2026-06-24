@@ -5,37 +5,27 @@ import SectionHeader from '../components/ui/SectionHeader'
 import IconBadge from '../components/ui/IconBadge'
 import Reveal from '../components/ui/Reveal'
 import { getPhilosophyIcon } from '../utils/icons'
-import { siteInfo, systemAdvantages } from '../data/content'
+import { useLanguage } from '../i18n/LanguageContext'
+import { useLocalizedContent } from '../i18n/useLocalizedContent'
+import { SpeakHeading } from '../components/voice/SpeakAloud'
 
-const philosophyItems = [
-  {
-    key: 'classroom',
-    title: 'Classroom Tested',
-    description:
-      'Every activity has been refined through years of teaching hearing impaired learners in educational settings, not just clinical rooms.',
-  },
-  {
-    key: 'family',
-    title: 'Family First',
-    description:
-      'Parents are the most important teachers. VoiceForUnheard equips families with confidence, knowledge, and daily tools to support their child.',
-  },
-  {
-    key: 'inclusive',
-    title: 'Inclusive by Design',
-    description:
-      'Whether your family chooses listening and spoken language, sign language, or a bilingual approach, this system supports your journey without judgment.',
-  },
+const PHILOSOPHY_KEYS = [
+  { key: 'classroom', titleKey: 'educator.classroomTested', descKey: 'educator.classroomDesc' },
+  { key: 'family', titleKey: 'educator.familyFirst', descKey: 'educator.familyDesc' },
+  { key: 'inclusive', titleKey: 'educator.inclusive', descKey: 'educator.inclusiveDesc' },
 ]
 
 export default function Educator() {
+  const { t } = useLanguage()
+  const { siteInfo, systemAdvantages } = useLocalizedContent()
+
   return (
     <div className="page educator-page">
       <section className="page-hero page-hero--educator">
         <div className="container">
           <SectionHeader
-            badge="Meet Your Guide"
-            title="A Speech Education Teacher Who Understands"
+            badge={t('pages.educator.badge')}
+            title={t('pages.educator.title')}
             subtitle={siteInfo.educator.bio}
             light
           />
@@ -49,18 +39,18 @@ export default function Educator() {
       <section className="section">
         <div className="container">
           <SectionHeader
-            badge="Philosophy"
-            title="Education Meets Clinical Excellence"
-            subtitle="Most speech therapy platforms are built by technologists. VoiceForUnheard is built by someone who has sat across from children, coached parents through tears of diagnosis, and celebrated first words in real classrooms."
+            badge={t('educator.philosophyBadge')}
+            title={t('educator.philosophyTitle')}
+            subtitle={t('educator.philosophySubtitle')}
           />
           <Reveal className="philosophy-grid stagger">
-            {philosophyItems.map((item) => {
+            {PHILOSOPHY_KEYS.map((item) => {
               const Icon = getPhilosophyIcon(item.key)
               return (
                 <article key={item.key} className="philosophy-card interactive-card card-shine">
                   <IconBadge icon={Icon} size="md" variant="soft" />
-                  <h3>{item.title}</h3>
-                  <p>{item.description}</p>
+                  <SpeakHeading as="h3" body={t(item.descKey)}>{t(item.titleKey)}</SpeakHeading>
+                  <p>{t(item.descKey)}</p>
                 </article>
               )
             })}
@@ -71,20 +61,20 @@ export default function Educator() {
       <section className="section section--alt">
         <div className="container">
           <SectionHeader
-            badge="Built Different"
-            title="What Makes This System Unique"
+            badge={t('educator.uniqueBadge')}
+            title={t('educator.uniqueTitle')}
           />
           <Reveal className="unique-list stagger">
             {systemAdvantages.slice(0, 4).map((item) => (
               <article key={item.title} className="unique-item interactive-card card-shine">
-                <h3>{item.title}</h3>
+                <SpeakHeading as="h3" body={item.description}>{item.title}</SpeakHeading>
                 <p>{item.description}</p>
               </article>
             ))}
           </Reveal>
           <Reveal className="section-cta" delay={150}>
             <Link to="/signin" className="btn btn--cta">
-              <span>Work With Us</span>
+              <span>{t('common.workWithUs')}</span>
               <span className="btn__cta-icon">
                 <HiArrowRight />
               </span>

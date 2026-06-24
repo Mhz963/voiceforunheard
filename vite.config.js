@@ -1,10 +1,12 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import urduTtsPlugin from './server/urduTtsPlugin.js'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
+    urduTtsPlugin(),
     {
       name: 'fix-production-html',
       transformIndexHtml: {

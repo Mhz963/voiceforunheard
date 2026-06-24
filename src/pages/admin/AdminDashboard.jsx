@@ -11,9 +11,11 @@ import {
   HiX,
 } from 'react-icons/hi'
 import { useAdminAuth } from '../../context/AdminAuthContext'
-import { parentPortalConfig } from '../../data/parentPortal'
+import { useLanguage } from '../../i18n/LanguageContext'
+import { usePortalConfig } from '../../i18n/usePortalConfig'
 import PortalLayout from '../../components/portal/PortalLayout'
 import AdminAcademics from '../../components/academics/AdminAcademics'
+import { SpeakHeading } from '../../components/voice/SpeakAloud'
 import {
   approveParent,
   deleteParent,
@@ -46,6 +48,8 @@ function labelFor(list, id) {
 }
 
 export default function AdminDashboard() {
+  const { t } = useLanguage()
+  const portalConfig = usePortalConfig()
   const { admin, logout } = useAdminAuth()
   const navigate = useNavigate()
   const [tab, setTab] = useState('overview')
@@ -84,32 +88,32 @@ export default function AdminDashboard() {
   }
 
   const pageCopy = {
-    overview: { title: 'Dashboard', description: 'A quick look at families, concerns, and sessions.' },
-    requests: { title: 'Access Requests', description: 'Review and approve new parent registrations.' },
-    parents: { title: 'Parents', description: 'All registered families on the platform.' },
-    concerns: { title: 'Concerns', description: 'Messages and issues shared by families.' },
-    meetings: { title: 'Meetings', description: 'Scheduled video sessions with families.' },
+    overview: { title: t('adminPortal.dashboardTitle'), description: t('adminPortal.dashboardDesc') },
+    requests: { title: t('adminPortal.requestsTitle'), description: t('adminPortal.requestsDesc') },
+    parents: { title: t('adminPortal.parentsTitle'), description: t('adminPortal.parentsDesc') },
+    concerns: { title: t('adminPortal.concernsTitle'), description: t('adminPortal.concernsDesc') },
+    meetings: { title: t('adminPortal.meetingsTitle'), description: t('adminPortal.meetingsDesc') },
     academics: {
-      title: 'Academics',
-      description: 'Post daily lessons, arrange homework help, and send schoolwork guidance (Grades 1–10).',
+      title: t('adminPortal.academicsTitle'),
+      description: t('adminPortal.academicsDesc'),
     },
   }[tab]
 
   const navItems = [
-    { id: 'overview', label: 'Overview', icon: HiViewGrid },
-    { id: 'academics', label: 'Academics', icon: HiBookOpen, badge: pendingTuition.length },
-    { id: 'requests', label: 'Requests', icon: HiUserAdd, badge: pendingParents.length },
-    { id: 'parents', label: 'Parents', icon: HiUserGroup },
-    { id: 'concerns', label: 'Concerns', icon: HiClipboardList, badge: concerns.filter((c) => c.status === 'submitted').length },
-    { id: 'meetings', label: 'Meetings', icon: HiCalendar },
+    { id: 'overview', label: t('adminPortal.overview'), icon: HiViewGrid },
+    { id: 'academics', label: t('adminPortal.academics'), icon: HiBookOpen, badge: pendingTuition.length },
+    { id: 'requests', label: t('adminPortal.requests'), icon: HiUserAdd, badge: pendingParents.length },
+    { id: 'parents', label: t('adminPortal.parents'), icon: HiUserGroup },
+    { id: 'concerns', label: t('adminPortal.concerns'), icon: HiClipboardList, badge: concerns.filter((c) => c.status === 'submitted').length },
+    { id: 'meetings', label: t('adminPortal.meetings'), icon: HiCalendar },
   ]
 
   return (
     <PortalLayout
       variant="admin"
-      portalLabel="Educator Admin"
+      portalLabel={t('portal.adminLabel')}
       userName={admin.name}
-      userMeta="Educator account"
+      userMeta={t('portal.educatorAccount')}
       navItems={navItems}
       activeId={tab}
       onNavigate={setTab}
@@ -122,28 +126,28 @@ export default function AdminDashboard() {
           <div className="portal-page__stats">
             <button type="button" className="portal-stat portal-stat--clickable" onClick={() => setTab('requests')}>
               <strong>{pendingParents.length}</strong>
-              <span>Pending requests</span>
+              <span>{t('adminPortal.pendingRequests')}</span>
             </button>
             <button type="button" className="portal-stat portal-stat--clickable" onClick={() => setTab('parents')}>
               <strong>{parents.filter((p) => p.approved).length}</strong>
-              <span>Approved parents</span>
+              <span>{t('adminPortal.approvedParents')}</span>
             </button>
             <button type="button" className="portal-stat portal-stat--clickable" onClick={() => setTab('concerns')}>
               <strong>{concerns.filter((c) => c.status === 'submitted').length}</strong>
-              <span>New concerns</span>
+              <span>{t('adminPortal.newConcerns')}</span>
             </button>
             <button type="button" className="portal-stat portal-stat--clickable" onClick={() => setTab('meetings')}>
               <strong>{upcomingMeetings.length}</strong>
-              <span>Upcoming meetings</span>
+              <span>{t('adminPortal.upcomingMeetings')}</span>
             </button>
             <button type="button" className="portal-stat portal-stat--clickable" onClick={() => setTab('academics')}>
               <strong>{pendingTuition.length}</strong>
-              <span>Homework requests</span>
+              <span>{t('adminPortal.homeworkRequests')}</span>
             </button>
           </div>
           {pendingParents.length > 0 && (
             <div className="portal-page__section">
-              <h3>Latest Access Request</h3>
+              <SpeakHeading as="h3">{t('adminPortal.latestRequest')}</SpeakHeading>
               <ParentRequestCard
                 parent={pendingParents[0]}
                 onApprove={() => handleApprove(pendingParents[0].id)}
@@ -161,7 +165,7 @@ export default function AdminDashboard() {
       {tab === 'requests' && (
         <div className="portal-page__list">
           {pendingParents.length === 0 ? (
-            <p className="portal-page__empty">No pending requests.</p>
+            <p className="portal-page__empty">{t('adminPortal.noPending')}</p>
           ) : (
             pendingParents.map((p) => (
               <ParentRequestCard
@@ -178,19 +182,19 @@ export default function AdminDashboard() {
       {tab === 'parents' && (
         <div className="portal-page__list">
           {parents.length === 0 ? (
-            <p className="portal-page__empty">No parents registered yet.</p>
+            <p className="portal-page__empty">{t('adminPortal.noParents')}</p>
           ) : (
             parents.map((p) => (
               <article key={p.id} className="admin-card interactive-card">
                 <div className="admin-card__meta">
                   <span className={`admin-badge ${p.approved ? 'admin-badge--ok' : 'admin-badge--pending'}`}>
-                    {p.approved ? 'Approved' : 'Pending'}
+                    {p.approved ? t('adminPortal.approved') : t('adminPortal.pending')}
                   </span>
                   <span className="parent-dashboard__tag">{p.relationship}</span>
                 </div>
                 <h4>{p.name}</h4>
                 <p className="admin-card__detail">
-                  {p.email} · Child: {p.childName} ({p.childAge})
+                  {p.email} · {t('common.child')}: {p.childName} ({p.childAge})
                   {p.childGrade ? ` · Grade ${p.childGrade}` : ''}
                 </p>
                 <p className="admin-card__detail">
@@ -200,10 +204,10 @@ export default function AdminDashboard() {
                 {!p.approved && (
                   <div className="admin-card__actions">
                     <button type="button" className="btn btn--primary btn--sm" onClick={() => handleApprove(p.id)}>
-                      <HiCheck /> Approve
+                      <HiCheck /> {t('adminPortal.approve')}
                     </button>
                     <button type="button" className="btn btn--ghost btn--sm" onClick={() => handleReject(p.id)}>
-                      <HiX /> Reject
+                      <HiX /> {t('adminPortal.reject')}
                     </button>
                   </div>
                 )}
@@ -216,7 +220,7 @@ export default function AdminDashboard() {
       {tab === 'concerns' && (
         <div className="portal-page__list">
           {concerns.length === 0 ? (
-            <p className="portal-page__empty">No concerns submitted yet.</p>
+            <p className="portal-page__empty">{t('adminPortal.noConcerns')}</p>
           ) : (
             concerns.map((c) => (
               <ConcernAdminCard key={c.id} concern={c} onUpdate={refresh} />
@@ -228,7 +232,7 @@ export default function AdminDashboard() {
       {tab === 'meetings' && (
         <div className="portal-page__list">
           {meetings.length === 0 ? (
-            <p className="portal-page__empty">No meetings scheduled yet.</p>
+            <p className="portal-page__empty">{t('adminPortal.noMeetings')}</p>
           ) : (
             meetings.map((m) => (
               <MeetingAdminCard key={m.id} meeting={m} onUpdate={refresh} />
@@ -241,23 +245,25 @@ export default function AdminDashboard() {
 }
 
 function ParentRequestCard({ parent, onApprove, onReject }) {
+  const { t } = useLanguage()
+
   return (
     <article className="admin-card interactive-card">
       <div className="admin-card__meta">
-        <span className="admin-badge admin-badge--pending">Pending approval</span>
-        <span className="parent-dashboard__tag">Requested {new Date(parent.createdAt).toLocaleDateString()}</span>
+        <span className="admin-badge admin-badge--pending">{t('adminPortal.pendingApproval')}</span>
+        <span className="parent-dashboard__tag">{t('adminPortal.requested')} {new Date(parent.createdAt).toLocaleDateString()}</span>
       </div>
       <h4>{parent.name}</h4>
       <p className="admin-card__detail">{parent.email}</p>
       <p className="admin-card__detail">
-        Child: {parent.childName} ({parent.childAge}) · {parent.relationship}
+        {t('common.child')}: {parent.childName} ({parent.childAge}) · {parent.relationship}
       </p>
       <div className="admin-card__actions">
         <button type="button" className="btn btn--primary btn--sm" onClick={onApprove}>
-          <HiUserAdd /> Approve Access
+          <HiUserAdd /> {t('adminPortal.approveAccess')}
         </button>
         <button type="button" className="btn btn--ghost btn--sm" onClick={onReject}>
-          <HiX /> Reject
+          <HiX /> {t('adminPortal.reject')}
         </button>
       </div>
     </article>
@@ -265,25 +271,27 @@ function ParentRequestCard({ parent, onApprove, onReject }) {
 }
 
 function ConcernAdminCard({ concern, onUpdate }) {
+  const { t } = useLanguage()
+  const portalConfig = usePortalConfig()
   const [note, setNote] = useState(concern.adminNote || '')
 
   return (
     <article className="admin-card interactive-card">
       <div className="admin-card__meta">
-        <span className="parent-dashboard__tag">{labelFor(parentPortalConfig.concernCategories, concern.category)}</span>
+        <span className="parent-dashboard__tag">{labelFor(portalConfig.concernCategories, concern.category)}</span>
         <span className={`parent-dashboard__urgency parent-dashboard__urgency--${concern.urgency}`}>
-          {labelFor(parentPortalConfig.urgencyLevels, concern.urgency)}
+          {labelFor(portalConfig.urgencyLevels, concern.urgency)}
         </span>
-        <span className="admin-badge">{labelFor(parentPortalConfig.concernStatuses, concern.status)}</span>
+        <span className="admin-badge">{labelFor(portalConfig.concernStatuses, concern.status)}</span>
       </div>
       <h4>{concern.title}</h4>
       <p className="admin-card__detail">
-        From {concern.parentName} · Re: {concern.childName}
+        {t('common.from')} {concern.parentName} · Re: {concern.childName}
       </p>
       <p>{concern.description}</p>
       <label className="admin-card__note">
-        Educator note
-        <textarea rows={2} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Add a note for your records..." />
+        {t('adminPortal.educatorNote')}
+        <textarea rows={2} value={note} onChange={(e) => setNote(e.target.value)} />
       </label>
       <div className="admin-card__actions">
         <button
@@ -291,14 +299,14 @@ function ConcernAdminCard({ concern, onUpdate }) {
           className="btn btn--outline btn--sm"
           onClick={() => { updateConcernStatus(concern.id, 'reviewed', note); onUpdate() }}
         >
-          Mark Under Review
+          {t('adminPortal.markUnderReview')}
         </button>
         <button
           type="button"
           className="btn btn--primary btn--sm"
           onClick={() => { updateConcernStatus(concern.id, 'resolved', note); onUpdate() }}
         >
-          <HiCheck /> Mark Resolved
+          <HiCheck /> {t('adminPortal.markResolved')}
         </button>
       </div>
     </article>
@@ -306,6 +314,8 @@ function ConcernAdminCard({ concern, onUpdate }) {
 }
 
 function MeetingAdminCard({ meeting, onUpdate }) {
+  const { t } = useLanguage()
+  const portalConfig = usePortalConfig()
   const [note, setNote] = useState(meeting.adminNote || '')
 
   return (
@@ -313,14 +323,14 @@ function MeetingAdminCard({ meeting, onUpdate }) {
       <div className="admin-card__meta">
         <span className="parent-dashboard__tag">{formatDate(meeting.date)}</span>
         <span className="parent-dashboard__tag">{formatTime(meeting.time)}</span>
-        <span className="admin-badge">{labelFor(parentPortalConfig.meetingStatuses, meeting.status)}</span>
+        <span className="admin-badge">{labelFor(portalConfig.meetingStatuses, meeting.status)}</span>
       </div>
       <h4>{meeting.parentName} — {meeting.childName}</h4>
       <p className="admin-card__detail">{meeting.email}</p>
       {meeting.agenda && <p>{meeting.agenda}</p>}
       <label className="admin-card__note">
-        Session note
-        <textarea rows={2} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Prep notes or follow-up..." />
+        {t('adminPortal.sessionNote')}
+        <textarea rows={2} value={note} onChange={(e) => setNote(e.target.value)} />
       </label>
       <div className="admin-card__actions">
         {meeting.status === 'scheduled' && (
@@ -329,27 +339,27 @@ function MeetingAdminCard({ meeting, onUpdate }) {
             className="btn btn--primary btn--sm"
             onClick={() => { updateMeetingStatus(meeting.id, 'confirmed', null, note); onUpdate() }}
           >
-            <HiCheck /> Confirm
+            <HiCheck /> {t('adminPortal.confirm')}
           </button>
         )}
         {meeting.status !== 'completed' && meeting.status !== 'cancelled' && (
           <>
             <a href={meeting.meetLink} target="_blank" rel="noopener noreferrer" className="btn btn--outline btn--sm">
-              <HiCalendar /> Open Meet
+              <HiCalendar /> {t('adminPortal.openMeet')}
             </a>
             <button
               type="button"
               className="btn btn--outline btn--sm"
               onClick={() => { updateMeetingStatus(meeting.id, 'completed', null, note); onUpdate() }}
             >
-              Mark Completed
+              {t('adminPortal.markCompleted')}
             </button>
             <button
               type="button"
               className="btn btn--ghost btn--sm"
               onClick={() => { updateMeetingStatus(meeting.id, 'cancelled', null, note); onUpdate() }}
             >
-              <HiX /> Cancel
+              <HiX /> {t('common.cancel')}
             </button>
           </>
         )}

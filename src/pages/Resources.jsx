@@ -1,17 +1,22 @@
 import { HiArrowRight } from 'react-icons/hi'
 import SectionHeader from '../components/ui/SectionHeader'
 import Reveal from '../components/ui/Reveal'
-import { resources } from '../data/content'
+import { useLanguage } from '../i18n/LanguageContext'
+import { useLocalizedContent } from '../i18n/useLocalizedContent'
+import { SpeakHeading } from '../components/voice/SpeakAloud'
 
 export default function Resources() {
+  const { t } = useLanguage()
+  const { resources } = useLocalizedContent()
+
   return (
     <div className="page resources-page">
       <section className="page-hero page-hero--resources">
         <div className="container">
           <SectionHeader
-            badge="Knowledge Hub"
-            title="Resources for Families and Educators"
-            subtitle="Trusted organizations, research databases, and practical tools to support your speech education journey."
+            badge={t('pages.resources.badge')}
+            title={t('pages.resources.title')}
+            subtitle={t('pages.resources.subtitle')}
             light
           />
         </div>
@@ -22,7 +27,9 @@ export default function Resources() {
           {resources.map((group) => (
             <div key={group.category} className="resource-group">
               <Reveal>
-                <h2 className="resource-group__title">{group.category}</h2>
+                <SpeakHeading as="h2" headingClassName="resource-group__title">
+                  {group.category}
+                </SpeakHeading>
               </Reveal>
               <Reveal className="resource-grid stagger">
                 {group.items.map((item) => (
@@ -33,11 +40,11 @@ export default function Resources() {
                     target={item.url.startsWith('http') ? '_blank' : undefined}
                     rel={item.url.startsWith('http') ? 'noopener noreferrer' : undefined}
                   >
-                    <h3>{item.name}</h3>
+                    <SpeakHeading as="h3" body={item.description}>{item.name}</SpeakHeading>
                     <p>{item.description}</p>
                     <span className="resource-card__link">
-                      {item.url === '#' ? 'Coming soon' : (
-                        <>Visit resource <HiArrowRight /></>
+                      {item.url === '#' ? item.comingSoon ?? t('resourcesPage.comingSoon') : (
+                        <>{t('resourcesPage.visitLink')} <HiArrowRight /></>
                       )}
                     </span>
                   </a>

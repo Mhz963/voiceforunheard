@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { isUrduSpeechAvailable, speakUrdu, stopUrduSpeech } from '../services/urduSpeech.js'
 
 function getSpeechRecognition() {
   if (typeof window === 'undefined') return null
@@ -14,6 +15,156 @@ export function appendSpeechText(current, text) {
   if (!next) return current
   if (!current?.trim()) return next
   return `${current.trimEnd()} ${next}`
+}
+
+export function speechLangForLocale(locale) {
+  return locale === 'ur' ? 'ur-PK' : 'en-US'
+}
+
+let voicesWarmPromise = null
+
+function getSpeechVoices() {
+  if (typeof window === 'undefined' || !window.speechSynthesis) return []
+  return window.speechSynthesis.getVoices()
+}
+
+/** Browsers often return an empty voice list until voiceschanged fires. */
+export function preloadSpeechVoices() {
+  if (typeof window === 'undefined' || !window.speechSynthesis) {
+    return Promise.resolve([])
+  }
+
+  const existing = getSpeechVoices()
+  if (existing.length > 0) return Promise.resolve(existing)
+
+  if (voicesWarmPromise) return voicesWarmPromise
+
+  voicesWarmPromise = new Promise((resolve) => {
+    const synth = window.speechSynthesis
+    let settled = false
+
+    const finish = () => {
+      if (settled) return
+      const voices = getSpeechVoices()
+      if (voices.length > 0) {
+        settled = true
+        synth.removeEventListener('voiceschanged', finish)
+        resolve(voices)
+      }
+    }
+
+    synth.addEventListener('voiceschanged', finish)
+    finish()
+
+    window.setTimeout(finish, 120)
+    window.setTimeout(finish, 400)
+    window.setTimeout(() => {
+      if (!settled) {
+        settled = true
+        synth.removeEventListener('voiceschanged', finish)
+        resolve(getSpeechVoices())
+      }
+    }, 1500)
+  }).finally(() => {
+    voicesWarmPromise = null
+  })
+
+  return voicesWarmPromise
+}
+
+function rankSpeechVoice(voice, preferredLang) {
+  const lang = preferredLang.toLowerCase()
+  const prefix = lang.split('-')[0]
+  const voiceLang = voice.lang.toLowerCase()
+
+  if (voiceLang === lang) return 1000
+  if (voiceLang.startsWith(`${prefix}-`)) return 900
+  if (voiceLang.startsWith(prefix)) return 700
+  if (prefix === 'en' && voiceLang.startsWith('en')) return 600
+  return voice.default ? 100 : 0
+}
+
+export function pickSpeechVoice(preferredLang) {
+  const voices = getSpeechVoices()
+  if (!voices.length) return null
+
+  let best = null
+  let bestRank = -1
+
+  for (const voice of voices) {
+    const score = rankSpeechVoice(voice, preferredLang)
+    if (score > bestRank) {
+      bestRank = score
+      best = voice
+    }
+  }
+
+  if (bestRank > 0) return best
+  return voices.find((voice) => voice.default) ?? voices[0]
+}
+
+function speakWithSynthesis(trimmed, { lang, rate, onEnd, onError }) {
+  const utterance = new SpeechSynthesisUtterance(trimmed)
+  const voice = pickSpeechVoice(lang)
+
+  utterance.lang = lang
+  if (voice) {
+    utterance.voice = voice
+    utterance.lang = voice.lang
+  }
+
+  utterance.rate = rate
+
+  let settled = false
+  const finish = (handler) => {
+    if (settled) return
+    settled = true
+    handler?.()
+  }
+
+  utterance.onend = () => finish(onEnd)
+  utterance.onerror = () => finish(onError)
+
+  window.speechSynthesis.speak(utterance)
+  return utterance
+}
+
+export function speakText(text, { lang = 'en-US', rate = 0.95, onEnd, onError } = {}) {
+  if (!text?.trim()) return Promise.resolve(null)
+
+  const trimmed = text.trim()
+  const isUrdu = lang.toLowerCase().startsWith('ur')
+
+  if (isUrdu) {
+    stopSpeech()
+    return Promise.resolve(speakUrdu(trimmed, { rate, onEnd, onError }))
+  }
+
+  if (typeof window === 'undefined' || !window.speechSynthesis) {
+    return Promise.resolve(null)
+  }
+
+  return preloadSpeechVoices().then(() => {
+    window.speechSynthesis.cancel()
+    stopUrduSpeech()
+
+    const start = () => speakWithSynthesis(trimmed, { lang, rate, onEnd, onError })
+
+    if (typeof requestAnimationFrame === 'function') {
+      return new Promise((resolve) => {
+        requestAnimationFrame(() => resolve(start()))
+      })
+    }
+
+    return start()
+  })
+}
+
+export function stopSpeech() {
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    window.speechSynthesis.cancel()
+  }
+  stopUrduSpeech()
 }
 
 export default function useSpeechRecognition({ lang = 'en-US', continuous = true } = {}) {
@@ -52,7 +203,7 @@ export default function useSpeechRecognition({ lang = 'en-US', continuous = true
 
     recognition.onerror = (event) => {
       if (event.error === 'aborted') return
-      setError(event.error === 'not-allowed' ? 'Microphone access was denied.' : 'Voice input failed. Please try again.')
+      setError(event.error === 'not-allowed' ? 'micDenied' : 'voiceFailed')
       setListening(false)
       setInterim('')
     }
@@ -91,7 +242,7 @@ export default function useSpeechRecognition({ lang = 'en-US', continuous = true
   const start = useCallback((onResult) => {
     const recognition = recognitionRef.current
     if (!recognition) {
-      setError('Voice input is not supported in this browser.')
+      setError('notSupported')
       return
     }
 
@@ -108,7 +259,7 @@ export default function useSpeechRecognition({ lang = 'en-US', continuous = true
         recognition.start()
         setListening(true)
       } catch {
-        setError('Could not start voice input. Please try again.')
+        setError('couldNotStart')
         setListening(false)
       }
     }
@@ -133,16 +284,11 @@ export default function useSpeechRecognition({ lang = 'en-US', continuous = true
   }
 }
 
-export function speakText(text, { lang = 'en-US', rate = 0.95 } = {}) {
-  if (typeof window === 'undefined' || !window.speechSynthesis || !text?.trim()) return
-
-  window.speechSynthesis.cancel()
-  const utterance = new SpeechSynthesisUtterance(text.trim())
-  utterance.lang = lang
-  utterance.rate = rate
-  window.speechSynthesis.speak(utterance)
-}
-
 export function isSpeechSynthesisSupported() {
   return typeof window !== 'undefined' && 'speechSynthesis' in window
+}
+
+export function isSpeakSupported(locale) {
+  if (locale === 'ur') return isUrduSpeechAvailable()
+  return isSpeechSynthesisSupported()
 }

@@ -64,14 +64,15 @@
 .pillar-card li {
   font-size: 0.85rem;
   color: var(--color-text-muted);
-  padding-left: 1rem;
+  padding-inline-start: 1rem;
+  padding-inline-end: 0;
   position: relative;
 }
 
 .pillar-card li::before {
   content: '•';
   position: absolute;
-  left: 0;
+  inset-inline-start: 0;
   color: var(--color-accent);
 }
 

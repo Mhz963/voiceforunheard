@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom'
 import { FaHeart } from 'react-icons/fa6'
+import { useLanguage } from '../../i18n/LanguageContext'
+import { useLocalizedContent } from '../../i18n/useLocalizedContent'
 import BrandLogo from '../ui/BrandLogo'
-import { siteInfo } from '../../data/content'
 
 export default function Footer() {
+  const { t } = useLanguage()
+  const { siteInfo } = useLocalizedContent()
   const year = new Date().getFullYear()
 
   return (
@@ -17,41 +20,39 @@ export default function Footer() {
         </div>
 
         <div className="footer__col">
-          <h4>Explore</h4>
-          <Link to="/statistics">Global Statistics</Link>
-          <Link to="/why-therapy">Why Speech Therapy</Link>
-          <Link to="/programs">All Programs</Link>
-          <Link to="/methodology">Our Methodology</Link>
+          <h4>{t('footer.explore')}</h4>
+          <Link to="/statistics">{t('footer.globalStatistics')}</Link>
+          <Link to="/why-therapy">{t('footer.whySpeechTherapy')}</Link>
+          <Link to="/programs">{t('footer.allPrograms')}</Link>
+          <Link to="/methodology">{t('footer.ourMethodology')}</Link>
         </div>
 
         <div className="footer__col">
-          <h4>Learn</h4>
-          <Link to="/age-groups">Age Groups</Link>
-          <Link to="/educator">Meet the Educator</Link>
-          <Link to="/resources">Resources</Link>
-          <Link to="/faq">FAQ</Link>
+          <h4>{t('footer.learn')}</h4>
+          <Link to="/age-groups">{t('nav.ageGroups')}</Link>
+          <Link to="/educator">{t('footer.meetEducator')}</Link>
+          <Link to="/resources">{t('nav.resources')}</Link>
+          <Link to="/faq">{t('nav.faq')}</Link>
         </div>
 
         <div className="footer__col">
-          <h4>Connect</h4>
-          <Link to="/signin">Sign In</Link>
-          <Link to="/contact">Contact Us</Link>
+          <h4>{t('footer.connect')}</h4>
+          <Link to="/signin">{t('nav.signIn')}</Link>
+          <Link to="/contact">{t('footer.contactUs')}</Link>
           <a href="https://www.who.int/news-room/fact-sheets/detail/deafness-and-hearing-loss" target="_blank" rel="noopener noreferrer">
-            WHO Hearing Loss Data
+            {t('footer.whoData')}
           </a>
           <a href="https://www.asha.org" target="_blank" rel="noopener noreferrer">
-            ASHA Resources
+            {t('footer.ashaResources')}
           </a>
         </div>
       </div>
 
       <div className="footer__bottom">
         <p>
-          © {year} {siteInfo.name}. Built with <FaHeart className="footer__heart" /> for hearing impaired learners worldwide.
+          © {year} {siteInfo.name}. {t('footer.copyright')} <FaHeart className="footer__heart" />
         </p>
-        <p className="footer__cite">
-          Statistics sourced from WHO, Global Burden of Disease Study, and peer reviewed research.
-        </p>
+        <p className="footer__cite">{t('footer.cite')}</p>
       </div>
     </footer>
   )

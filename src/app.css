@@ -2,6 +2,7 @@
 @import './index.css';
 @import './styles/animations.css';
 @import './styles/responsive.css';
+@import './styles/rtl.css';
 @import './styles/cards-mobile.css';
 
 /* Layout */
@@ -12,7 +13,9 @@
 /* Shared UI */
 @import './components/ui/IconBadge.css';
 @import './components/ui/BrandLogo.css';
+@import './components/ui/LanguageSwitcher.css';
 @import './components/voice/VoiceInput.css';
+@import './components/voice/SpeakAloud.css';
 
 /* Marketing pages */
 @import './pages/Home.css';

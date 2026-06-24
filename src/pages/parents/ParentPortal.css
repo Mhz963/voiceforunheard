@@ -383,7 +383,7 @@
   background: rgba(42, 157, 143, 0.08);
   padding: 0.65rem 0.85rem;
   border-radius: var(--radius-sm);
-  border-left: 3px solid var(--color-teal);
+  border-inline-start: 3px solid var(--color-teal);
   margin: 0.5rem 0;
 }
 
@@ -612,7 +612,7 @@
   padding: var(--space-sm);
   border-radius: var(--radius-sm);
   background: var(--color-bg-alt);
-  border-left: 3px solid var(--color-teal);
+  border-inline-start: 3px solid var(--color-teal);
 }
 
 .academics-card__homework strong,
@@ -633,4 +633,10 @@
   margin-top: 0.75rem;
   font-size: 0.8rem;
   color: var(--color-text-muted);
+}
+
+@media (max-width: 480px) {
+  .academics-panel__subject-grid {
+    grid-template-columns: 1fr;
+  }
 }

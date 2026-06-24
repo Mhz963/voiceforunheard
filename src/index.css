@@ -576,7 +576,7 @@ ul {
   font-family: var(--font-body);
   font-size: 1rem;
   font-weight: 600;
-  text-align: left;
+  text-align: start;
   color: var(--color-primary-dark);
   cursor: pointer;
   transition: color var(--transition-smooth), background var(--transition-smooth);

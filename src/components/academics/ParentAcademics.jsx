@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { HiBell, HiBookOpen, HiCheck, HiPlus } from 'react-icons/hi'
-import { parentPortalConfig } from '../../data/parentPortal'
+import { useLanguage } from '../../i18n/LanguageContext'
+import { usePortalConfig } from '../../i18n/usePortalConfig'
 import { SpeakButton, VoiceLabel } from '../voice/VoiceInput'
 import { appendSpeechText } from '../../hooks/useSpeechRecognition'
 import {
@@ -29,11 +30,13 @@ function labelFor(list, id) {
   return list.find((item) => item.id === id)?.label || id
 }
 
-function gradeLabel(grade) {
-  return parentPortalConfig.grades.find((g) => g.id === Number(grade))?.label || `Grade ${grade}`
+function gradeLabel(grade, portalConfig) {
+  return portalConfig.grades.find((g) => g.id === Number(grade))?.label || `Grade ${grade}`
 }
 
 export default function ParentAcademics({ parent, refreshKey, onRefresh }) {
+  const { t } = useLanguage()
+  const portalConfig = usePortalConfig()
   const [section, setSection] = useState('lessons')
 
   const lessons = useMemo(() => getLessonUpdatesForParent(parent), [parent, refreshKey])
@@ -43,9 +46,9 @@ export default function ParentAcademics({ parent, refreshKey, onRefresh }) {
   const pendingTuition = tuitionRequests.filter((r) => r.status === 'pending').length
 
   const sections = [
-    { id: 'lessons', label: 'Daily Lessons', badge: lessons.length },
-    { id: 'homework', label: 'Homework Help', badge: pendingTuition },
-    { id: 'guidance', label: 'Guidance', badge: unreadGuidance },
+    { id: 'lessons', label: t('academics.dailyLessons'), badge: lessons.length },
+    { id: 'homework', label: t('academics.homeworkHelp'), badge: pendingTuition },
+    { id: 'guidance', label: t('academics.guidance'), badge: unreadGuidance },
   ]
 
   return (
@@ -53,8 +56,8 @@ export default function ParentAcademics({ parent, refreshKey, onRefresh }) {
       <div className="academics-panel__grade-banner">
         <HiBookOpen aria-hidden="true" />
         <div>
-          <strong>Academic support — {gradeLabel(parent.childGrade)}</strong>
-          <span>Grades 1–10 lesson updates, homework help, and schoolwork guidance for {parent.childName}</span>
+          <strong>{t('academics.supportBanner', { grade: gradeLabel(parent.childGrade, portalConfig) })}</strong>
+          <span>{t('academics.supportDesc', { childName: parent.childName })}</span>
         </div>
       </div>
 
@@ -72,17 +75,19 @@ export default function ParentAcademics({ parent, refreshKey, onRefresh }) {
         ))}
       </nav>
 
-      {section === 'lessons' && <LessonsSection lessons={lessons} />}
+      {section === 'lessons' && <LessonsSection lessons={lessons} portalConfig={portalConfig} />}
       {section === 'homework' && (
         <HomeworkSection
           parent={parent}
           requests={tuitionRequests}
+          portalConfig={portalConfig}
           onSubmitted={onRefresh}
         />
       )}
       {section === 'guidance' && (
         <GuidanceSection
           guidance={guidance}
+          portalConfig={portalConfig}
           onRead={(id) => {
             markGuidanceRead(id, parent.id)
             onRefresh()
@@ -97,11 +102,13 @@ export default function ParentAcademics({ parent, refreshKey, onRefresh }) {
   )
 }
 
-function LessonsSection({ lessons }) {
+function LessonsSection({ lessons, portalConfig }) {
+  const { t } = useLanguage()
+
   if (lessons.length === 0) {
     return (
       <p className="portal-page__empty">
-        No lesson updates yet. Your educator will post daily topics and homework notes here.
+        {t('academics.noLessons')}
       </p>
     )
   }
@@ -112,9 +119,9 @@ function LessonsSection({ lessons }) {
         <article key={lesson.id} className="academics-card interactive-card">
           <header className="academics-card__header">
             <span className="parent-dashboard__tag">{formatLessonDate(lesson.date)}</span>
-            <span className="parent-dashboard__tag">{gradeLabel(lesson.grade)}</span>
+            <span className="parent-dashboard__tag">{gradeLabel(lesson.grade, portalConfig)}</span>
             {lesson.audience === 'grade' && (
-              <span className="parent-dashboard__tag parent-dashboard__tag--confirmed">Grade-wide</span>
+              <span className="parent-dashboard__tag parent-dashboard__tag--confirmed">{t('academics.gradeWide')}</span>
             )}
           </header>
           <h4>{lesson.topics}</h4>
@@ -126,16 +133,16 @@ function LessonsSection({ lessons }) {
             </div>
           )}
           <p>{lesson.summary}</p>
-          <SpeakButton text={lesson.summary} label="Listen" />
+          <SpeakButton text={lesson.summary} />
           {lesson.homework && (
             <div className="academics-card__homework">
-              <strong>Homework & practice</strong>
+              <strong>{t('academics.homeworkPractice')}</strong>
               <p>{lesson.homework}</p>
-              <SpeakButton text={lesson.homework} label="Listen to homework" />
+              <SpeakButton text={lesson.homework} label={t('academics.listenHomework')} />
             </div>
           )}
           <footer className="academics-card__footer">
-            Posted by {lesson.educatorName}
+            {t('academics.postedBy', { name: lesson.educatorName })}
           </footer>
         </article>
       ))}
@@ -143,9 +150,10 @@ function LessonsSection({ lessons }) {
   )
 }
 
-function HomeworkSection({ parent, requests, onSubmitted }) {
+function HomeworkSection({ parent, requests, portalConfig, onSubmitted }) {
+  const { t } = useLanguage()
   const [form, setForm] = useState({
-    subject: parentPortalConfig.subjects[0],
+    subject: portalConfig.subjects[0],
     requestType: 'homework',
     description: '',
     preferredTimes: '',
@@ -171,7 +179,7 @@ function HomeworkSection({ parent, requests, onSubmitted }) {
       createdAt: new Date().toISOString(),
     })
     setForm({
-      subject: parentPortalConfig.subjects[0],
+      subject: portalConfig.subjects[0],
       requestType: 'homework',
       description: '',
       preferredTimes: '',
@@ -184,37 +192,37 @@ function HomeworkSection({ parent, requests, onSubmitted }) {
   return (
     <div className="portal-page__split">
       <div className="parent-portal__auth-card">
-        <h2>Request Homework or Tuition Help</h2>
+        <h2>{t('academics.requestHelp')}</h2>
         <p className="parent-portal__auth-sub">
-          Ask your educator to arrange extra support for schoolwork, assignments, or subject tutoring.
+          {t('academics.requestHelpDesc')}
         </p>
 
         {success && (
           <div className="parent-portal__alert parent-portal__alert--success">
-            Your request has been sent. Your educator will respond with options soon.
+            {t('academics.requestSent')}
           </div>
         )}
 
         <form className="parent-portal__form" onSubmit={handleSubmit}>
           <label>
-            Subject
+            {t('academics.subject')}
             <select value={form.subject} onChange={(e) => update('subject', e.target.value)} required>
-              {parentPortalConfig.subjects.map((s) => (
+              {portalConfig.subjects.map((s) => (
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
           </label>
           <label>
-            Type of support
+            {t('academics.supportType')}
             <select value={form.requestType} onChange={(e) => update('requestType', e.target.value)} required>
-              {parentPortalConfig.tuitionRequestTypes.map((t) => (
-                <option key={t.id} value={t.id}>{t.label}</option>
+              {portalConfig.tuitionRequestTypes.map((type) => (
+                <option key={type.id} value={type.id}>{type.label}</option>
               ))}
             </select>
           </label>
           <label>
             <VoiceLabel onTranscript={(text) => update('description', appendSpeechText(form.description, text))}>
-              What does your child need help with?
+              {t('academics.needHelp')}
             </VoiceLabel>
             <textarea
               rows={4}
@@ -226,7 +234,7 @@ function HomeworkSection({ parent, requests, onSubmitted }) {
           </label>
           <label>
             <VoiceLabel onTranscript={(text) => update('preferredTimes', appendSpeechText(form.preferredTimes, text))}>
-              Preferred days or times (optional)
+              {t('academics.preferredTimes')}
             </VoiceLabel>
             <input
               type="text"
@@ -236,58 +244,61 @@ function HomeworkSection({ parent, requests, onSubmitted }) {
             />
           </label>
           <button type="submit" className="btn btn--primary btn--block">
-            <HiPlus /> Submit Request
+            <HiPlus /> {t('academics.submitRequest')}
           </button>
         </form>
       </div>
 
       <div className="portal-page__list">
-        <h3>Your Requests</h3>
+        <h3>{t('academics.yourRequests')}</h3>
         {requests.length === 0 ? (
-          <p className="portal-page__empty">No homework or tuition requests yet.</p>
+          <p className="portal-page__empty">{t('academics.noRequests')}</p>
         ) : (
-          requests.map((r) => <TuitionRequestCard key={r.id} request={r} />)
+          requests.map((r) => <TuitionRequestCard key={r.id} request={r} portalConfig={portalConfig} />)
         )}
       </div>
     </div>
   )
 }
 
-function TuitionRequestCard({ request }) {
+function TuitionRequestCard({ request, portalConfig }) {
+  const { t } = useLanguage()
+
   return (
     <article className="academics-card interactive-card">
       <header className="academics-card__header">
         <span className="parent-dashboard__tag">{request.subject}</span>
         <span className="admin-badge">
-          {labelFor(parentPortalConfig.tuitionStatuses, request.status)}
+          {labelFor(portalConfig.tuitionStatuses, request.status)}
         </span>
       </header>
-      <h4>{labelFor(parentPortalConfig.tuitionRequestTypes, request.requestType)}</h4>
+      <h4>{labelFor(portalConfig.tuitionRequestTypes, request.requestType)}</h4>
       <p>{request.description}</p>
       {request.preferredTimes && (
-        <p className="admin-card__detail">Preferred times: {request.preferredTimes}</p>
+        <p className="admin-card__detail">{t('academics.preferredTimes')}: {request.preferredTimes}</p>
       )}
       {request.offerNote && (
         <div className="academics-card__offer">
-          <strong>Educator response</strong>
+          <strong>{t('academics.educatorResponse')}</strong>
           <p>{request.offerNote}</p>
-          {request.offerSchedule && <p className="admin-card__detail">Schedule: {request.offerSchedule}</p>}
+          {request.offerSchedule && <p className="admin-card__detail">{t('academics.proposedSchedule')}: {request.offerSchedule}</p>}
         </div>
       )}
       <footer className="academics-card__footer">
-        Submitted {new Date(request.createdAt).toLocaleDateString()}
+        {t('common.submitted')} {new Date(request.createdAt).toLocaleDateString()}
       </footer>
     </article>
   )
 }
 
-function GuidanceSection({ guidance, onRead, onReadAll }) {
+function GuidanceSection({ guidance, portalConfig, onRead, onReadAll }) {
+  const { t } = useLanguage()
   const unread = guidance.filter((g) => !g.read)
 
   if (guidance.length === 0) {
     return (
       <p className="portal-page__empty">
-        No schoolwork guidance yet. Tips and reminders from your educator will appear here.
+        {t('academics.noGuidance')}
       </p>
     )
   }
@@ -297,7 +308,7 @@ function GuidanceSection({ guidance, onRead, onReadAll }) {
       {unread.length > 0 && (
         <div className="academics-panel__actions">
           <button type="button" className="btn btn--outline btn--sm" onClick={onReadAll}>
-            <HiCheck /> Mark all as read
+            <HiCheck /> {t('common.markAllRead')}
           </button>
         </div>
       )}
@@ -309,11 +320,11 @@ function GuidanceSection({ guidance, onRead, onReadAll }) {
           <header className="academics-card__header">
             <span className={`parent-dashboard__urgency parent-dashboard__urgency--${item.priority === 'important' ? 'high' : 'low'}`}>
               <HiBell aria-hidden="true" />
-              {labelFor(parentPortalConfig.guidancePriorities, item.priority)}
+              {labelFor(portalConfig.guidancePriorities, item.priority)}
             </span>
             {!item.read && (
               <button type="button" className="btn btn--ghost btn--sm" onClick={() => onRead(item.id)}>
-                Mark read
+                {t('common.markRead')}
               </button>
             )}
           </header>
@@ -322,9 +333,9 @@ function GuidanceSection({ guidance, onRead, onReadAll }) {
           <SpeakButton text={`${item.title}. ${item.message}`} />
           {item.tips && (
             <div className="academics-card__homework">
-              <strong>How to help at home</strong>
+              <strong>{t('academics.howToHelp')}</strong>
               <p>{item.tips}</p>
-              <SpeakButton text={item.tips} label="Listen to tips" />
+              <SpeakButton text={item.tips} label={t('academics.listenTips')} />
             </div>
           )}
           <footer className="academics-card__footer">

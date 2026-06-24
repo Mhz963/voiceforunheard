@@ -2,17 +2,22 @@ import SectionHeader from '../components/ui/SectionHeader'
 import IconBadge from '../components/ui/IconBadge'
 import Reveal from '../components/ui/Reveal'
 import { getAgeGroupIcon } from '../utils/icons'
-import { ageGroups } from '../data/content'
+import { useLanguage } from '../i18n/LanguageContext'
+import { useLocalizedContent } from '../i18n/useLocalizedContent'
+import { SpeakHeading } from '../components/voice/SpeakAloud'
 
 export default function AgeGroups() {
+  const { t } = useLanguage()
+  const { ageGroups } = useLocalizedContent()
+
   return (
     <div className="page age-page">
       <section className="page-hero page-hero--age">
         <div className="container">
           <SectionHeader
-            badge="Developmental Pathways"
-            title="Programs Tailored to Every Age"
-            subtitle="Language develops differently at every stage. VoiceForUnheard adapts content, goals, and teaching methods to match each learner's developmental window."
+            badge={t('pages.ageGroups.badge')}
+            title={t('pages.ageGroups.title')}
+            subtitle={t('pages.ageGroups.subtitle')}
             light
           />
         </div>
@@ -32,13 +37,18 @@ export default function AgeGroups() {
                     </div>
                     <div className="age-card__content interactive-card card-shine">
                       <div className="age-card__header">
-                        <h3>{group.title}</h3>
+                        <SpeakHeading
+                          as="h3"
+                          body={[group.range, `${t('ageGroupsPage.focus')}: ${group.focus}`, ...group.milestones].join('. ')}
+                        >
+                          {group.title}
+                        </SpeakHeading>
                         <span className="age-card__range">{group.range}</span>
                       </div>
                       <p className="age-card__focus">
-                        <strong>Focus:</strong> {group.focus}
+                        <strong>{t('ageGroupsPage.focus')}:</strong> {group.focus}
                       </p>
-                      <h4>Key Milestones</h4>
+                      <h4>{t('ageGroupsPage.milestones')}</h4>
                       <ul>
                         {group.milestones.map((milestone) => (
                           <li key={milestone}>{milestone}</li>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { HiChevronDown } from 'react-icons/hi'
+import SpeakAloud from '../voice/SpeakAloud'
 
 export default function Accordion({ items }) {
   const [openIndex, setOpenIndex] = useState(0)
@@ -18,7 +19,10 @@ export default function Accordion({ items }) {
             onClick={() => setOpenIndex(openIndex === index ? -1 : index)}
             aria-expanded={openIndex === index}
           >
-            <span>{item.question}</span>
+            <span className="accordion__trigger-inner">
+              <span>{item.question}</span>
+              <SpeakAloud text={[item.question, item.answer].join('. ')} />
+            </span>
             <HiChevronDown className="accordion__icon" />
           </button>
           <div className="accordion__panel">

@@ -10,7 +10,6 @@ body {
 
 body.nav-open {
   overflow: hidden;
-  touch-action: none;
 }
 
 #root {
@@ -130,16 +129,89 @@ body.nav-open {
     align-items: flex-start;
   }
 
-  .reason-card {
+  .reason-card,
+  .principle-item {
     flex-direction: column;
+    align-items: flex-start;
   }
 
   .reason-card__number {
     font-size: 1.5rem;
   }
+
+  .hero__title-row {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .hero__title-row .hero__title {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+
+  .hero__title-row .speak-aloud {
+    margin-top: 0.15rem;
+  }
+
+  .stat-card {
+    padding-top: 2.75rem;
+  }
+
+  .portal-topbar {
+    flex-wrap: wrap;
+    row-gap: 0.35rem;
+    padding: var(--space-sm);
+  }
+
+  .portal-topbar__titles {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .portal-topbar__titles p {
+    display: none;
+  }
+
+  .portal-topbar__titles h1 {
+    font-size: clamp(1rem, 4.5vw, 1.35rem);
+    line-height: 1.25;
+  }
+
+  .portal-topbar .lang-switch {
+    margin-inline-start: auto;
+    margin-inline-end: 0;
+  }
+
+  .portal-page__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .portal-page__split {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-banner {
+    text-align: center;
+  }
+
+  .feature-banner__content {
+    align-items: center;
+  }
+
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-stats__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 480px) {
+  :root {
+    --header-height: 72px;
+  }
+
   .container {
     padding: 0 1rem;
   }

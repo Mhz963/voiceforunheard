@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { HiCheck, HiPlus } from 'react-icons/hi'
-import { parentPortalConfig } from '../../data/parentPortal'
+import { useLanguage } from '../../i18n/LanguageContext'
+import { usePortalConfig } from '../../i18n/usePortalConfig'
 import {
   addLessonUpdate,
   addSchoolworkGuidance,
@@ -28,11 +29,13 @@ function labelFor(list, id) {
   return list.find((item) => item.id === id)?.label || id
 }
 
-function gradeLabel(grade) {
-  return parentPortalConfig.grades.find((g) => g.id === Number(grade))?.label || `Grade ${grade}`
+function gradeLabel(grade, portalConfig) {
+  return portalConfig.grades.find((g) => g.id === Number(grade))?.label || `Grade ${grade}`
 }
 
 export default function AdminAcademics({ admin, refreshKey, onRefresh }) {
+  const { t } = useLanguage()
+  const portalConfig = usePortalConfig()
   const [section, setSection] = useState('lessons')
 
   const parents = useMemo(() => getParents().filter((p) => p.approved), [refreshKey])
@@ -42,10 +45,10 @@ export default function AdminAcademics({ admin, refreshKey, onRefresh }) {
   const pendingTuition = tuitionRequests.filter((r) => r.status === 'pending').length
 
   const sections = [
-    { id: 'lessons', label: 'Post Lessons' },
-    { id: 'tuition', label: 'Homework Requests', badge: pendingTuition },
-    { id: 'guidance', label: 'Send Guidance' },
-    { id: 'history', label: 'History' },
+    { id: 'lessons', label: t('academics.postLessons') },
+    { id: 'tuition', label: t('academics.homeworkRequests'), badge: pendingTuition },
+    { id: 'guidance', label: t('academics.sendGuidanceTab') },
+    { id: 'history', label: t('academics.history') },
   ]
 
   return (
@@ -65,29 +68,30 @@ export default function AdminAcademics({ admin, refreshKey, onRefresh }) {
       </nav>
 
       {section === 'lessons' && (
-        <PostLessonForm parents={parents} admin={admin} onPosted={onRefresh} />
+        <PostLessonForm parents={parents} admin={admin} portalConfig={portalConfig} onPosted={onRefresh} />
       )}
       {section === 'tuition' && (
-        <TuitionManageList requests={tuitionRequests} onUpdate={onRefresh} />
+        <TuitionManageList requests={tuitionRequests} portalConfig={portalConfig} onUpdate={onRefresh} />
       )}
       {section === 'guidance' && (
-        <PostGuidanceForm parents={parents} admin={admin} onPosted={onRefresh} />
+        <PostGuidanceForm parents={parents} admin={admin} portalConfig={portalConfig} onPosted={onRefresh} />
       )}
       {section === 'history' && (
-        <HistorySection lessons={lessons} guidance={guidance} />
+        <HistorySection lessons={lessons} guidance={guidance} portalConfig={portalConfig} />
       )}
     </div>
   )
 }
 
-function PostLessonForm({ parents, admin, onPosted }) {
+function PostLessonForm({ parents, admin, portalConfig, onPosted }) {
+  const { t } = useLanguage()
   const today = new Date().toISOString().slice(0, 10)
   const [form, setForm] = useState({
     audience: 'parent',
     parentId: parents[0]?.id || '',
     grade: 1,
     date: today,
-    subjects: [parentPortalConfig.subjects[0]],
+    subjects: [portalConfig.subjects[0]],
     topics: '',
     summary: '',
     homework: '',
@@ -138,47 +142,47 @@ function PostLessonForm({ parents, admin, onPosted }) {
   }
 
   if (parents.length === 0) {
-    return <p className="portal-page__empty">Approve at least one parent before posting lesson updates.</p>
+    return <p className="portal-page__empty">{t('academics.approveOneParent')}</p>
   }
 
   return (
     <div className="parent-portal__auth-card academics-panel__form-card">
-      <h2>Post Daily Lesson Update</h2>
+      <h2>{t('academics.postLesson')}</h2>
       <p className="parent-portal__auth-sub">
-        Share what was taught today so parents can follow along and support learning at home.
+        {t('academics.postLessonDesc')}
       </p>
 
       {success && (
         <div className="parent-portal__alert parent-portal__alert--success">
-          Lesson update published successfully.
+          {t('academics.lessonPublished')}
         </div>
       )}
 
       <form className="parent-portal__form" onSubmit={handleSubmit}>
         <label>
-          Share with
+          {t('academics.shareWith')}
           <select value={form.audience} onChange={(e) => update('audience', e.target.value)}>
-            <option value="parent">One family</option>
-            <option value="grade">All families in a grade (1–10)</option>
+            <option value="parent">{t('academics.oneFamily')}</option>
+            <option value="grade">{t('academics.allGrade')}</option>
           </select>
         </label>
 
         {form.audience === 'parent' ? (
           <label>
-            Family
+            {t('academics.family')}
             <select value={form.parentId} onChange={(e) => update('parentId', e.target.value)} required>
               {parents.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.childName} — {p.name} ({gradeLabel(p.childGrade)})
+                  {p.childName} — {p.name} ({gradeLabel(p.childGrade, portalConfig)})
                 </option>
               ))}
             </select>
           </label>
         ) : (
           <label>
-            Grade level
+            {t('academics.gradeLevel')}
             <select value={form.grade} onChange={(e) => update('grade', Number(e.target.value))}>
-              {parentPortalConfig.grades.map((g) => (
+              {portalConfig.grades.map((g) => (
                 <option key={g.id} value={g.id}>{g.label}</option>
               ))}
             </select>
@@ -186,14 +190,14 @@ function PostLessonForm({ parents, admin, onPosted }) {
         )}
 
         <label>
-          Lesson date
+          {t('academics.lessonDate')}
           <input type="date" value={form.date} onChange={(e) => update('date', e.target.value)} required />
         </label>
 
         <fieldset className="academics-panel__subject-field">
-          <legend>Subjects covered</legend>
+          <legend>{t('academics.subjectsCovered')}</legend>
           <div className="academics-panel__subject-grid">
-            {parentPortalConfig.subjects.map((s) => (
+            {portalConfig.subjects.map((s) => (
               <label key={s} className="academics-panel__subject-check">
                 <input
                   type="checkbox"
@@ -207,43 +211,41 @@ function PostLessonForm({ parents, admin, onPosted }) {
         </fieldset>
 
         <label>
-          Topics / lessons taught
+          {t('academics.topicsTaught')}
           <input
             type="text"
             value={form.topics}
             onChange={(e) => update('topics', e.target.value)}
             required
-            placeholder="e.g. Fractions, reading comprehension strategies"
           />
         </label>
         <label>
-          Summary for parents
+          {t('academics.summaryForParents')}
           <textarea
             rows={4}
             value={form.summary}
             onChange={(e) => update('summary', e.target.value)}
             required
-            placeholder="What the class worked on today and key takeaways..."
           />
         </label>
         <label>
-          Homework & home practice (optional)
+          {t('academics.homeworkOptional')}
           <textarea
             rows={3}
             value={form.homework}
             onChange={(e) => update('homework', e.target.value)}
-            placeholder="Assignments, worksheets, or practice parents can reinforce..."
           />
         </label>
         <button type="submit" className="btn btn--primary">
-          <HiPlus /> Publish Update
+          <HiPlus /> {t('academics.publishUpdate')}
         </button>
       </form>
     </div>
   )
 }
 
-function PostGuidanceForm({ parents, admin, onPosted }) {
+function PostGuidanceForm({ parents, admin, portalConfig, onPosted }) {
+  const { t } = useLanguage()
   const [form, setForm] = useState({
     parentId: parents[0]?.id || '',
     title: '',
@@ -284,84 +286,82 @@ function PostGuidanceForm({ parents, admin, onPosted }) {
   }
 
   if (parents.length === 0) {
-    return <p className="portal-page__empty">Approve at least one parent before sending guidance.</p>
+    return <p className="portal-page__empty">{t('academics.approveOneParent')}</p>
   }
 
   return (
     <div className="parent-portal__auth-card academics-panel__form-card">
-      <h2>Send Schoolwork Guidance</h2>
+      <h2>{t('academics.sendGuidance')}</h2>
       <p className="parent-portal__auth-sub">
-        Notify parents about assignments, study tips, or reminders to support schoolwork at home.
+        {t('academics.sendGuidanceDesc')}
       </p>
 
       {success && (
         <div className="parent-portal__alert parent-portal__alert--success">
-          Guidance notification sent to the family.
+          {t('academics.guidanceSent')}
         </div>
       )}
 
       <form className="parent-portal__form" onSubmit={handleSubmit}>
         <label>
-          Family
+          {t('academics.family')}
           <select value={form.parentId} onChange={(e) => update('parentId', e.target.value)} required>
             {parents.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.childName} — {p.name} ({gradeLabel(p.childGrade)})
+                {p.childName} — {p.name} ({gradeLabel(p.childGrade, portalConfig)})
               </option>
             ))}
           </select>
         </label>
         <label>
-          Priority
+          {t('academics.priority')}
           <select value={form.priority} onChange={(e) => update('priority', e.target.value)}>
-            {parentPortalConfig.guidancePriorities.map((p) => (
+            {portalConfig.guidancePriorities.map((p) => (
               <option key={p.id} value={p.id}>{p.label}</option>
             ))}
           </select>
         </label>
         <label>
-          Title
+          {t('academics.title')}
           <input
             type="text"
             value={form.title}
             onChange={(e) => update('title', e.target.value)}
             required
-            placeholder="e.g. Math worksheet due Friday"
           />
         </label>
         <label>
-          Message
+          {t('academics.message')}
           <textarea
             rows={4}
             value={form.message}
             onChange={(e) => update('message', e.target.value)}
             required
-            placeholder="What parents should know about upcoming or current schoolwork..."
           />
         </label>
         <label>
-          Tips for home support (optional)
+          {t('academics.tipsOptional')}
           <textarea
             rows={3}
             value={form.tips}
             onChange={(e) => update('tips', e.target.value)}
-            placeholder="Practical steps parents can take tonight or this week..."
           />
         </label>
         <button type="submit" className="btn btn--primary">
-          <HiPlus /> Send Guidance
+          <HiPlus /> {t('academics.sendGuidanceBtn')}
         </button>
       </form>
     </div>
   )
 }
 
-function TuitionManageList({ requests, onUpdate }) {
+function TuitionManageList({ requests, portalConfig, onUpdate }) {
+  const { t } = useLanguage()
   const [notes, setNotes] = useState({})
   const [schedules, setSchedules] = useState({})
 
   if (requests.length === 0) {
-    return <p className="portal-page__empty">No homework or tuition requests yet.</p>
+    return <p className="portal-page__empty">{t('academics.noHomeworkRequests')}</p>
   }
 
   return (
@@ -369,37 +369,35 @@ function TuitionManageList({ requests, onUpdate }) {
       {requests.map((r) => (
         <article key={r.id} className="academics-card interactive-card">
           <header className="academics-card__header">
-            <span className="parent-dashboard__tag">{r.childName} · {gradeLabel(r.grade)}</span>
+            <span className="parent-dashboard__tag">{r.childName} · {gradeLabel(r.grade, portalConfig)}</span>
             <span className="parent-dashboard__tag">{r.subject}</span>
             <span className="admin-badge">
-              {labelFor(parentPortalConfig.tuitionStatuses, r.status)}
+              {labelFor(portalConfig.tuitionStatuses, r.status)}
             </span>
           </header>
-          <h4>{labelFor(parentPortalConfig.tuitionRequestTypes, r.requestType)}</h4>
-          <p className="admin-card__detail">From {r.parentName}</p>
+          <h4>{labelFor(portalConfig.tuitionRequestTypes, r.requestType)}</h4>
+          <p className="admin-card__detail">{t('common.from')} {r.parentName}</p>
           <p>{r.description}</p>
           {r.preferredTimes && (
-            <p className="admin-card__detail">Preferred: {r.preferredTimes}</p>
+            <p className="admin-card__detail">{t('academics.preferredTimes')}: {r.preferredTimes}</p>
           )}
 
           {r.status === 'pending' && (
             <>
               <label className="admin-card__note">
-                Offer / response
+                {t('academics.offerResponse')}
                 <textarea
                   rows={2}
                   value={notes[r.id] || ''}
                   onChange={(e) => setNotes((prev) => ({ ...prev, [r.id]: e.target.value }))}
-                  placeholder="Describe the tutoring or homework help you can offer..."
                 />
               </label>
               <label className="admin-card__note">
-                Proposed schedule
+                {t('academics.proposedSchedule')}
                 <input
                   type="text"
                   value={schedules[r.id] || ''}
                   onChange={(e) => setSchedules((prev) => ({ ...prev, [r.id]: e.target.value }))}
-                  placeholder="e.g. Tuesdays 4–5 PM via Google Meet"
                 />
               </label>
               <div className="admin-card__actions">
@@ -415,7 +413,7 @@ function TuitionManageList({ requests, onUpdate }) {
                     onUpdate()
                   }}
                 >
-                  <HiCheck /> Send Offer
+                  <HiCheck /> {t('academics.sendOffer')}
                 </button>
                 <button
                   type="button"
@@ -425,7 +423,7 @@ function TuitionManageList({ requests, onUpdate }) {
                     onUpdate()
                   }}
                 >
-                  Decline
+                  {t('academics.decline')}
                 </button>
               </div>
             </>
@@ -433,9 +431,9 @@ function TuitionManageList({ requests, onUpdate }) {
 
           {r.status !== 'pending' && r.offerNote && (
             <div className="academics-card__offer">
-              <strong>Response sent</strong>
+              <strong>{t('academics.responseSent')}</strong>
               <p>{r.offerNote}</p>
-              {r.offerSchedule && <p className="admin-card__detail">Schedule: {r.offerSchedule}</p>}
+              {r.offerSchedule && <p className="admin-card__detail">{t('academics.proposedSchedule')}: {r.offerSchedule}</p>}
             </div>
           )}
 
@@ -449,7 +447,7 @@ function TuitionManageList({ requests, onUpdate }) {
                   onUpdate()
                 }}
               >
-                Mark Scheduled
+                {t('academics.markScheduled')}
               </button>
               <button
                 type="button"
@@ -459,7 +457,7 @@ function TuitionManageList({ requests, onUpdate }) {
                   onUpdate()
                 }}
               >
-                <HiCheck /> Mark Completed
+                <HiCheck /> {t('adminPortal.markCompleted')}
               </button>
             </div>
           )}
@@ -469,9 +467,11 @@ function TuitionManageList({ requests, onUpdate }) {
   )
 }
 
-function HistorySection({ lessons, guidance }) {
+function HistorySection({ lessons, guidance, portalConfig }) {
+  const { t } = useLanguage()
+
   if (lessons.length === 0 && guidance.length === 0) {
-    return <p className="portal-page__empty">No academic posts yet.</p>
+    return <p className="portal-page__empty">{t('academics.noAcademicPosts')}</p>
   }
 
   return (
@@ -480,12 +480,12 @@ function HistorySection({ lessons, guidance }) {
         <article key={lesson.id} className="academics-card interactive-card">
           <header className="academics-card__header">
             <span className="parent-dashboard__tag">Lesson · {formatLessonDate(lesson.date)}</span>
-            <span className="parent-dashboard__tag">{gradeLabel(lesson.grade)}</span>
+            <span className="parent-dashboard__tag">{gradeLabel(lesson.grade, portalConfig)}</span>
           </header>
           <h4>{lesson.topics}</h4>
           <p className="admin-card__detail">
             {lesson.audience === 'grade'
-              ? `Grade-wide update`
+              ? t('academics.gradeWideUpdate')
               : `${lesson.childName} — ${lesson.parentName}`}
           </p>
           <p>{lesson.summary}</p>
@@ -494,7 +494,7 @@ function HistorySection({ lessons, guidance }) {
       {guidance.slice(0, 10).map((item) => (
         <article key={item.id} className="academics-card interactive-card">
           <header className="academics-card__header">
-            <span className="parent-dashboard__tag">Guidance</span>
+            <span className="parent-dashboard__tag">{t('academics.guidance')}</span>
             <span className="parent-dashboard__tag">{item.childName}</span>
           </header>
           <h4>{item.title}</h4>

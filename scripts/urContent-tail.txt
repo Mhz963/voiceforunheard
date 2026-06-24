@@ -1,0 +1,364 @@
+  {
+    id: 'language-development',
+    title: 'زبان سیکھنا',
+    summary: 'الفاظ، جملے، اور کہانی سنانے کی مہارت — اسکول اور دوستوں کے لیے۔',
+    description:
+      'منظم زبان کی مدد سننے اور بولنے دونوں میں فرق کم کرتی ہے۔ سرگرمیاں الفاظ بڑھانا، جملے، سوالوں کے جواب، کہانی، اور کلاس میں بات کرنے کی مہارت سکھاتی ہیں۔',
+    features: [
+      'سن کر سمجھنا',
+      'بولنے کے نئے الفاظ',
+      'صحیح جملے بنانا',
+      'کہانی سنانا',
+      'اسکول کی زبان',
+    ],
+    ages: '۱۸ ماہ سے ۱۸ سال',
+    duration: 'چلتا رہتا ہے، ہر تین ماہ جانچ',
+  },
+  {
+    id: 'sign-language',
+    title: 'اشاروں کی زبان',
+    summary: 'اشاروں کی زبان بنیادی یا مدد کے طور پر سیکھیں۔',
+    description:
+      'جو گھر اشاروں کی زبان چنتے ہیں، انہیں ASL یا مقامی اشارے سکھائے جاتے ہیں، بولنے کے ساتھ۔ جو بچے اشارہ اور بولنا دونوں استعمال کرتے ہیں ان کی بھی مدد ہوتی ہے۔',
+    features: [
+      'ASL یا مقامی اشارے',
+      'انگلیوں سے حروف بنانا',
+      'اشاروں کے ساتھ بولنا',
+      'بہرے لوگوں کی کمیونٹی سے رابطہ',
+      'چہرے کے اشارے',
+    ],
+    ages: 'ہر عمر',
+    duration: 'شروع سے آگے تک',
+  },
+  {
+    id: 'listening-skills',
+    title: 'سننے کی تربیت',
+    summary: 'آوازوں اور بولنے کو پہچاننے اور سمجھنے کی صلاحیت مضبوط کریں۔',
+    description:
+      'سننا ایک سیکھا ہوا کام ہے۔ یہ پروگرام بچوں کو بچی ہوئی سننے کی صلاحیت اور کان کی مشین اچھی طرح چلانا سکھاتا ہے — گھر کی آوازوں سے لے کر بولنے کی یاد تک۔',
+    features: [
+      'آواز پہچاننا اور فرق سمجھنا',
+      'سن کر یاد رکھنا',
+      'شور میں بولنے کی سمجھ',
+      'آواز کہاں سے آ رہی ہے',
+      'گانا اور تال سمجھنا',
+    ],
+    ages: '۶ ماہ سے بڑے',
+    duration: '۱۰ سے ۲۰ ہفتے',
+  },
+  {
+    id: 'literacy',
+    title: 'پڑھنا اور لکھنے میں مدد',
+    summary: 'بولنے اور پڑھنے کے درمیان کا فرق کم کریں۔',
+    description:
+      'پڑھنا اکثر ان بچوں کے لیے سب سے بڑی مشکل ہوتی ہے جو سننے میں مشکل محسوس کرتے ہیں۔ یہ پروگرام آوازوں کی سمجھ، پڑھنے کے الفاظ، رفتار اور سمجھ کو بچے کے طریقے کے ساتھ جوڑتا ہے۔',
+    features: [
+      'آوازوں کی پہچان',
+      'پڑھنے کے الفاظ یاد کرنا',
+      'تیزی سے پڑھنا',
+      'سمجھنے کے طریقے',
+      'لکھنے میں مدد',
+    ],
+    ages: '۴ سال سے بڑے',
+    duration: 'اسکول کے سال کے مطابق',
+  },
+  {
+    id: 'social-communication',
+    title: 'دوستوں سے بات اور ملنا جلنا',
+    summary: 'بات چیت، دوستی اور محفلوں میں پورا اعتماد رکھنا۔',
+    description:
+      'بڑوں کی بات سمجھنا، باری لینا، اور چہرے کے اشارے سمجھنا شامل ہونے کے لیے ضروری ہے۔ یہ پروگرام رول پلے، ویڈیو اور گروپ سے کام کرنا سکھاتا ہے۔',
+    features: [
+      'بات میں باری لینا',
+      'موضوع شروع اور جاری رکھنا',
+      'مزاح اور محاورے سمجھنا',
+      'خود اپنی بات کہنا',
+      'جھگڑوں کو حل کرنا',
+    ],
+    ages: '۵ سال سے بڑے',
+    duration: '۸ ہفتے کے گروپ',
+  },
+  {
+    id: 'early-intervention',
+    title: 'چھوٹی عمر میں جلدی مدد',
+    summary: 'سننے کے مسئلے کے بعد چھوٹے بچوں کے لیے پہلے قدم۔',
+    description:
+      'پہلے تین سال زبان کے لیے سب سے اہم ہیں۔ یہ پروگرام تشخیص سے لے کر مشین لگوانا، علاج شروع کرنا اور اسکول سے پہلے کے پروگرام تک گھر والوں کی مدد کرتا ہے۔',
+    features: [
+      'نئے پیدا اور چھوٹے بچوں کے کام',
+      'والدین کو سکھانا اور گھر پر آنا',
+      'مشین چلانے کی تربیت',
+      'بچے کی ترقی دیکھنا',
+      'اسکول کے لیے تیاری',
+    ],
+    ages: 'پیدائش سے ۳ سال',
+    duration: '۳ سال تک، پھر اسکول',
+  },
+  {
+    id: 'cochlear-implant',
+    title: 'Cochlear Implant کی مدد',
+    summary: 'implant سے پہلے اور بعد کے لیے خاص مدد۔',
+    description:
+      'Cochlear Implant لینے والوں کو mapping اور سننے کی تربیت چاہیے ہوتی ہے۔ یہ پروگرام گھر والوں کو سرجری سے پہلے، فعال کرنا اور لمبی مدت کی سننے اور بولنے کی مدد دیتا ہے۔',
+    features: [
+      'implant سے پہلے کیا امید رکھیں',
+      'فعال کرنا اور شروع کی تربیت',
+      'mapping میٹنگ کی تیاری',
+      'سننے کی صلاحیت بڑھانا',
+      'لمبے عرصے کے نتائج دیکھنا',
+    ],
+    ages: '۱۲ ماہ سے بڑے',
+    duration: '۳ سے ۵ سال کا راستہ',
+  },
+  {
+    id: 'hearing-aid',
+    title: 'کان کی مشین سے واقفیت',
+    summary: 'مشین صحیح استعمال اور سننے کی تربیت سے زیادہ فائدہ۔',
+    description:
+      'کان کی مشین مسلسل پہننا، دیکھ بھال اور سننا سیکھنا ضروری ہے۔ یہ پروگرام مشین کی دیکھ بھال، مسائل حل کرنا اور سننے کی مشق سکھاتا ہے۔',
+    features: [
+      'مشین لگانا اور صاف کرنا',
+      'عام مسائل حل کرنا',
+      'سننے کی عادت کی مشق',
+      'کلاس میں FM system',
+      'سالانہ سننے کی جانچ کی تیاری',
+    ],
+    ages: 'ہر عمر',
+    duration: '۶ سے ۱۲ ہفتے اور بعد میں بھی',
+  },
+  {
+    id: 'transition',
+    title: 'اسکول میں جانا اور اپنی بات کہنا',
+    summary: 'عام اسکول اور خود اپنی مدد کے لیے تیاری۔',
+    description:
+      'چھوٹی عمر کی مدد سے اسکول میں جانے کی منصوبہ بندی چاہیے۔ یہ پروگرام IEP، کلاس میں سہولت، استاد کی تربیت اور بچے کو اپنی بات کہنا سکھاتا ہے۔',
+    features: [
+      'IEP اور 504 plan کی مدد',
+      'کلاس کی سہولت کی ہدایت',
+      'استاد کے لیے سامان',
+      'دوستوں کو سمجھانا',
+      'اپنی بات کہنا سیکھنا',
+    ],
+    ages: '۳ سال سے ۱۸ سال',
+    duration: 'ہر سال دوبارہ جانچ',
+  },
+  {
+    id: 'adult-rehab',
+    title: 'بڑوں کی مدد',
+    summary: 'بڑوں کے لیے جو بعد میں سننا کم ہوتا ہے یا implant لیتے ہیں۔',
+    description:
+      'جو بڑے بعد میں سننا کھوتے ہیں یا implant لیتے ہیں ان کے الگ مسائل ہیں۔ یہ پروگرام دفتر کی بات، مدد کی مشین، ہونٹ پڑھنا اور نئی صورت حال میں ڈھلنا سکھاتا ہے۔',
+    features: [
+      'دفتر میں بات کرنے کے طریقے',
+      'مدد کی سننے والی مشین',
+      'ہونٹ پڑھنا',
+      'مشورہ اور ڈھلنا',
+      'کان میں شور کے لیے مدد',
+    ],
+    ages: '۱۸ سال اور اس سے زیادہ',
+    duration: 'مقصد کے مطابق',
+  },
+]
+
+export const ageGroups = [
+  {
+    id: 'infants',
+    title: 'نئے پیدا',
+    range: 'پیدائش سے ۱۲ ماہ',
+    focus: 'جانچ، مشین لگوانا، والدین کو سکھانا اور سننے کی تربیت',
+    milestones: [
+      'آواز پر بار بار جواب',
+      'پہلی آوازیں اور بچوں کی بچکانہ آواز',
+      'والدین کو مشین پر اعتماد',
+      'روز سننے کا معمول',
+    ],
+  },
+  {
+    id: 'toddlers',
+    title: 'چھوٹے بچے',
+    range: '۱ سے ۳ سال',
+    focus: 'پہلے الفاظ، آوازوں میں فرق اور کھیل سے زبان',
+    milestones: [
+      '۱۰ سے ۵۰ بولنے کے الفاظ',
+      'آسان ہدایت پر عمل',
+      'جان پہچان آوازوں کی پہچان',
+      'کھیل میں ساتھ دیکھنا',
+    ],
+  },
+  {
+    id: 'preschool',
+    title: 'اسکول سے پہلے',
+    range: '۳ سے ۵ سال',
+    focus: 'جملے، آوازوں کی پہچان اور دوستوں کے ساتھ کھیل',
+    milestones: [
+      '۳ سے ۵ الفاظ کے جملے',
+      'کون، کیا، کہاں کے جواب',
+      'قافیہ اور آوازوں کی پہچان',
+      'گروپ میں دوستوں کے ساتھ',
+    ],
+  },
+  {
+    id: 'school-age',
+    title: 'اسکول کی عمر',
+    range: '۶ سے ۱۲ سال',
+    focus: 'اسکول کی زبان، پڑھنا اور کلاس میں بات',
+    milestones: [
+      'جماعت کے مطابق پڑھنا سمجھنا',
+      'لمبے جملے بولنا',
+      'کلاس میں حصہ لینا',
+      'لکھنا سیکھنا',
+    ],
+  },
+  {
+    id: 'adolescents',
+    title: 'نوجوان',
+    range: '۱۳ سے ۱۸ سال',
+    focus: 'خود اپنی مدد، اچھی پڑhne اور اپنی pehchan',
+    milestones: [
+      'مشین خود چlana',
+      'اسکول mein apni bat kehna',
+      'مushkil zaban aur muhavare',
+      'نوکری aur college ki tayyari',
+    ],
+  },
+  {
+    id: 'adults',
+    title: 'بڑے',
+    range: '۱۸ سال aur us se zyada',
+    focus: 'دفتر ki bat، technology aur zindagi bhar seekhna',
+    milestones: [
+      'دفتر ki sahulat istemal karna',
+      'madad ki machine achi tarah se',
+      'har jagah pur etmad bat karna',
+      'سنne ki tarbiyat jari rakhna',
+    ],
+  },
+]
+
+export const methodology = {
+  pillars: [
+    {
+      title: 'جانچنا',
+      description:
+        'سنne ki halat، bat ka tareeqa، zaban ki satah، بولne ki wazahat aur seekhne ka andaaz dekha jata hai۔ shuru ka data se har bachay ke apne maqsad banate hain۔',
+      steps: ['سنne ki history', 'zaban ka namoona', 'aam janchn', 'گھر walon se bat', 'maqsad ki tarjeeh'],
+    },
+    {
+      title: 'منصوبہ',
+      description:
+        'گھر ke maqsad، bat ka tareeqa aur umar ke mutabiq apna rasta۔ wazeh maqsad aur waqt ke sath۔',
+      steps: ['apna پڑhne ka plan', 'kitni bar milna', 'گھر ki mashq', 'machine ka istemal', 'tarakki ke nishan'],
+    },
+    {
+      title: 'سکھانا',
+      description:
+        'sabit shuda tareeqe se sikhana — chhotay bachon ke liye khel se، baron ke liye baar baar mashq se۔',
+      steps: ['mazahdar sabq', 'video se sikhana', 'والدین ko sikhana', 'doston ke sath kaam', 'asli zindagi mein istemal'],
+    },
+    {
+      title: 'مشق',
+      description:
+        'گھر par roz ka kaam، phone par mashq aur bahar ke kaam se jo meeting mein sikha woh yaad rehta hai۔ roz karna jaldi aage badhata hai۔',
+      steps: ['گھر ke kaam ke saman', 'phone ki apps', 'bahar jana', 'school ke sath', 'bhai behan ka sath'],
+    },
+    {
+      title: 'پیمائش',
+      description:
+        'bar bar tarakki dekhi jati hai — screen par، dobara janchn aur maqsad badalna۔ har faisla isi data se hota hai۔',
+      steps: ['hafte ka note', 'mahine ki report', 'teen mah baad janchn', 'saal ki meeting', 'natayij likhna'],
+    },
+  ],
+  principles: [
+    'har bacha bat kar sakta hai agar sahi saman aur madad mile',
+    'گھر wale ilaj mein shamil hain، sirf dekhne wale nahi',
+    'bat ka jo tareeqa گھر chune us ki izzat hoti hai',
+    'jaldi aur zyada madad se behtar natayij milte hain',
+    'pehle machine theek karo phir ilaj acha chalega',
+    'am school mein shamil hona mumkin hai agar tayyari ho',
+    'har culture aur zaban se kuch seekhte hain',
+    'hum khud seekhte rehte hain taake tareeqe naye rahein',
+  ],
+}
+
+export const resources = [
+  {
+    category: 'تنظیمیں',
+    items: [
+      { name: 'World Health Organization', description: 'duniya bhar mein سنne ke masle ka data aur hidayat', url: 'https://www.who.int/news-room/fact-sheets/detail/deafness-and-hearing-loss' },
+      { name: 'ASHA', description: 'American Speech Language Hearing Association ke maayar', url: 'https://www.asha.org' },
+      { name: 'Hands & Voices', description: 'behron ke bachon ke گھر walon ki madad', url: 'https://www.handsandvoices.org' },
+      { name: 'AG Bell', description: 'sun kar بولne ke liye maloomat aur madad', url: 'https://www.agbell.org' },
+    ],
+  },
+  {
+    category: 'تحقیق',
+    items: [
+      { name: 'NCBI Auditory Verbal Therapy', description: 'AVT kitni madad karti hai is par saboot', url: 'https://www.ncbi.nlm.nih.gov/books/NBK606541/' },
+      { name: 'Global Burden of Disease Study', description: 'bachon mein سنne ke masle ka data', url: 'https://www.healthdata.org' },
+      { name: 'PMC Cochrane Reviews', description: 'gftaar ke ilaj par tehqeeqi jaize', url: 'https://www.ncbi.nlm.nih.gov/pmc/' },
+    ],
+  },
+  {
+    category: 'سامان',
+    items: [
+      { name: 'Hearing Level Simulator', description: 'alag سنne ki satah بولne ko kaise mutasir karti hai', url: '#' },
+      { name: 'Milestone Tracker', description: 'umar ke hisab se bat ki checklist', url: '#' },
+      { name: 'Home Practice Library', description: 'roz ki mashq ke liye download ke qabil kaam', url: '#' },
+      { name: 'Device Care Guides', description: 'کان ki machine aur Cochlear Implant ki dekhbhaal qadam ba qadam', url: '#' },
+    ],
+  },
+]
+
+export const faqItems = [
+  {
+    question: 'سنne ke masle ke baad bachay ko gftaar ka ilaj kab shuru karna chahiye؟',
+    answer:
+      'jitni jaldi ho sake۔ tehqeeq kehti hai ۱۲ mahine se pehle shuru hone wali madad se zaban bahut behtar hoti hai۔ dimagh ke pehle teen saal sab se zyada seekhta hai۔ VoiceForUnheard tashkhees ke foran baad chhoti umar ki madad deta hai۔',
+  },
+  {
+    question: 'kya VoiceForUnheard ishara zaban wale گھرon ki madad karta hai؟',
+    answer:
+      'bilkul۔ har گھر ke bat ke tareeqe ki izzat karte hain۔ hamara ishara program ASL sikhata hai aur hamara doosra rasta ishara aur بولna dono jodta hai۔ ek hi sahi rasta nahi — jo aap ke گھر ke liye sahi ho wohi sahi hai۔',
+  },
+  {
+    question: 'VoiceForUnheard clinic ke ilaj se kaise alag hai؟',
+    answer:
+      'VoiceForUnheard ek teacher ne banaya jo school ki haqeeqat samajhta hai۔ clinic ke ilaj ko school ki zaroorat se jodte hain — school mein jana، teacher ke liye saman، پڑhna aur lambi muddat ki tarakqi، sirf ek meeting ke maqsad nahi۔',
+  },
+  {
+    question: 'kya mera bacha VoiceForUnheard apne mojooda doctor ke sath istemal kar sakta hai؟',
+    answer:
+      'ji haan۔ VoiceForUnheard jo pehle se chal raha hai us ke sath milta hai۔ گھر ki mashq، tarakqi ka record aur khas modules deta hai jo clinic ki meeting ke baad bhi kaam jari rakhte hain۔',
+  },
+  {
+    question: 'shuru karne ke liye kya chahiye؟',
+    answer:
+      'computer ya tablet aur internet kafi hai۔ achi کان ki machine ya Cochlear Implant aap ke kan ke doctor se lagwana chahiye۔ VoiceForUnheard mein machine chalana aur masail hal karna bhi sikhaya jata hai۔',
+  },
+  {
+    question: 'tarakqi kaise dekhte hain؟',
+    answer:
+      'aam janchn، meeting ka data، والدین ki bat aur video se سنna، بولna، zaban aur doston se bat dekhte hain۔ screen par dikhta hai kahan aage badha aur kahan zyada madad chahiye۔',
+  },
+]
+
+export const testimonials = [
+  {
+    name: 'Sarah M.',
+    role: '۴ saal ke bachay ki walida jis ne Cochlear Implant lagwaya',
+    text: 'VoiceForUnheard ne tashkhees ke baad jab hum pareshan the hamen tarteeb di۔ گھر ke kaam se ilaj hafte mein ek bar se zyada roz ka hissa ban gaya۔',
+    rating: 5,
+  },
+  {
+    name: 'James T.',
+    role: 'chhotay school ka teacher',
+    text: 'class ki sahulat aur teacher ke liye saman se mera student achi tarah madad pa saka۔ aakhir samajh aaya پڑhane ka tareeqa kaise badlna hai۔',
+    rating: 5,
+  },
+  {
+    name: 'Priya K.',
+    role: 'gftaar aur zaban ki mahir',
+    text: 'main VoiceForUnheard گھر walon ko is liye kehti hoon ke ilaj گھر tak pohanch jata hai aur tehqeeq se sabit kaam ke sath۔ tarakqi dekhna clinic jaisa hai۔',
+    rating: 5,
+  },
+]

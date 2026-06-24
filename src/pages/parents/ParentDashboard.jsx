@@ -10,10 +10,12 @@ import {
   HiX,
 } from 'react-icons/hi'
 import { useParentAuth } from '../../context/ParentAuthContext'
-import { parentPortalConfig } from '../../data/parentPortal'
+import { useLanguage } from '../../i18n/LanguageContext'
+import { usePortalConfig } from '../../i18n/usePortalConfig'
 import PortalLayout from '../../components/portal/PortalLayout'
 import ParentAcademics from '../../components/academics/ParentAcademics'
 import { SpeakButton, VoiceLabel } from '../../components/voice/VoiceInput'
+import { SpeakHeading } from '../../components/voice/SpeakAloud'
 import { appendSpeechText } from '../../hooks/useSpeechRecognition'
 import {
   addConcern,
@@ -46,15 +48,15 @@ function formatTime(time24) {
   return `${hour}:${String(m).padStart(2, '0')} ${period}`
 }
 
-function getAvailableDates() {
+function getAvailableDates(config) {
   const dates = []
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  for (let i = 1; i <= parentPortalConfig.maxDaysAhead; i++) {
+  for (let i = 1; i <= config.maxDaysAhead; i++) {
     const d = new Date(today)
     d.setDate(today.getDate() + i)
-    if (parentPortalConfig.meetingDays.includes(d.getDay())) {
+    if (config.meetingDays.includes(d.getDay())) {
       dates.push(d.toISOString().slice(0, 10))
     }
   }
@@ -71,6 +73,8 @@ function canJoinMeeting(date, time) {
 }
 
 export default function ParentDashboard() {
+  const { t } = useLanguage()
+  const portalConfig = usePortalConfig()
   const { parent, logout } = useParentAuth()
   const navigate = useNavigate()
   const [tab, setTab] = useState('overview')
@@ -97,36 +101,36 @@ export default function ParentDashboard() {
 
   const pageCopy = {
     overview: {
-      title: 'Overview',
-      description: `Supporting ${parent.childName} (${parent.childAge})`,
+      title: t('parentPortal.overviewTitle'),
+      description: t('parentPortal.overviewDesc', { childName: parent.childName, childAge: parent.childAge }),
     },
     concerns: {
-      title: 'Share a Concern',
-      description: 'Tell your educator about challenges at home or in school.',
+      title: t('parentPortal.concernsTitle'),
+      description: t('parentPortal.concernsDesc'),
     },
     meetings: {
-      title: 'Video Sessions',
-      description: 'Schedule and join Google Meet sessions with your educator.',
+      title: t('parentPortal.meetingsTitle'),
+      description: t('parentPortal.meetingsDesc'),
     },
     academics: {
-      title: 'Academics',
-      description: `Grades 1–10 support, daily lessons, homework help, and schoolwork guidance for ${parent.childName}.`,
+      title: t('parentPortal.academicsTitle'),
+      description: t('parentPortal.academicsDesc', { childName: parent.childName }),
     },
   }[tab]
 
   const navItems = [
-    { id: 'overview', label: 'Overview', icon: HiViewGrid },
-    { id: 'academics', label: 'Academics', icon: HiBookOpen, badge: unreadGuidance },
-    { id: 'concerns', label: 'Concerns', icon: HiChatAlt2, badge: concerns.length },
-    { id: 'meetings', label: 'Sessions', icon: HiCalendar, badge: upcomingMeetings.length },
+    { id: 'overview', label: t('parentPortal.overview'), icon: HiViewGrid },
+    { id: 'academics', label: t('parentPortal.academics'), icon: HiBookOpen, badge: unreadGuidance },
+    { id: 'concerns', label: t('parentPortal.concerns'), icon: HiChatAlt2, badge: concerns.length },
+    { id: 'meetings', label: t('parentPortal.sessions'), icon: HiCalendar, badge: upcomingMeetings.length },
   ]
 
   return (
     <PortalLayout
       variant="parent"
-      portalLabel="Parent Portal"
+      portalLabel={t('portal.parentLabel')}
       userName={parent.name}
-      userMeta={`Child: ${parent.childName}`}
+      userMeta={t('portal.childMeta', { name: parent.childName })}
       navItems={navItems}
       activeId={tab}
       onNavigate={setTab}
@@ -162,42 +166,44 @@ export default function ParentDashboard() {
 }
 
 function OverviewTab({ concerns, upcomingMeetings, lessons, unreadGuidance, onGoConcerns, onGoMeetings, onGoAcademics }) {
+  const { t } = useLanguage()
+
   return (
     <div className="portal-page">
       <div className="portal-page__stats">
         <div className="portal-stat">
           <strong>{lessons.length}</strong>
-          <span>Lesson updates</span>
+          <span>{t('parentPortal.lessonUpdates')}</span>
         </div>
         <div className="portal-stat">
           <strong>{unreadGuidance}</strong>
-          <span>New guidance</span>
+          <span>{t('parentPortal.newGuidance')}</span>
         </div>
         <div className="portal-stat">
           <strong>{concerns.length}</strong>
-          <span>Concerns shared</span>
+          <span>{t('parentPortal.concernsShared')}</span>
         </div>
         <div className="portal-stat">
           <strong>{upcomingMeetings.length}</strong>
-          <span>Upcoming sessions</span>
+          <span>{t('parentPortal.upcomingSessions')}</span>
         </div>
       </div>
 
       <div className="portal-page__actions">
         <button type="button" className="btn btn--primary" onClick={onGoAcademics}>
-          <HiBookOpen /> View Academics
+          <HiBookOpen /> {t('parentPortal.viewAcademics')}
         </button>
         <button type="button" className="btn btn--outline" onClick={onGoConcerns}>
-          <HiPlus /> Share a New Concern
+          <HiPlus /> {t('parentPortal.shareConcern')}
         </button>
         <button type="button" className="btn btn--outline" onClick={onGoMeetings}>
-          <HiCalendar /> Book a Video Session
+          <HiCalendar /> {t('parentPortal.bookSession')}
         </button>
       </div>
 
       {lessons.length > 0 && (
         <div className="portal-page__section">
-          <h3>Today&apos;s Lesson</h3>
+          <SpeakHeading as="h3" body={lessons[0].summary}>{t('parentPortal.todayLesson')}</SpeakHeading>
           <article className="academics-card interactive-card">
             <header className="academics-card__header">
               <span className="parent-dashboard__tag">{lessons[0].topics}</span>
@@ -209,26 +215,35 @@ function OverviewTab({ concerns, upcomingMeetings, lessons, unreadGuidance, onGo
 
       {unreadGuidance > 0 && (
         <div className="portal-page__section">
-          <h3>Schoolwork Reminder</h3>
+          <SpeakHeading
+            as="h3"
+            body={unreadGuidance === 1
+              ? t('parentPortal.guidanceCount', { count: unreadGuidance })
+              : t('parentPortal.guidanceCountPlural', { count: unreadGuidance })}
+          >
+            {t('parentPortal.schoolworkReminder')}
+          </SpeakHeading>
           <p className="admin-card__detail">
-            You have {unreadGuidance} new guidance notification{unreadGuidance === 1 ? '' : 's'} from your educator.
+            {unreadGuidance === 1
+              ? t('parentPortal.guidanceCount', { count: unreadGuidance })
+              : t('parentPortal.guidanceCountPlural', { count: unreadGuidance })}
           </p>
           <button type="button" className="btn btn--outline btn--sm" onClick={onGoAcademics}>
-            View guidance
+            {t('parentPortal.viewGuidance')}
           </button>
         </div>
       )}
 
       {upcomingMeetings.length > 0 && (
         <div className="portal-page__section">
-          <h3>Next Session</h3>
+          <SpeakHeading as="h3">{t('parentPortal.nextSession')}</SpeakHeading>
           <MeetingCard meeting={upcomingMeetings[0]} />
         </div>
       )}
 
       {concerns.length > 0 && (
         <div className="portal-page__section">
-          <h3>Latest Concern</h3>
+          <SpeakHeading as="h3">{t('parentPortal.latestConcern')}</SpeakHeading>
           <ConcernCard concern={concerns[0]} />
         </div>
       )}
@@ -237,8 +252,10 @@ function OverviewTab({ concerns, upcomingMeetings, lessons, unreadGuidance, onGo
 }
 
 function ConcernsTab({ parent, onSubmitted, concerns }) {
+  const { t } = useLanguage()
+  const portalConfig = usePortalConfig()
   const [form, setForm] = useState({
-    category: parentPortalConfig.concernCategories[0].id,
+    category: portalConfig.concernCategories[0].id,
     title: '',
     description: '',
     urgency: 'medium',
@@ -262,7 +279,7 @@ function ConcernsTab({ parent, onSubmitted, concerns }) {
     })
     setSubmitted(true)
     setForm({
-      category: parentPortalConfig.concernCategories[0].id,
+      category: portalConfig.concernCategories[0].id,
       title: '',
       description: '',
       urgency: 'medium',
@@ -274,30 +291,34 @@ function ConcernsTab({ parent, onSubmitted, concerns }) {
   return (
     <div className="portal-page__split">
       <div className="parent-portal__auth-card">
-        <h2>Share a Concern or Problem</h2>
+        <SpeakHeading
+          as="h2"
+          body={`${t('parentPortal.shareConcernHint')} ${t('portal.speakInstead')}`}
+        >
+          {t('parentPortal.shareConcernForm')}
+        </SpeakHeading>
         <p className="parent-portal__auth-sub">
-          Tell your educator about challenges your child is facing. This helps prepare for your next session.
-          You can tap <strong>Speak</strong> and say your message instead of typing.
+          {t('parentPortal.shareConcernHint')} {t('portal.speakInstead')}
         </p>
 
         {submitted && (
           <div className="parent-portal__alert parent-portal__alert--success">
-            Your concern has been submitted. Your educator will review it before your next meeting.
+            {t('parentPortal.concernSubmitted')}
           </div>
         )}
 
         <form className="parent-portal__form" onSubmit={handleSubmit}>
           <label>
-            Category
+            {t('parentPortal.category')}
             <select value={form.category} onChange={(e) => update('category', e.target.value)} required>
-              {parentPortalConfig.concernCategories.map((c) => (
+              {portalConfig.concernCategories.map((c) => (
                 <option key={c.id} value={c.id}>{c.label}</option>
               ))}
             </select>
           </label>
           <label>
             <VoiceLabel onTranscript={(text) => update('title', appendSpeechText(form.title, text))}>
-              Brief Title
+              {t('parentPortal.briefTitle')}
             </VoiceLabel>
             <input
               type="text"
@@ -309,7 +330,7 @@ function ConcernsTab({ parent, onSubmitted, concerns }) {
           </label>
           <label>
             <VoiceLabel onTranscript={(text) => update('description', appendSpeechText(form.description, text))}>
-              Describe the Problem
+              {t('parentPortal.describeProblem')}
             </VoiceLabel>
             <textarea
               rows={5}
@@ -320,21 +341,21 @@ function ConcernsTab({ parent, onSubmitted, concerns }) {
             />
           </label>
           <label>
-            Urgency
+            {t('parentPortal.urgency')}
             <select value={form.urgency} onChange={(e) => update('urgency', e.target.value)} required>
-              {parentPortalConfig.urgencyLevels.map((u) => (
+              {portalConfig.urgencyLevels.map((u) => (
                 <option key={u.id} value={u.id}>{u.label}</option>
               ))}
             </select>
           </label>
-          <button type="submit" className="btn btn--primary btn--block">Submit Concern</button>
+          <button type="submit" className="btn btn--primary btn--block">{t('parentPortal.submitConcern')}</button>
         </form>
       </div>
 
       <div className="portal-page__list">
-        <h3>Your Submitted Concerns</h3>
+        <SpeakHeading as="h3">{t('parentPortal.yourConcerns')}</SpeakHeading>
         {concerns.length === 0 ? (
-          <p className="portal-page__empty">No concerns submitted yet.</p>
+          <p className="portal-page__empty">{t('parentPortal.noConcerns')}</p>
         ) : (
           concerns.map((c) => <ConcernCard key={c.id} concern={c} />)
         )}
@@ -344,10 +365,12 @@ function ConcernsTab({ parent, onSubmitted, concerns }) {
 }
 
 function MeetingsTab({ parent, meetings, onScheduled, onCancel }) {
-  const availableDates = useMemo(() => getAvailableDates(), [])
+  const { t } = useLanguage()
+  const portalConfig = usePortalConfig()
+  const availableDates = useMemo(() => getAvailableDates(portalConfig), [portalConfig])
   const [form, setForm] = useState({
     date: availableDates[0] || '',
-    time: parentPortalConfig.timeSlots[0],
+    time: portalConfig.timeSlots[0],
     agenda: '',
   })
   const [error, setError] = useState('')
@@ -367,7 +390,7 @@ function MeetingsTab({ parent, meetings, onScheduled, onCancel }) {
     setSuccess('')
 
     if (isSlotTaken(form.time)) {
-      setError('This time slot was just booked. Please choose another.')
+      setError(t('parentPortal.slotTaken'))
       return
     }
 
@@ -380,12 +403,12 @@ function MeetingsTab({ parent, meetings, onScheduled, onCancel }) {
       date: form.date,
       time: form.time,
       agenda: form.agenda.trim(),
-      meetLink: parentPortalConfig.googleMeetLink,
+      meetLink: portalConfig.googleMeetLink,
       status: 'scheduled',
       createdAt: new Date().toISOString(),
     })
 
-    setSuccess('Meeting scheduled! You can join via Google Meet at the scheduled time.')
+    setSuccess(t('parentPortal.meetingScheduled'))
     setForm((prev) => ({ ...prev, agenda: '' }))
     onScheduled()
   }
@@ -398,9 +421,14 @@ function MeetingsTab({ parent, meetings, onScheduled, onCancel }) {
   return (
     <div className="portal-page__split">
       <div className="parent-portal__auth-card">
-        <h2>Schedule a Video Session</h2>
+        <SpeakHeading
+          as="h2"
+          body={t('parentPortal.scheduleHint', { minutes: portalConfig.sessionDurationMinutes })}
+        >
+          {t('parentPortal.scheduleMeeting')}
+        </SpeakHeading>
         <p className="parent-portal__auth-sub">
-          Book a {parentPortalConfig.sessionDurationMinutes}-minute Google Meet session with your speech education teacher.
+          {t('parentPortal.scheduleHint', { minutes: portalConfig.sessionDurationMinutes })}
         </p>
 
         {error && <div className="parent-portal__alert parent-portal__alert--error">{error}</div>}
@@ -408,7 +436,7 @@ function MeetingsTab({ parent, meetings, onScheduled, onCancel }) {
 
         <form className="parent-portal__form" onSubmit={handleSubmit}>
           <label>
-            Preferred Date
+            {t('parentPortal.preferredDate')}
             <select value={form.date} onChange={(e) => update('date', e.target.value)} required>
               {availableDates.map((d) => (
                 <option key={d} value={d}>{formatDate(d)}</option>
@@ -416,18 +444,18 @@ function MeetingsTab({ parent, meetings, onScheduled, onCancel }) {
             </select>
           </label>
           <label>
-            Time Slot
+            {t('parentPortal.timeSlot')}
             <select value={form.time} onChange={(e) => update('time', e.target.value)} required>
-              {parentPortalConfig.timeSlots.map((t) => (
-                <option key={t} value={t} disabled={isSlotTaken(t)}>
-                  {formatTime(t)}{isSlotTaken(t) ? ' (booked)' : ''}
+              {portalConfig.timeSlots.map((slot) => (
+                <option key={slot} value={slot} disabled={isSlotTaken(slot)}>
+                  {formatTime(slot)}{isSlotTaken(slot) ? ` ${t('parentPortal.booked')}` : ''}
                 </option>
               ))}
             </select>
           </label>
           <label>
             <VoiceLabel onTranscript={(text) => update('agenda', appendSpeechText(form.agenda, text))}>
-              What would you like to discuss?
+              {t('parentPortal.discussAgenda')}
             </VoiceLabel>
             <textarea
               rows={4}
@@ -438,15 +466,15 @@ function MeetingsTab({ parent, meetings, onScheduled, onCancel }) {
             />
           </label>
           <button type="submit" className="btn btn--primary btn--block">
-            <HiVideoCamera /> Confirm Meeting
+            <HiVideoCamera /> {t('parentPortal.confirmMeeting')}
           </button>
         </form>
       </div>
 
       <div className="portal-page__list">
-        <h3>Your Scheduled Sessions</h3>
+        <SpeakHeading as="h3">{t('parentPortal.yourMeetings')}</SpeakHeading>
         {meetings.filter((m) => ['scheduled', 'confirmed'].includes(m.status)).length === 0 ? (
-          <p className="portal-page__empty">No meetings scheduled yet.</p>
+          <p className="portal-page__empty">{t('parentPortal.noMeetings')}</p>
         ) : (
           meetings
             .filter((m) => ['scheduled', 'confirmed'].includes(m.status))
@@ -460,8 +488,10 @@ function MeetingsTab({ parent, meetings, onScheduled, onCancel }) {
 }
 
 function ConcernCard({ concern }) {
-  const category = parentPortalConfig.concernCategories.find((c) => c.id === concern.category)
-  const urgency = parentPortalConfig.urgencyLevels.find((u) => u.id === concern.urgency)
+  const { t } = useLanguage()
+  const portalConfig = usePortalConfig()
+  const category = portalConfig.concernCategories.find((c) => c.id === concern.category)
+  const urgency = portalConfig.urgencyLevels.find((u) => u.id === concern.urgency)
 
   return (
     <article className="parent-dashboard__card interactive-card">
@@ -476,19 +506,21 @@ function ConcernCard({ concern }) {
       <SpeakButton text={`${concern.title}. ${concern.description}`} />
       {concern.adminNote && (
         <div className="parent-dashboard__educator-note">
-          <strong>Educator note:</strong> {concern.adminNote}
-          <SpeakButton text={concern.adminNote} label="Listen to note" />
+          <strong>{t('parentPortal.educatorNote')}</strong> {concern.adminNote}
+          <SpeakButton text={concern.adminNote} label={t('parentPortal.listenToNote')} />
         </div>
       )}
       <footer>
-        Submitted {new Date(concern.createdAt).toLocaleDateString()} · Status:{' '}
-        {parentPortalConfig.concernStatuses.find((s) => s.id === concern.status)?.label || concern.status}
+        {t('common.submitted')} {new Date(concern.createdAt).toLocaleDateString()} · {t('common.status')}:{' '}
+        {portalConfig.concernStatuses.find((s) => s.id === concern.status)?.label || concern.status}
       </footer>
     </article>
   )
 }
 
 function MeetingCard({ meeting, onCancel }) {
+  const { t } = useLanguage()
+  const portalConfig = usePortalConfig()
   const joinable = canJoinMeeting(meeting.date, meeting.time)
   const isPast = new Date(`${meeting.date}T${meeting.time}`) < new Date()
 
@@ -498,14 +530,16 @@ function MeetingCard({ meeting, onCancel }) {
         <span className="parent-dashboard__tag">{formatDate(meeting.date)}</span>
         <span className="parent-dashboard__tag">{formatTime(meeting.time)}</span>
         {meeting.status === 'confirmed' && (
-          <span className="parent-dashboard__tag parent-dashboard__tag--confirmed">Confirmed</span>
+          <span className="parent-dashboard__tag parent-dashboard__tag--confirmed">
+            {portalConfig.meetingStatuses.find((s) => s.id === 'confirmed')?.label}
+          </span>
         )}
       </div>
       <h4>Video Session — {meeting.childName}</h4>
       {meeting.agenda && <p>{meeting.agenda}</p>}
       {meeting.adminNote && (
         <p className="parent-dashboard__educator-note">
-          <strong>From educator:</strong> {meeting.adminNote}
+          <strong>{t('parentPortal.fromEducator')}</strong> {meeting.adminNote}
         </p>
       )}
       <div className="parent-dashboard__meeting-actions">
@@ -516,17 +550,17 @@ function MeetingCard({ meeting, onCancel }) {
             rel="noopener noreferrer"
             className="btn btn--primary"
           >
-            <HiVideoCamera /> Join Google Meet
+            <HiVideoCamera /> {t('parentPortal.joinMeet')}
           </a>
         )}
         {!joinable && !isPast && (
           <span className="parent-dashboard__meet-hint">
-            Join link activates 15 minutes before the session
+            {t('parentPortal.joinHint')}
           </span>
         )}
         {onCancel && !isPast && (
           <button type="button" className="btn btn--ghost parent-dashboard__cancel" onClick={onCancel}>
-            <HiX /> Cancel
+            <HiX /> {t('common.cancel')}
           </button>
         )}
       </div>
