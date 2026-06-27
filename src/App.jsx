@@ -19,6 +19,7 @@ import SignIn from './pages/auth/SignIn'
 import ParentDashboard from './pages/parents/ParentDashboard'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import SuperAdminDashboard from './pages/superadmin/SuperAdminDashboard'
+import PaymentReturn from './pages/payment/PaymentReturn'
 
 export default function App() {
   return (
@@ -61,6 +62,14 @@ export default function App() {
             <ProtectedAdminRoute>
               <AdminDashboard />
             </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="payment/return"
+          element={
+            <ProtectedParentRoute>
+              <PaymentReturn />
+            </ProtectedParentRoute>
           }
         />
         <Route

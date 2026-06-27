@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useMemo, useState, useEffect } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   HiBookOpen,
   HiCalendar,
@@ -19,14 +19,18 @@ import { SpeakHeading } from '../../components/voice/SpeakAloud'
 import { appendSpeechText } from '../../hooks/useSpeechRecognition'
 import {
   addConcern,
-  addMeeting,
   cancelMeeting,
+  canRequestRefund,
   getAllMeetingsForSlot,
   getConcerns,
   getLessonUpdatesForParent,
   getMeetings,
   getSchoolworkGuidance,
+  updateMeetingPayment,
 } from '../../services/parentStorage'
+import { requestRefund } from '../../services/payments'
+import SessionCheckout from '../../components/payments/SessionCheckout'
+import '../../components/payments/SessionCheckout.css'
 
 function createId(prefix) {
   return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
@@ -77,8 +81,20 @@ export default function ParentDashboard() {
   const portalConfig = usePortalConfig()
   const { parent, logout } = useParentAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [tab, setTab] = useState('overview')
   const [refreshKey, setRefreshKey] = useState(0)
+  const [paymentNotice, setPaymentNotice] = useState('')
+
+  useEffect(() => {
+    const tabParam = searchParams.get('tab')
+    if (tabParam && ['overview', 'academics', 'concerns', 'meetings'].includes(tabParam)) {
+      setTab(tabParam)
+    }
+    if (searchParams.get('payment') === 'cancelled') {
+      setPaymentNotice('cancelled')
+    }
+  }, [searchParams])
 
   const concerns = useMemo(() => getConcerns(parent.id), [parent.id, refreshKey])
   const meetings = useMemo(() => getMeetings(parent.id), [parent.id, refreshKey])
@@ -157,8 +173,10 @@ export default function ParentDashboard() {
             <MeetingsTab
               parent={parent}
               meetings={meetings}
+              paymentNotice={paymentNotice}
               onScheduled={refresh}
               onCancel={refresh}
+              onRefund={refresh}
             />
           )}
     </PortalLayout>
@@ -364,7 +382,7 @@ function ConcernsTab({ parent, onSubmitted, concerns }) {
   )
 }
 
-function MeetingsTab({ parent, meetings, onScheduled, onCancel }) {
+function MeetingsTab({ parent, meetings, paymentNotice, onScheduled, onCancel, onRefund }) {
   const { t } = useLanguage()
   const portalConfig = usePortalConfig()
   const availableDates = useMemo(() => getAvailableDates(portalConfig), [portalConfig])
@@ -374,7 +392,7 @@ function MeetingsTab({ parent, meetings, onScheduled, onCancel }) {
     agenda: '',
   })
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const [refundPolicyDays] = useState(7)
 
   function update(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -384,38 +402,52 @@ function MeetingsTab({ parent, meetings, onScheduled, onCancel }) {
     return getAllMeetingsForSlot(form.date, time).length > 0
   }
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    setError('')
-    setSuccess('')
-
-    if (isSlotTaken(form.time)) {
-      setError(t('parentPortal.slotTaken'))
-      return
-    }
-
-    addMeeting({
-      id: createId('meeting'),
-      parentId: parent.id,
-      parentName: parent.name,
-      childName: parent.childName,
-      email: parent.email,
-      date: form.date,
-      time: form.time,
-      agenda: form.agenda.trim(),
-      meetLink: portalConfig.googleMeetLink,
-      status: 'scheduled',
-      createdAt: new Date().toISOString(),
-    })
-
-    setSuccess(t('parentPortal.meetingScheduled'))
-    setForm((prev) => ({ ...prev, agenda: '' }))
-    onScheduled()
-  }
+  const formValid =
+    form.date &&
+    form.time &&
+    form.agenda.trim() &&
+    !isSlotTaken(form.time)
 
   function handleCancel(id) {
     cancelMeeting(id, parent.id)
     onCancel()
+  }
+
+  async function handleRefund(meeting) {
+    if (!meeting.payment?.providerPaymentId) return
+    const confirmed = window.confirm(t('payments.refundConfirm'))
+    if (!confirmed) return
+
+    try {
+      const result = await requestRefund(
+        meeting.payment.provider,
+        meeting.payment.providerPaymentId,
+        'Not satisfied',
+      )
+
+      updateMeetingPayment(
+        meeting.id,
+        {
+          refundStatus: result.refunded ? 'refunded' : 'pending_manual',
+          refunded: Boolean(result.refunded),
+          refundedAt: new Date().toISOString(),
+        },
+        parent.id,
+      )
+      onRefund()
+    } catch (err) {
+      if (meeting.payment.provider === 'jazzcash') {
+        updateMeetingPayment(
+          meeting.id,
+          { refundStatus: 'pending_manual', refundRequestedAt: new Date().toISOString() },
+          parent.id,
+        )
+        onRefund()
+        window.alert(t('payments.jazzcashRefundNote'))
+        return
+      }
+      window.alert(err.message || t('payments.refundFailed'))
+    }
   }
 
   return (
@@ -431,10 +463,14 @@ function MeetingsTab({ parent, meetings, onScheduled, onCancel }) {
           {t('parentPortal.scheduleHint', { minutes: portalConfig.sessionDurationMinutes })}
         </p>
 
+        {paymentNotice === 'cancelled' && (
+          <div className="parent-portal__alert parent-portal__alert--error">
+            {t('payments.cancelled')}
+          </div>
+        )}
         {error && <div className="parent-portal__alert parent-portal__alert--error">{error}</div>}
-        {success && <div className="parent-portal__alert parent-portal__alert--success">{success}</div>}
 
-        <form className="parent-portal__form" onSubmit={handleSubmit}>
+        <form className="parent-portal__form" onSubmit={(e) => e.preventDefault()}>
           <label>
             {t('parentPortal.preferredDate')}
             <select value={form.date} onChange={(e) => update('date', e.target.value)} required>
@@ -465,10 +501,18 @@ function MeetingsTab({ parent, meetings, onScheduled, onCancel }) {
               placeholder="Share topics, recent challenges, or questions for the session..."
             />
           </label>
-          <button type="submit" className="btn btn--primary btn--block">
-            <HiVideoCamera /> {t('parentPortal.confirmMeeting')}
-          </button>
         </form>
+
+        <SessionCheckout
+          booking={{
+            date: form.date,
+            time: form.time,
+            agenda: form.agenda.trim(),
+          }}
+          parent={parent}
+          disabled={!formValid}
+          onError={setError}
+        />
       </div>
 
       <div className="portal-page__list">
@@ -479,7 +523,13 @@ function MeetingsTab({ parent, meetings, onScheduled, onCancel }) {
           meetings
             .filter((m) => ['scheduled', 'confirmed'].includes(m.status))
             .map((m) => (
-              <MeetingCard key={m.id} meeting={m} onCancel={() => handleCancel(m.id)} />
+              <MeetingCard
+                key={m.id}
+                meeting={m}
+                refundPolicyDays={refundPolicyDays}
+                onCancel={() => handleCancel(m.id)}
+                onRefund={() => handleRefund(m)}
+              />
             ))
         )}
       </div>
@@ -518,11 +568,13 @@ function ConcernCard({ concern }) {
   )
 }
 
-function MeetingCard({ meeting, onCancel }) {
+function MeetingCard({ meeting, onCancel, onRefund, refundPolicyDays = 7 }) {
   const { t } = useLanguage()
   const portalConfig = usePortalConfig()
   const joinable = canJoinMeeting(meeting.date, meeting.time)
   const isPast = new Date(`${meeting.date}T${meeting.time}`) < new Date()
+  const showRefund = canRequestRefund(meeting, refundPolicyDays)
+  const payment = meeting.payment
 
   return (
     <article className="parent-dashboard__card interactive-card">
@@ -533,6 +585,19 @@ function MeetingCard({ meeting, onCancel }) {
           <span className="parent-dashboard__tag parent-dashboard__tag--confirmed">
             {portalConfig.meetingStatuses.find((s) => s.id === 'confirmed')?.label}
           </span>
+        )}
+        {payment && (
+          <span className="parent-dashboard__tag">
+            {payment.currency === 'PKR' ? `Rs ${Number(payment.amount).toLocaleString()}` : `$${payment.amount}`}
+          </span>
+        )}
+        {payment?.refundStatus === 'refunded' && (
+          <span className="parent-dashboard__tag parent-dashboard__tag--refunded">
+            {t('payments.refunded')}
+          </span>
+        )}
+        {payment?.refundStatus === 'pending_manual' && (
+          <span className="parent-dashboard__tag">{t('payments.refundPending')}</span>
         )}
       </div>
       <h4>Video Session — {meeting.childName}</h4>
@@ -561,6 +626,11 @@ function MeetingCard({ meeting, onCancel }) {
         {onCancel && !isPast && (
           <button type="button" className="btn btn--ghost parent-dashboard__cancel" onClick={onCancel}>
             <HiX /> {t('common.cancel')}
+          </button>
+        )}
+        {showRefund && onRefund && (
+          <button type="button" className="btn btn--ghost parent-dashboard__refund" onClick={onRefund}>
+            {t('payments.requestRefund')}
           </button>
         )}
       </div>

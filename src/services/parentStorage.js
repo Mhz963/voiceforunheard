@@ -11,6 +11,7 @@ const KEYS = {
   activity: 'vfu_activity_log',
   accessCodes: 'vfu_access_codes',
   seeded: 'vfu_demo_seeded',
+  pendingPayment: 'vfu_pending_payment',
 }
 
 function readList(key) {
@@ -133,6 +134,55 @@ export function updateMeetingStatus(meetingId, status, parentId = null, adminNot
   }
   writeList(KEYS.meetings, meetings)
   return meetings[index]
+}
+
+export function updateMeetingPayment(meetingId, paymentPatch, parentId = null) {
+  const meetings = readList(KEYS.meetings)
+  const index = meetings.findIndex((m) => {
+    if (parentId) return m.id === meetingId && m.parentId === parentId
+    return m.id === meetingId
+  })
+  if (index < 0) return null
+  meetings[index] = {
+    ...meetings[index],
+    payment: { ...(meetings[index].payment || {}), ...paymentPatch },
+    updatedAt: new Date().toISOString(),
+  }
+  writeList(KEYS.meetings, meetings)
+  return meetings[index]
+}
+
+export function findMeetingByOrderId(orderId) {
+  return getAllMeetings().find((m) => m.payment?.orderId === orderId) || null
+}
+
+export function canRequestRefund(meeting, refundPolicyDays = 7) {
+  const payment = meeting?.payment
+  if (!payment?.paidAt || payment.refunded || payment.refundStatus === 'refunded') {
+    return false
+  }
+  if (payment.refundStatus === 'requested' || payment.refundStatus === 'pending_manual') {
+    return false
+  }
+  const daysSincePaid = (Date.now() - new Date(payment.paidAt).getTime()) / (1000 * 60 * 60 * 24)
+  return daysSincePaid <= refundPolicyDays
+}
+
+export function savePendingPayment(data) {
+  localStorage.setItem(KEYS.pendingPayment, JSON.stringify(data))
+}
+
+export function getPendingPayment() {
+  try {
+    const raw = localStorage.getItem(KEYS.pendingPayment)
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+export function clearPendingPayment() {
+  localStorage.removeItem(KEYS.pendingPayment)
 }
 
 // ——— Lesson updates ———

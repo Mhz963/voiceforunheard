@@ -1,0 +1,52 @@
+.session-checkout__currency {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.session-checkout__currency label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--color-border, #e2e8f0);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.session-checkout__currency input:checked + span,
+.session-checkout__currency label:has(input:checked) {
+  border-color: var(--color-primary, #2563eb);
+}
+
+.session-checkout__currency label:has(input:checked) {
+  border-color: var(--color-primary, #2563eb);
+  background: rgba(37, 99, 235, 0.06);
+}
+
+.session-checkout__price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0.5rem 0 1rem;
+  color: var(--color-primary, #2563eb);
+}
+
+.session-checkout__provider {
+  font-size: 0.875rem;
+  color: var(--color-muted, #64748b);
+  margin-bottom: 1rem;
+}
+
+.session-checkout__refund-note {
+  font-size: 0.8125rem;
+  color: var(--color-muted, #64748b);
+  margin-top: 0.75rem;
+  line-height: 1.5;
+}
+
+.session-checkout__paying {
+  opacity: 0.7;
+  pointer-events: none;
+}
