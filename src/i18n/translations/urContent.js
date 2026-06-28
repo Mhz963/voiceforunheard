@@ -3,6 +3,7 @@ export const siteInfo = {
   tagline: 'بے آوازوں کو آواز دینا',
   logo: '/logo1.png',
   favicon: '/icon1.png',
+  contactEmail: 'binteanayat@gmail.com',
   description:
     'گفتار کی مکمل تعلیم جو ایک گفتار کے معلم نے بنائی — بچوں، گھر والوں اور معلموں کے لیے جو سننے میں مشکل محسوس کرتے ہیں۔',
   educator: {

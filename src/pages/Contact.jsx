@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { HiMail, HiPhone, HiLocationMarker, HiCheckCircle } from 'react-icons/hi'
+import { HiMail, HiPhone, HiLocationMarker, HiCheckCircle, HiExternalLink } from 'react-icons/hi'
 import SectionHeader from '../components/ui/SectionHeader'
 import Reveal from '../components/ui/Reveal'
 import { VoiceHelpBanner, VoiceLabel } from '../components/voice/VoiceInput'
@@ -7,6 +7,8 @@ import { appendSpeechText } from '../hooks/useSpeechRecognition'
 import { useLanguage } from '../i18n/LanguageContext'
 import { useLocalizedContent } from '../i18n/useLocalizedContent'
 import { SpeakHeading } from '../components/voice/SpeakAloud'
+
+const EDUCATOR_PORTFOLIO_URL = 'https://maria-speech-therapist.vercel.app/'
 
 export default function Contact() {
   const { t } = useLanguage()
@@ -54,7 +56,9 @@ export default function Contact() {
                 <HiMail />
                 <div>
                   <strong>{t('pages.contact.email')}</strong>
-                  <span>hello@voiceforunheard.org</span>
+                  <a href={`mailto:${siteInfo.contactEmail}`} className="contact-list__link">
+                    {siteInfo.contactEmail}
+                  </a>
                 </div>
               </li>
               <li>
@@ -69,6 +73,21 @@ export default function Contact() {
                 <div>
                   <strong>{t('pages.contact.office')}</strong>
                   <span>{t('pages.contact.officeValue')}</span>
+                </div>
+              </li>
+              <li>
+                <HiExternalLink />
+                <div>
+                  <strong>{t('pages.contact.portfolio')}</strong>
+                  <a
+                    href={EDUCATOR_PORTFOLIO_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="contact-list__link"
+                  >
+                    {t('pages.contact.portfolioLink')}
+                  </a>
+                  <span className="contact-list__hint">{t('pages.contact.portfolioHint')}</span>
                 </div>
               </li>
             </ul>

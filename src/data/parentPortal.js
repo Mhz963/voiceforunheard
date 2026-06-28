@@ -18,7 +18,7 @@ export const portalConfig = {
     },
     admin: {
       label: 'Educator Admin',
-      email: 'admin@voiceforunheard.org',
+      email: 'binteanayat@gmail.com',
       password: 'admin123',
       dashboard: '/portal/admin',
       color: '#1a4d6d',

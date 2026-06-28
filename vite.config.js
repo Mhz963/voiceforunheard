@@ -5,6 +5,7 @@ import paymentsPlugin from './server/paymentsPlugin.js'
 
 // https://vite.dev/config/
 export default defineConfig({
+  devtools: false,
   plugins: [
     react(),
     urduTtsPlugin(),

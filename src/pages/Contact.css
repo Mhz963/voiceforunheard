@@ -45,6 +45,28 @@
   color: var(--color-text-muted);
 }
 
+.contact-list__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.contact-list__link:hover {
+  color: var(--color-teal);
+  text-decoration: underline;
+}
+
+.contact-list__hint {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
 .contact-form-wrap {
   background: var(--color-surface);
   border-radius: var(--radius-lg);

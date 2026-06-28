@@ -109,10 +109,93 @@
   text-decoration: none;
 }
 
-.header__link:hover,
-.header__link--active {
+@media (min-width: 1201px) {
+  .header__inner {
+    padding: 0 0.5rem;
+    gap: 0.25rem;
+  }
+
+  .header__logo-img {
+    max-height: 50px;
+    max-width: min(185px, 22vw);
+    transform: scaleX(1.05);
+  }
+
+  .header__nav,
+  .header__nav-links {
+    gap: 0.4rem;
+    height: 100%;
+    align-items: center;
+  }
+
+  .header__link {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    padding: 0.45rem 0.55rem;
+    min-height: auto;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  .header__link:hover {
+    color: var(--color-primary);
+    background: rgba(26, 77, 109, 0.05);
+  }
+
+  .header__link--active {
+    color: var(--color-primary);
+    font-weight: 600;
+    background: transparent;
+  }
+
+  .header__link--active::after {
+    content: '';
+    position: absolute;
+    left: 0.45rem;
+    right: 0.45rem;
+    bottom: 0.15rem;
+    height: 2px;
+    background: var(--color-teal);
+    border-radius: 1px;
+  }
+
+  .header__cta {
+    padding: 0.4rem 0.4rem 0.4rem 0.75rem;
+    font-size: 0.78rem;
+  }
+
+  .header__cta-icon {
+    width: 22px;
+    height: 22px;
+    font-size: 0.8rem;
+  }
+
+  .header__auth-actions {
+    gap: 0.25rem;
+  }
+
+  .header__desktop-actions .lang-switch__icon {
+    display: none;
+  }
+
+  .header__desktop-actions .lang-switch__select {
+    font-size: 0.75rem;
+    padding: 0.35rem 1.3rem 0.35rem 0.5rem;
+    max-width: 5rem;
+  }
+}
+
+.header__link:hover {
   color: var(--color-primary);
   background: rgba(26, 77, 109, 0.06);
+}
+
+.header__link--active {
+  color: var(--color-primary);
+  font-weight: 600;
 }
 
 .header__actions {
@@ -393,21 +476,26 @@
   .header__nav {
     grid-column: 2;
     grid-row: 1;
+    height: 100%;
   }
 }
 
 @media (min-width: 1201px) and (max-width: 1400px) {
+  .header__nav-links {
+    gap: 0.3rem;
+  }
+
   .header__link {
-    padding: 0.4rem 0.55rem;
-    font-size: 0.8rem;
+    padding: 0.4rem 0.45rem;
+    font-size: 0.84rem;
   }
 
   .header__logo-img {
-    max-width: min(215px, 25vw);
+    max-width: min(175px, 21vw);
   }
 }
 
-@media (min-width: 1025px) and (max-width: 1280px) {
+@media (min-width: 1025px) and (max-width: 1200px) {
   .header__link {
     padding: 0.45rem 0.6rem;
     font-size: 0.82rem;
@@ -420,17 +508,21 @@
 
 @media (min-width: 1281px) {
   .header__inner {
-    padding: 0 1.25rem;
+    padding: 0 0.75rem;
   }
 
-  .header__logo-img {
-    max-height: 64px;
-    max-width: min(275px, 24vw);
+  .header__nav-links {
+    gap: 0.45rem;
   }
 
   .header__link {
-    padding: 0.5rem 0.85rem;
+    padding: 0.45rem 0.6rem;
     font-size: 0.9rem;
+  }
+
+  .header__logo-img {
+    max-height: 54px;
+    max-width: min(200px, 21vw);
   }
 }
 

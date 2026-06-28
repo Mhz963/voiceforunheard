@@ -83,7 +83,7 @@ export default function AdminPortal() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  placeholder="admin@voiceforunheard.org"
+                  placeholder={parentPortalConfig.demoAdmin.email}
                 />
               </label>
               <label>
