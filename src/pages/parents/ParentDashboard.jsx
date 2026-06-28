@@ -591,6 +591,9 @@ function MeetingCard({ meeting, onCancel, onRefund, refundPolicyDays = 7 }) {
             {payment.currency === 'PKR' ? `Rs ${Number(payment.amount).toLocaleString()}` : `$${payment.amount}`}
           </span>
         )}
+        {meeting.isDemo && (
+          <span className="parent-dashboard__tag">{t('payments.demoSession')}</span>
+        )}
         {payment?.refundStatus === 'refunded' && (
           <span className="parent-dashboard__tag parent-dashboard__tag--refunded">
             {t('payments.refunded')}

@@ -86,6 +86,11 @@ export async function handleStripeCreateSession(req, res) {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       customer_email: parent.email,
+      payment_method_types: ['card'],
+      wallet_options: {
+        link: { display: 'never' },
+      },
+      billing_address_collection: 'auto',
       line_items: [
         {
           price_data: {

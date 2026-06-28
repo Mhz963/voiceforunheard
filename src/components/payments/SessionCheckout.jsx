@@ -17,16 +17,25 @@ function formatPrice(currency, config) {
   return `$${Number(config.sessionPriceUsd)}`
 }
 
+function pickDefaultCurrency(config) {
+  if (config.stripeEnabled) return 'USD'
+  if (config.jazzcashEnabled) return 'PKR'
+  return 'USD'
+}
+
 export default function SessionCheckout({ booking, parent, disabled, onError }) {
   const { t } = useLanguage()
-  const [currency, setCurrency] = useState('PKR')
   const [config, setConfig] = useState(null)
+  const [currency, setCurrency] = useState('USD')
   const [loading, setLoading] = useState(false)
   const [configError, setConfigError] = useState('')
 
   useEffect(() => {
     fetchPaymentConfig()
-      .then(setConfig)
+      .then((nextConfig) => {
+        setConfig(nextConfig)
+        setCurrency(pickDefaultCurrency(nextConfig))
+      })
       .catch(() => setConfigError(t('payments.configError')))
   }, [t])
 
@@ -40,10 +49,10 @@ export default function SessionCheckout({ booking, parent, disabled, onError }) 
 
   const provider = currency === 'PKR' ? 'jazzcash' : 'stripe'
   const providerEnabled = currency === 'PKR' ? config.jazzcashEnabled : config.stripeEnabled
+  const checkoutBlocked = disabled || loading || !providerEnabled
 
-  async function handlePay(e) {
-    e.preventDefault()
-    if (disabled || loading || !providerEnabled) return
+  async function handlePay() {
+    if (checkoutBlocked) return
 
     setLoading(true)
     onError?.('')
@@ -63,16 +72,25 @@ export default function SessionCheckout({ booking, parent, disabled, onError }) 
     try {
       if (provider === 'stripe') {
         const { url, orderId } = await startStripeCheckout({ booking, parent })
+        if (!url || !url.startsWith('https://')) {
+          throw new Error(t('payments.checkoutError'))
+        }
+
         savePendingPayment({
           ...pendingBase,
           orderId,
           amountUsd: config.sessionPriceUsd,
         })
-        window.location.href = url
+
+        window.location.assign(url)
         return
       }
 
       const { actionUrl, fields, orderId } = await startJazzCashCheckout({ booking, parent })
+      if (!actionUrl || !fields) {
+        throw new Error(t('payments.checkoutError'))
+      }
+
       savePendingPayment({
         ...pendingBase,
         orderId,
@@ -96,6 +114,7 @@ export default function SessionCheckout({ booking, parent, disabled, onError }) 
             value="PKR"
             checked={currency === 'PKR'}
             onChange={() => setCurrency('PKR')}
+            disabled={!config.jazzcashEnabled}
           />
           <span>{t('payments.pkr')}</span>
         </label>
@@ -106,6 +125,7 @@ export default function SessionCheckout({ booking, parent, disabled, onError }) 
             value="USD"
             checked={currency === 'USD'}
             onChange={() => setCurrency('USD')}
+            disabled={!config.stripeEnabled}
           />
           <span>{t('payments.usd')}</span>
         </label>
@@ -114,13 +134,22 @@ export default function SessionCheckout({ booking, parent, disabled, onError }) 
       <p className="session-checkout__price">{formatPrice(currency, config)}</p>
       <p className="session-checkout__provider">
         {currency === 'PKR' ? t('payments.payWithJazzCash') : t('payments.payWithStripe')}
-        {!providerEnabled && ` — ${t('payments.providerUnavailable')}`}
       </p>
+
+      {!providerEnabled && (
+        <div className="parent-portal__alert parent-portal__alert--error">
+          {currency === 'PKR' ? t('payments.jazzcashUnavailable') : t('payments.stripeUnavailable')}
+        </div>
+      )}
+
+      {providerEnabled && (
+        <p className="session-checkout__redirect-note">{t('payments.stripeRedirectNote')}</p>
+      )}
 
       <button
         type="button"
         className="btn btn--primary btn--block"
-        disabled={disabled || loading || !providerEnabled}
+        disabled={checkoutBlocked}
         onClick={handlePay}
       >
         {currency === 'PKR' ? <HiCreditCard /> : <HiCurrencyDollar />}

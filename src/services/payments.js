@@ -1,6 +1,10 @@
 const API = '/api/payments'
 
 async function parseJsonResponse(res) {
+  const contentType = res.headers.get('content-type') || ''
+  if (!contentType.includes('application/json')) {
+    throw new Error('Payment server returned an invalid response. Please refresh and try again.')
+  }
   const data = await res.json().catch(() => ({}))
   if (!res.ok) {
     throw new Error(data.error || data.message || 'Payment request failed')

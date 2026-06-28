@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { HiMenu, HiX, HiLogin } from 'react-icons/hi'
+import { HiMenu, HiLogin, HiUserAdd, HiX } from 'react-icons/hi'
 import { useLanguage } from '../../i18n/LanguageContext'
 import BrandLogo from '../ui/BrandLogo'
 import LanguageSwitcher from '../ui/LanguageSwitcher'
@@ -61,12 +61,20 @@ export default function Header() {
 
         <div className="header__desktop-actions">
           <LanguageSwitcher />
-          <Link to="/signin" className="header__cta header__cta--bar" onClick={() => setMenuOpen(false)}>
-            <span>{t('nav.signIn')}</span>
-            <span className="header__cta-icon">
-              <HiLogin aria-hidden="true" />
-            </span>
-          </Link>
+          <div className="header__auth-actions">
+            <Link to="/signin" className="header__cta header__cta--outline header__cta--bar" onClick={() => setMenuOpen(false)}>
+              <span>{t('nav.signIn')}</span>
+              <span className="header__cta-icon">
+                <HiLogin aria-hidden="true" />
+              </span>
+            </Link>
+            <Link to="/signup" className="header__cta header__cta--bar" onClick={() => setMenuOpen(false)}>
+              <span>{t('nav.signUp')}</span>
+              <span className="header__cta-icon">
+                <HiUserAdd aria-hidden="true" />
+              </span>
+            </Link>
+          </div>
         </div>
 
         <button
@@ -109,12 +117,20 @@ export default function Header() {
             </div>
             <LanguageSwitcher />
           </div>
-          <Link to="/signin" className="header__cta header__cta--drawer" onClick={() => setMenuOpen(false)}>
-            <span>{t('nav.signIn')}</span>
-            <span className="header__cta-icon">
-              <HiLogin aria-hidden="true" />
-            </span>
-          </Link>
+          <div className="header__drawer-auth">
+            <Link to="/signin" className="header__cta header__cta--outline header__cta--drawer" onClick={() => setMenuOpen(false)}>
+              <span>{t('nav.signIn')}</span>
+              <span className="header__cta-icon">
+                <HiLogin aria-hidden="true" />
+              </span>
+            </Link>
+            <Link to="/signup" className="header__cta header__cta--drawer" onClick={() => setMenuOpen(false)}>
+              <span>{t('nav.signUp')}</span>
+              <span className="header__cta-icon">
+                <HiUserAdd aria-hidden="true" />
+              </span>
+            </Link>
+          </div>
         </nav>
       </div>
     </header>

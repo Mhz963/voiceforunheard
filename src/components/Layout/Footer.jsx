@@ -38,6 +38,7 @@ export default function Footer() {
         <div className="footer__col">
           <h4>{t('footer.connect')}</h4>
           <Link to="/signin">{t('nav.signIn')}</Link>
+          <Link to="/signup">{t('nav.signUp')}</Link>
           <Link to="/contact">{t('footer.contactUs')}</Link>
           <a href="https://www.who.int/news-room/fact-sheets/detail/deafness-and-hearing-loss" target="_blank" rel="noopener noreferrer">
             {t('footer.whoData')}

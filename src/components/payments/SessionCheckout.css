@@ -46,6 +46,19 @@
   line-height: 1.5;
 }
 
+.session-checkout__redirect-note {
+  font-size: 0.875rem;
+  color: var(--color-primary, #2563eb);
+  margin: 0 0 1rem;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.session-checkout__currency label:has(input:disabled) {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .session-checkout__paying {
   opacity: 0.7;
   pointer-events: none;

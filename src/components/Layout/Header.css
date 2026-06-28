@@ -161,6 +161,38 @@
   color: #fff !important;
 }
 
+.header__cta--outline {
+  background: transparent;
+  color: var(--color-primary) !important;
+  border: 2px solid var(--color-primary);
+  box-shadow: none;
+}
+
+.header__cta--outline .header__cta-icon {
+  background: rgba(26, 77, 109, 0.1);
+  color: var(--color-primary);
+}
+
+.header__cta--outline:hover {
+  background: rgba(26, 77, 109, 0.06);
+  color: var(--color-primary) !important;
+  box-shadow: none;
+}
+
+.header__auth-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.header__drawer-auth {
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: var(--space-sm);
+}
+
 .header__cta-icon {
   display: flex;
   align-items: center;
@@ -311,6 +343,10 @@
 
   .header__cta--bar {
     display: none;
+  }
+
+  .header__drawer-auth {
+    display: flex;
   }
 
   .header__cta--drawer {

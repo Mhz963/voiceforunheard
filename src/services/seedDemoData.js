@@ -108,6 +108,7 @@ export function seedDemoData() {
 
     addMeeting({
       id: 'meeting_demo_001',
+      isDemo: true,
       parentId: parent.id,
       parentName: parent.name,
       childName: parent.childName,
@@ -124,6 +125,7 @@ export function seedDemoData() {
 
     addMeeting({
       id: 'meeting_demo_002',
+      isDemo: true,
       parentId: parent.id,
       parentName: parent.name,
       childName: parent.childName,

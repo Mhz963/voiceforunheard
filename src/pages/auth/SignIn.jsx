@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   HiEye,
   HiEyeOff,
@@ -15,6 +15,7 @@ import { useSuperAdminAuth } from '../../context/SuperAdminAuthContext'
 import { usePortalConfig } from '../../i18n/usePortalConfig'
 import { useLanguage } from '../../i18n/LanguageContext'
 import BrandLogo from '../../components/ui/BrandLogo'
+import AuthTabs from '../../components/auth/AuthTabs'
 import SpeakAloud from '../../components/voice/SpeakAloud'
 
 const ROLE_ICONS = {
@@ -128,6 +129,7 @@ export default function SignIn() {
           <span className="signin-hero__badge">{t('signIn.badge')}</span>
           <h1>{t('signIn.title')}</h1>
           <p>{t('signIn.subtitle')}</p>
+          <AuthTabs />
         </div>
       </section>
 
@@ -256,6 +258,15 @@ export default function SignIn() {
                   <strong>{t('signIn.demoCreds')}</strong> {roleConfig.email} / {roleConfig.password}
                 </p>
               </div>
+
+              {selectedRole === 'parent' && (
+                <p className="signin-panel__switch">
+                  {t('signIn.noAccount')}{' '}
+                  <Link to="/signup" onClick={closeModal}>
+                    {t('nav.signUp')}
+                  </Link>
+                </p>
+              )}
             </div>
           </div>
         </div>
