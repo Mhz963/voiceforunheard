@@ -103,7 +103,9 @@ export default function ParentDashboard() {
   const unreadGuidance = guidance.filter((g) => !g.read).length
 
   const upcomingMeetings = meetings.filter(
-    (m) => ['scheduled', 'confirmed'].includes(m.status) && new Date(`${m.date}T${m.time}`) >= new Date(),
+    (m) =>
+      ['pending_payment', 'scheduled', 'confirmed'].includes(m.status) &&
+      new Date(`${m.date}T${m.time}`) >= new Date(),
   )
 
   function refresh() {
@@ -512,16 +514,18 @@ function MeetingsTab({ parent, meetings, paymentNotice, onScheduled, onCancel, o
           parent={parent}
           disabled={!formValid}
           onError={setError}
+          onBooked={onScheduled}
         />
       </div>
 
       <div className="portal-page__list">
         <SpeakHeading as="h3">{t('parentPortal.yourMeetings')}</SpeakHeading>
-        {meetings.filter((m) => ['scheduled', 'confirmed'].includes(m.status)).length === 0 ? (
+        {meetings.filter((m) => ['pending_payment', 'scheduled', 'confirmed'].includes(m.status))
+          .length === 0 ? (
           <p className="portal-page__empty">{t('parentPortal.noMeetings')}</p>
         ) : (
           meetings
-            .filter((m) => ['scheduled', 'confirmed'].includes(m.status))
+            .filter((m) => ['pending_payment', 'scheduled', 'confirmed'].includes(m.status))
             .map((m) => (
               <MeetingCard
                 key={m.id}
@@ -586,6 +590,11 @@ function MeetingCard({ meeting, onCancel, onRefund, refundPolicyDays = 7 }) {
             {portalConfig.meetingStatuses.find((s) => s.id === 'confirmed')?.label}
           </span>
         )}
+        {meeting.status === 'pending_payment' && (
+          <span className="parent-dashboard__tag parent-dashboard__tag--pending">
+            {portalConfig.meetingStatuses.find((s) => s.id === 'pending_payment')?.label}
+          </span>
+        )}
         {payment && (
           <span className="parent-dashboard__tag">
             {payment.currency === 'PKR' ? `Rs ${Number(payment.amount).toLocaleString()}` : `$${payment.amount}`}
@@ -604,6 +613,9 @@ function MeetingCard({ meeting, onCancel, onRefund, refundPolicyDays = 7 }) {
         )}
       </div>
       <h4>Video Session — {meeting.childName}</h4>
+      {meeting.status === 'pending_payment' && (
+        <p className="parent-dashboard__educator-note">{t('payments.qrWaitingParent')}</p>
+      )}
       {meeting.agenda && <p>{meeting.agenda}</p>}
       {meeting.adminNote && (
         <p className="parent-dashboard__educator-note">
@@ -611,7 +623,7 @@ function MeetingCard({ meeting, onCancel, onRefund, refundPolicyDays = 7 }) {
         </p>
       )}
       <div className="parent-dashboard__meeting-actions">
-        {joinable && (
+        {joinable && meeting.status !== 'pending_payment' && (
           <a
             href={meeting.meetLink}
             target="_blank"
@@ -621,7 +633,7 @@ function MeetingCard({ meeting, onCancel, onRefund, refundPolicyDays = 7 }) {
             <HiVideoCamera /> {t('parentPortal.joinMeet')}
           </a>
         )}
-        {!joinable && !isPast && (
+        {!joinable && !isPast && meeting.status !== 'pending_payment' && (
           <span className="parent-dashboard__meet-hint">
             {t('parentPortal.joinHint')}
           </span>
@@ -631,7 +643,7 @@ function MeetingCard({ meeting, onCancel, onRefund, refundPolicyDays = 7 }) {
             <HiX /> {t('common.cancel')}
           </button>
         )}
-        {showRefund && onRefund && (
+        {showRefund && onRefund && meeting.status !== 'pending_payment' && (
           <button type="button" className="btn btn--ghost parent-dashboard__refund" onClick={onRefund}>
             {t('payments.requestRefund')}
           </button>

@@ -40,8 +40,27 @@ function createOrderId() {
   return `vfu_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
 }
 
+function getJazzCashManualConfig() {
+  const contactEmail = (
+    process.env.PAYMENT_CONTACT_EMAIL ||
+    process.env.CONTACT_EMAIL ||
+    'binteanayat@gmail.com'
+  ).trim()
+  const enabled =
+    process.env.JAZZCASH_MANUAL_ENABLED === 'true' ||
+    process.env.JAZZCASH_MANUAL_ENABLED === '1' ||
+    Boolean(contactEmail)
+
+  return {
+    enabled,
+    contactEmail,
+  }
+}
+
 export async function handlePaymentConfig(_req, res) {
   const prices = getSessionPricesFromEnv(process.env)
+  const jazzcashHosted = isJazzCashConfigured()
+  const jazzcashManual = getJazzCashManualConfig()
   res.statusCode = 200
   res.setHeader('Content-Type', 'application/json')
   res.end(
@@ -51,7 +70,14 @@ export async function handlePaymentConfig(_req, res) {
       refundPolicyDays: 7,
       stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || '',
       stripeEnabled: isStripeConfigured(),
-      jazzcashEnabled: isJazzCashConfigured(),
+      jazzcashEnabled: jazzcashHosted || jazzcashManual.enabled,
+      jazzcashHostedEnabled: jazzcashHosted,
+      jazzcashManualEnabled: jazzcashManual.enabled && !jazzcashHosted,
+      jazzcashManual: jazzcashManual.enabled
+        ? {
+            contactEmail: jazzcashManual.contactEmail,
+          }
+        : null,
     }),
   )
 }

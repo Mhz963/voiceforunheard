@@ -22,6 +22,7 @@ import { SpeakHeading } from '../../components/voice/SpeakAloud'
 import {
   addAccessCode,
   approveParent,
+  confirmJazzCashManualPayment,
   deleteParent,
   getAccessCodes,
   getActivityLog,
@@ -337,6 +338,17 @@ function MeetingCard({ meeting, onUpdate }) {
   const { t } = useLanguage()
   const portalConfig = usePortalConfig()
   const [note, setNote] = useState(meeting.adminNote || '')
+  const [txnRef, setTxnRef] = useState(meeting.payment?.parentTxnRef || '')
+  const isPendingPayment = meeting.status === 'pending_payment'
+  const payment = meeting.payment
+
+  function handleConfirmPayment() {
+    confirmJazzCashManualPayment(meeting.id, { txnRef: txnRef.trim(), adminNote: note })
+    onUpdate()
+  }
+
+  const isJazzCashManual =
+    payment?.provider === 'jazzcash_manual' || payment?.provider === 'jazzcash_qr'
 
   return (
     <article className="admin-card interactive-card">
@@ -344,10 +356,43 @@ function MeetingCard({ meeting, onUpdate }) {
         <span className="parent-dashboard__tag">{formatDate(meeting.date)}</span>
         <span className="parent-dashboard__tag">{formatTime(meeting.time)}</span>
         <span className="admin-badge">{labelFor(portalConfig.meetingStatuses, meeting.status)}</span>
+        {isJazzCashManual && (
+          <span className="parent-dashboard__tag">JazzCash</span>
+        )}
       </div>
       <h4>{meeting.parentName} — {meeting.childName}</h4>
       {meeting.agenda && <p>{meeting.agenda}</p>}
+      {isPendingPayment && (
+        <div className="admin-card__payment-pending">
+          <p>
+            <strong>{t('adminPortal.pendingManualPayment')}</strong>
+            {' · '}
+            {payment?.currency === 'PKR'
+              ? `Rs ${Number(payment.amount).toLocaleString()}`
+              : payment?.amount}
+          </p>
+          {payment?.parentTxnRef && (
+            <p className="admin-card__detail">
+              {t('adminPortal.parentTxnRef')}: {payment.parentTxnRef}
+            </p>
+          )}
+          <label className="admin-card__note">
+            {t('adminPortal.txnRefLabel')}
+            <input
+              type="text"
+              value={txnRef}
+              onChange={(e) => setTxnRef(e.target.value)}
+              placeholder={t('adminPortal.txnRefPlaceholder')}
+            />
+          </label>
+        </div>
+      )}
       <div className="admin-card__actions">
+        {isPendingPayment && (
+          <button type="button" className="btn btn--primary btn--sm" onClick={handleConfirmPayment}>
+            {t('adminPortal.confirmPayment')}
+          </button>
+        )}
         {meeting.status === 'scheduled' && (
           <button
             type="button"

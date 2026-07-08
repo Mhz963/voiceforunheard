@@ -62,6 +62,7 @@ export default function AdminDashboard() {
 
   const pendingParents = parents.filter((p) => !p.approved)
   const pendingTuition = tuitionRequests.filter((r) => r.status === 'pending')
+  const pendingPayments = meetings.filter((m) => m.status === 'pending_payment')
   const upcomingMeetings = meetings.filter(
     (m) => m.status !== 'cancelled' && m.status !== 'completed' && new Date(`${m.date}T${m.time}`) >= new Date(),
   )
@@ -105,7 +106,7 @@ export default function AdminDashboard() {
     { id: 'requests', label: t('adminPortal.requests'), icon: HiUserAdd, badge: pendingParents.length },
     { id: 'parents', label: t('adminPortal.parents'), icon: HiUserGroup },
     { id: 'concerns', label: t('adminPortal.concerns'), icon: HiClipboardList, badge: concerns.filter((c) => c.status === 'submitted').length },
-    { id: 'meetings', label: t('adminPortal.meetings'), icon: HiCalendar },
+    { id: 'meetings', label: t('adminPortal.meetings'), icon: HiCalendar, badge: pendingPayments.length || undefined },
   ]
 
   return (
@@ -140,6 +141,12 @@ export default function AdminDashboard() {
               <strong>{upcomingMeetings.length}</strong>
               <span>{t('adminPortal.upcomingMeetings')}</span>
             </button>
+            {pendingPayments.length > 0 && (
+              <button type="button" className="portal-stat portal-stat--clickable" onClick={() => setTab('meetings')}>
+                <strong>{pendingPayments.length}</strong>
+                <span>{t('adminPortal.pendingPayments')}</span>
+              </button>
+            )}
             <button type="button" className="portal-stat portal-stat--clickable" onClick={() => setTab('academics')}>
               <strong>{pendingTuition.length}</strong>
               <span>{t('adminPortal.homeworkRequests')}</span>
@@ -317,6 +324,10 @@ function MeetingAdminCard({ meeting, onUpdate }) {
   const { t } = useLanguage()
   const portalConfig = usePortalConfig()
   const [note, setNote] = useState(meeting.adminNote || '')
+  const isPendingPayment = meeting.status === 'pending_payment'
+  const payment = meeting.payment
+  const isJazzCashManual =
+    payment?.provider === 'jazzcash_manual' || payment?.provider === 'jazzcash_qr'
 
   return (
     <article className="admin-card interactive-card">
@@ -324,10 +335,28 @@ function MeetingAdminCard({ meeting, onUpdate }) {
         <span className="parent-dashboard__tag">{formatDate(meeting.date)}</span>
         <span className="parent-dashboard__tag">{formatTime(meeting.time)}</span>
         <span className="admin-badge">{labelFor(portalConfig.meetingStatuses, meeting.status)}</span>
+        {isJazzCashManual && (
+          <span className="parent-dashboard__tag">JazzCash</span>
+        )}
       </div>
       <h4>{meeting.parentName} — {meeting.childName}</h4>
       <p className="admin-card__detail">{meeting.email}</p>
       {meeting.agenda && <p>{meeting.agenda}</p>}
+
+      {isPendingPayment && (
+        <div className="admin-card__payment-pending">
+          <p>
+            <strong>{t('adminPortal.pendingManualPaymentEducator')}</strong>
+          </p>
+          <p className="admin-card__detail">
+            {t('adminPortal.pendingQrAmount')}:{' '}
+            {payment?.currency === 'PKR'
+              ? `Rs ${Number(payment.amount).toLocaleString()}`
+              : payment?.amount}
+          </p>
+        </div>
+      )}
+
       <label className="admin-card__note">
         {t('adminPortal.sessionNote')}
         <textarea rows={2} value={note} onChange={(e) => setNote(e.target.value)} />
@@ -342,7 +371,7 @@ function MeetingAdminCard({ meeting, onUpdate }) {
             <HiCheck /> {t('adminPortal.confirm')}
           </button>
         )}
-        {meeting.status !== 'completed' && meeting.status !== 'cancelled' && (
+        {meeting.status !== 'completed' && meeting.status !== 'cancelled' && meeting.status !== 'pending_payment' && (
           <>
             <a href={meeting.meetLink} target="_blank" rel="noopener noreferrer" className="btn btn--outline btn--sm">
               <HiCalendar /> {t('adminPortal.openMeet')}
@@ -354,14 +383,16 @@ function MeetingAdminCard({ meeting, onUpdate }) {
             >
               {t('adminPortal.markCompleted')}
             </button>
-            <button
-              type="button"
-              className="btn btn--ghost btn--sm"
-              onClick={() => { updateMeetingStatus(meeting.id, 'cancelled', null, note); onUpdate() }}
-            >
-              <HiX /> {t('common.cancel')}
-            </button>
           </>
+        )}
+        {meeting.status !== 'completed' && meeting.status !== 'cancelled' && (
+          <button
+            type="button"
+            className="btn btn--ghost btn--sm"
+            onClick={() => { updateMeetingStatus(meeting.id, 'cancelled', null, note); onUpdate() }}
+          >
+            <HiX /> {t('common.cancel')}
+          </button>
         )}
       </div>
     </article>

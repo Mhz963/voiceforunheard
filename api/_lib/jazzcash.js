@@ -19,7 +19,7 @@ export function getJazzCashConfig() {
 
 export function isJazzCashConfigured() {
   const cfg = getJazzCashConfig()
-  return !!(cfg.merchantId && cfg.password && cfg.integritySalt && cfg.returnUrl)
+  return !!(cfg.merchantId && cfg.password && cfg.integritySalt)
 }
 
 function jazzCashDateTime() {

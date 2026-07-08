@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { HiMail, HiPhone, HiLocationMarker, HiCheckCircle, HiExternalLink } from 'react-icons/hi'
+import { HiMail, HiLocationMarker, HiCheckCircle, HiExternalLink } from 'react-icons/hi'
 import SectionHeader from '../components/ui/SectionHeader'
 import Reveal from '../components/ui/Reveal'
 import { VoiceHelpBanner, VoiceLabel } from '../components/voice/VoiceInput'
@@ -59,13 +59,6 @@ export default function Contact() {
                   <a href={`mailto:${siteInfo.contactEmail}`} className="contact-list__link">
                     {siteInfo.contactEmail}
                   </a>
-                </div>
-              </li>
-              <li>
-                <HiPhone />
-                <div>
-                  <strong>{t('pages.contact.phone')}</strong>
-                  <span>+1 (800) 555 0199</span>
                 </div>
               </li>
               <li>

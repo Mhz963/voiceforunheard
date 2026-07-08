@@ -156,6 +156,42 @@ export function findMeetingByOrderId(orderId) {
   return getAllMeetings().find((m) => m.payment?.orderId === orderId) || null
 }
 
+export function getPendingPaymentMeetings() {
+  return getAllMeetings().filter((m) => {
+    if (m.status !== 'pending_payment') return false
+    const provider = m.payment?.provider
+    return provider === 'jazzcash_manual' || provider === 'jazzcash_qr'
+  })
+}
+
+export function confirmJazzCashManualPayment(meetingId, { txnRef = '', adminNote = '' } = {}) {
+  const meetings = readList(KEYS.meetings)
+  const index = meetings.findIndex((m) => m.id === meetingId)
+  if (index < 0) return null
+
+  const meeting = meetings[index]
+  if (meeting.status !== 'pending_payment') return meeting
+
+  meetings[index] = {
+    ...meeting,
+    status: 'scheduled',
+    adminNote: adminNote || meeting.adminNote || '',
+    updatedAt: new Date().toISOString(),
+    payment: {
+      ...(meeting.payment || {}),
+      paidAt: new Date().toISOString(),
+      providerPaymentId: txnRef || meeting.payment?.providerPaymentId || meeting.payment?.orderId,
+      paymentConfirmedByAdmin: true,
+      awaitingAdminConfirm: false,
+    },
+  }
+  writeList(KEYS.meetings, meetings)
+  return meetings[index]
+}
+
+/** @deprecated use confirmJazzCashManualPayment */
+export const confirmJazzCashQrPayment = confirmJazzCashManualPayment
+
 export function canRequestRefund(meeting, refundPolicyDays = 7) {
   const payment = meeting?.payment
   if (!payment?.paidAt || payment.refunded || payment.refundStatus === 'refunded') {

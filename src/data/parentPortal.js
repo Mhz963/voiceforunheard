@@ -55,6 +55,7 @@ export const portalConfig = {
   ],
 
   meetingStatuses: [
+    { id: 'pending_payment', label: 'Awaiting payment confirmation' },
     { id: 'scheduled', label: 'Scheduled' },
     { id: 'confirmed', label: 'Confirmed' },
     { id: 'completed', label: 'Completed' },
