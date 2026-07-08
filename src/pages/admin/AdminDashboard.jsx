@@ -11,6 +11,7 @@ import {
   HiX,
 } from 'react-icons/hi'
 import { useAdminAuth } from '../../context/AdminAuthContext'
+import { useToast } from '../../context/ToastContext'
 import { useLanguage } from '../../i18n/LanguageContext'
 import { usePortalConfig } from '../../i18n/usePortalConfig'
 import PortalLayout from '../../components/portal/PortalLayout'
@@ -51,6 +52,7 @@ export default function AdminDashboard() {
   const { t } = useLanguage()
   const portalConfig = usePortalConfig()
   const { admin, logout } = useAdminAuth()
+  const toast = useToast()
   const navigate = useNavigate()
   const [tab, setTab] = useState('overview')
   const [refreshKey, setRefreshKey] = useState(0)
@@ -78,12 +80,14 @@ export default function AdminDashboard() {
 
   function handleApprove(parentId) {
     approveParent(parentId)
+    toast.successT('toasts.parentApprovedTitle', 'toasts.parentApprovedMessage')
     refresh()
   }
 
   function handleReject(parentId) {
     if (window.confirm('Remove this access request?')) {
       deleteParent(parentId)
+      toast.successT('toasts.parentRejectedTitle', 'toasts.parentRejectedMessage')
       refresh()
     }
   }
@@ -279,6 +283,7 @@ function ParentRequestCard({ parent, onApprove, onReject }) {
 
 function ConcernAdminCard({ concern, onUpdate }) {
   const { t } = useLanguage()
+  const toast = useToast()
   const portalConfig = usePortalConfig()
   const [note, setNote] = useState(concern.adminNote || '')
 
@@ -304,14 +309,22 @@ function ConcernAdminCard({ concern, onUpdate }) {
         <button
           type="button"
           className="btn btn--outline btn--sm"
-          onClick={() => { updateConcernStatus(concern.id, 'reviewed', note); onUpdate() }}
+          onClick={() => {
+            updateConcernStatus(concern.id, 'reviewed', note)
+            toast.successT('toasts.concernUpdatedTitle', 'toasts.concernReviewedMessage')
+            onUpdate()
+          }}
         >
           {t('adminPortal.markUnderReview')}
         </button>
         <button
           type="button"
           className="btn btn--primary btn--sm"
-          onClick={() => { updateConcernStatus(concern.id, 'resolved', note); onUpdate() }}
+          onClick={() => {
+            updateConcernStatus(concern.id, 'resolved', note)
+            toast.successT('toasts.concernUpdatedTitle', 'toasts.concernResolvedMessage')
+            onUpdate()
+          }}
         >
           <HiCheck /> {t('adminPortal.markResolved')}
         </button>
@@ -322,6 +335,7 @@ function ConcernAdminCard({ concern, onUpdate }) {
 
 function MeetingAdminCard({ meeting, onUpdate }) {
   const { t } = useLanguage()
+  const toast = useToast()
   const portalConfig = usePortalConfig()
   const [note, setNote] = useState(meeting.adminNote || '')
   const isPendingPayment = meeting.status === 'pending_payment'
@@ -354,6 +368,22 @@ function MeetingAdminCard({ meeting, onUpdate }) {
               ? `Rs ${Number(payment.amount).toLocaleString()}`
               : payment?.amount}
           </p>
+          {payment?.paymentReceiptImage && (
+            <div className="admin-card__receipt">
+              <p className="admin-card__detail">{t('adminPortal.paymentReceipt')}</p>
+              <a
+                href={payment.paymentReceiptImage}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="admin-card__receipt-link"
+              >
+                <img
+                  src={payment.paymentReceiptImage}
+                  alt={payment.paymentReceiptName || t('adminPortal.paymentReceipt')}
+                />
+              </a>
+            </div>
+          )}
         </div>
       )}
 
@@ -366,7 +396,11 @@ function MeetingAdminCard({ meeting, onUpdate }) {
           <button
             type="button"
             className="btn btn--primary btn--sm"
-            onClick={() => { updateMeetingStatus(meeting.id, 'confirmed', null, note); onUpdate() }}
+            onClick={() => {
+              updateMeetingStatus(meeting.id, 'confirmed', null, note)
+              toast.successT('toasts.sessionConfirmedTitle', 'toasts.sessionConfirmedMessage')
+              onUpdate()
+            }}
           >
             <HiCheck /> {t('adminPortal.confirm')}
           </button>
@@ -379,7 +413,11 @@ function MeetingAdminCard({ meeting, onUpdate }) {
             <button
               type="button"
               className="btn btn--outline btn--sm"
-              onClick={() => { updateMeetingStatus(meeting.id, 'completed', null, note); onUpdate() }}
+              onClick={() => {
+                updateMeetingStatus(meeting.id, 'completed', null, note)
+                toast.successT('toasts.sessionCompletedTitle', 'toasts.sessionCompletedMessage')
+                onUpdate()
+              }}
             >
               {t('adminPortal.markCompleted')}
             </button>
@@ -389,7 +427,11 @@ function MeetingAdminCard({ meeting, onUpdate }) {
           <button
             type="button"
             className="btn btn--ghost btn--sm"
-            onClick={() => { updateMeetingStatus(meeting.id, 'cancelled', null, note); onUpdate() }}
+            onClick={() => {
+              updateMeetingStatus(meeting.id, 'cancelled', null, note)
+              toast.successT('toasts.meetingCancelledTitle', 'toasts.meetingCancelledMessage')
+              onUpdate()
+            }}
           >
             <HiX /> {t('common.cancel')}
           </button>

@@ -29,6 +29,7 @@ import {
   updateMeetingPayment,
 } from '../../services/parentStorage'
 import { requestRefund } from '../../services/payments'
+import { useToast } from '../../context/ToastContext'
 import SessionCheckout from '../../components/payments/SessionCheckout'
 import '../../components/payments/SessionCheckout.css'
 
@@ -273,6 +274,7 @@ function OverviewTab({ concerns, upcomingMeetings, lessons, unreadGuidance, onGo
 
 function ConcernsTab({ parent, onSubmitted, concerns }) {
   const { t } = useLanguage()
+  const toast = useToast()
   const portalConfig = usePortalConfig()
   const [form, setForm] = useState({
     category: portalConfig.concernCategories[0].id,
@@ -305,6 +307,7 @@ function ConcernsTab({ parent, onSubmitted, concerns }) {
       urgency: 'medium',
     })
     onSubmitted()
+    toast.successT('toasts.concernSubmittedTitle', 'toasts.concernSubmittedMessage')
     setTimeout(() => setSubmitted(false), 4000)
   }
 
@@ -386,6 +389,7 @@ function ConcernsTab({ parent, onSubmitted, concerns }) {
 
 function MeetingsTab({ parent, meetings, paymentNotice, onScheduled, onCancel, onRefund }) {
   const { t } = useLanguage()
+  const toast = useToast()
   const portalConfig = usePortalConfig()
   const availableDates = useMemo(() => getAvailableDates(portalConfig), [portalConfig])
   const [form, setForm] = useState({
@@ -412,7 +416,12 @@ function MeetingsTab({ parent, meetings, paymentNotice, onScheduled, onCancel, o
 
   function handleCancel(id) {
     cancelMeeting(id, parent.id)
+    toast.successT('toasts.meetingCancelledTitle', 'toasts.meetingCancelledMessage')
     onCancel()
+  }
+
+  function handleBooked() {
+    onScheduled()
   }
 
   async function handleRefund(meeting) {
@@ -437,6 +446,7 @@ function MeetingsTab({ parent, meetings, paymentNotice, onScheduled, onCancel, o
         parent.id,
       )
       onRefund()
+      toast.successT('toasts.refundRequestedTitle', 'toasts.refundRequestedMessage')
     } catch (err) {
       if (meeting.payment.provider === 'jazzcash') {
         updateMeetingPayment(
@@ -445,9 +455,11 @@ function MeetingsTab({ parent, meetings, paymentNotice, onScheduled, onCancel, o
           parent.id,
         )
         onRefund()
+        toast.successT('toasts.refundRequestedTitle', 'toasts.refundRequestedMessage')
         window.alert(t('payments.jazzcashRefundNote'))
         return
       }
+      toast.errorT('toasts.refundFailedTitle', 'toasts.errorMessage')
       window.alert(err.message || t('payments.refundFailed'))
     }
   }
@@ -512,9 +524,9 @@ function MeetingsTab({ parent, meetings, paymentNotice, onScheduled, onCancel, o
             agenda: form.agenda.trim(),
           }}
           parent={parent}
-          disabled={!formValid}
+          formReady={formValid}
           onError={setError}
-          onBooked={onScheduled}
+          onBooked={handleBooked}
         />
       </div>
 

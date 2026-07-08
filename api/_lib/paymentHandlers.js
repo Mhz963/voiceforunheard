@@ -41,19 +41,15 @@ function createOrderId() {
 }
 
 function getJazzCashManualConfig() {
-  const contactEmail = (
-    process.env.PAYMENT_CONTACT_EMAIL ||
-    process.env.CONTACT_EMAIL ||
-    'binteanayat@gmail.com'
-  ).trim()
+  const merchantAccount = (process.env.JAZZCASH_MERCHANT_ACCOUNT || '').trim()
   const enabled =
     process.env.JAZZCASH_MANUAL_ENABLED === 'true' ||
     process.env.JAZZCASH_MANUAL_ENABLED === '1' ||
-    Boolean(contactEmail)
+    Boolean(merchantAccount)
 
   return {
     enabled,
-    contactEmail,
+    merchantAccount,
   }
 }
 
@@ -75,7 +71,7 @@ export async function handlePaymentConfig(_req, res) {
       jazzcashManualEnabled: jazzcashManual.enabled && !jazzcashHosted,
       jazzcashManual: jazzcashManual.enabled
         ? {
-            contactEmail: jazzcashManual.contactEmail,
+            merchantAccount: jazzcashManual.merchantAccount,
           }
         : null,
     }),

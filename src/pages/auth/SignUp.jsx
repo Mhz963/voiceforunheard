@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useParentAuth } from '../../context/ParentAuthContext'
 import { useLanguage } from '../../i18n/LanguageContext'
+import { useToast } from '../../context/ToastContext'
 import BrandLogo from '../../components/ui/BrandLogo'
 import AuthTabs from '../../components/auth/AuthTabs'
 import { VoiceHelpBanner, VoiceLabel } from '../../components/voice/VoiceInput'
@@ -9,6 +10,7 @@ import { appendSpeechText } from '../../hooks/useSpeechRecognition'
 
 export default function SignUp() {
   const { t } = useLanguage()
+  const toast = useToast()
   const { register, isAuthenticated } = useParentAuth()
   const navigate = useNavigate()
   const [form, setForm] = useState({
@@ -51,12 +53,15 @@ export default function SignUp() {
     setLoading(true)
     try {
       register(form)
+      toast.successT('toasts.accountCreatedTitle', 'toasts.accountCreatedMessage')
       navigate('/portal/parent')
     } catch (err) {
       if (err.message.includes('Registration saved') || err.message.includes('review')) {
         setSuccess(err.message)
+        toast.successT('toasts.accountCreatedTitle', 'toasts.accountCreatedMessage')
       } else {
         setError(err.message)
+        toast.errorT('toasts.errorTitle', 'toasts.errorMessage')
       }
     } finally {
       setLoading(false)

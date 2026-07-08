@@ -14,6 +14,7 @@ import { useAdminAuth } from '../../context/AdminAuthContext'
 import { useSuperAdminAuth } from '../../context/SuperAdminAuthContext'
 import { usePortalConfig } from '../../i18n/usePortalConfig'
 import { useLanguage } from '../../i18n/LanguageContext'
+import { useToast } from '../../context/ToastContext'
 import BrandLogo from '../../components/ui/BrandLogo'
 import AuthTabs from '../../components/auth/AuthTabs'
 import SpeakAloud from '../../components/voice/SpeakAloud'
@@ -28,6 +29,7 @@ const ROLE_KEYS = ['parent', 'admin', 'superadmin']
 
 export default function SignIn() {
   const { t } = useLanguage()
+  const toast = useToast()
   const portalConfig = usePortalConfig()
   const navigate = useNavigate()
   const parentAuth = useParentAuth()
@@ -104,16 +106,20 @@ export default function SignIn() {
     try {
       if (selectedRole === 'parent') {
         await parentAuth.login(email, password)
+        toast.successT('toasts.signedInTitle', 'toasts.signedInMessage')
         navigate('/portal/parent')
       } else if (selectedRole === 'admin') {
         await adminAuth.login(email, password)
+        toast.successT('toasts.signedInTitle', 'toasts.signedInMessage')
         navigate('/portal/admin')
       } else {
         await superAuth.login(email, password)
+        toast.successT('toasts.signedInTitle', 'toasts.signedInMessage')
         navigate('/portal/superadmin')
       }
     } catch (err) {
       setError(err.message || 'Sign in failed. Please try again.')
+      toast.errorT('toasts.errorTitle', 'toasts.errorMessage')
       setShake(true)
       setTimeout(() => setShake(false), 500)
     } finally {

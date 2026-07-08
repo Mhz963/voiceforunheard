@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { HiCheck, HiPlus } from 'react-icons/hi'
 import { useLanguage } from '../../i18n/LanguageContext'
+import { useToast } from '../../context/ToastContext'
 import { usePortalConfig } from '../../i18n/usePortalConfig'
 import {
   addLessonUpdate,
@@ -85,6 +86,7 @@ export default function AdminAcademics({ admin, refreshKey, onRefresh }) {
 
 function PostLessonForm({ parents, admin, portalConfig, onPosted }) {
   const { t } = useLanguage()
+  const toast = useToast()
   const today = new Date().toISOString().slice(0, 10)
   const [form, setForm] = useState({
     audience: 'parent',
@@ -137,6 +139,7 @@ function PostLessonForm({ parents, admin, portalConfig, onPosted }) {
 
     setForm((prev) => ({ ...prev, topics: '', summary: '', homework: '' }))
     setSuccess(true)
+    toast.successT('toasts.lessonPostedTitle', 'toasts.lessonPostedMessage')
     onPosted()
     setTimeout(() => setSuccess(false), 4000)
   }
@@ -246,6 +249,7 @@ function PostLessonForm({ parents, admin, portalConfig, onPosted }) {
 
 function PostGuidanceForm({ parents, admin, portalConfig, onPosted }) {
   const { t } = useLanguage()
+  const toast = useToast()
   const [form, setForm] = useState({
     parentId: parents[0]?.id || '',
     title: '',
@@ -281,6 +285,7 @@ function PostGuidanceForm({ parents, admin, portalConfig, onPosted }) {
 
     setForm((prev) => ({ ...prev, title: '', message: '', tips: '' }))
     setSuccess(true)
+    toast.successT('toasts.guidancePostedTitle', 'toasts.guidancePostedMessage')
     onPosted()
     setTimeout(() => setSuccess(false), 4000)
   }
@@ -357,6 +362,7 @@ function PostGuidanceForm({ parents, admin, portalConfig, onPosted }) {
 
 function TuitionManageList({ requests, portalConfig, onUpdate }) {
   const { t } = useLanguage()
+  const toast = useToast()
   const [notes, setNotes] = useState({})
   const [schedules, setSchedules] = useState({})
 
@@ -410,6 +416,7 @@ function TuitionManageList({ requests, portalConfig, onUpdate }) {
                       offerNote: notes[r.id] || 'Support has been arranged.',
                       offerSchedule: schedules[r.id] || '',
                     })
+                    toast.successT('toasts.tuitionUpdatedTitle', 'toasts.tuitionApprovedMessage')
                     onUpdate()
                   }}
                 >
@@ -420,6 +427,7 @@ function TuitionManageList({ requests, portalConfig, onUpdate }) {
                   className="btn btn--ghost btn--sm"
                   onClick={() => {
                     updateTuitionRequest(r.id, { status: 'declined', offerNote: notes[r.id] || '' })
+                    toast.successT('toasts.savedTitle', 'toasts.savedMessage')
                     onUpdate()
                   }}
                 >
@@ -444,6 +452,7 @@ function TuitionManageList({ requests, portalConfig, onUpdate }) {
                 className="btn btn--outline btn--sm"
                 onClick={() => {
                   updateTuitionRequest(r.id, { status: 'scheduled' })
+                  toast.successT('toasts.tuitionUpdatedTitle', 'toasts.tuitionApprovedMessage')
                   onUpdate()
                 }}
               >
@@ -454,6 +463,7 @@ function TuitionManageList({ requests, portalConfig, onUpdate }) {
                 className="btn btn--primary btn--sm"
                 onClick={() => {
                   updateTuitionRequest(r.id, { status: 'completed' })
+                  toast.successT('toasts.tuitionUpdatedTitle', 'toasts.tuitionCompletedMessage')
                   onUpdate()
                 }}
               >

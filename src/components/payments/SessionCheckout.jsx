@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react'
-import { HiCash, HiCurrencyDollar, HiDuplicate, HiMail } from 'react-icons/hi'
+import { useEffect, useRef, useState } from 'react'
+import { HiCash, HiCurrencyDollar, HiDuplicate, HiPhotograph } from 'react-icons/hi'
 import { useLanguage } from '../../i18n/LanguageContext'
+import { useToast } from '../../context/ToastContext'
 import { usePortalConfig } from '../../i18n/usePortalConfig'
 import {
   fetchPaymentConfig,
   startStripeCheckout,
 } from '../../services/payments'
 import { addMeeting, savePendingPayment } from '../../services/parentStorage'
+import { compressImageFile } from '../../utils/compressImage'
 import './SessionCheckout.css'
 
 function createId(prefix) {
@@ -38,9 +40,11 @@ function copyText(value) {
   return Promise.reject(new Error('Clipboard unavailable'))
 }
 
-export default function SessionCheckout({ booking, parent, disabled, onError, onBooked }) {
+export default function SessionCheckout({ booking, parent, formReady, onError, onBooked }) {
   const { t } = useLanguage()
+  const toast = useToast()
   const portalConfig = usePortalConfig()
+  const fileInputRef = useRef(null)
   const [config, setConfig] = useState(null)
   const [currency, setCurrency] = useState('USD')
   const [loading, setLoading] = useState(false)
@@ -48,6 +52,8 @@ export default function SessionCheckout({ booking, parent, disabled, onError, on
   const [manualPhase, setManualPhase] = useState(null)
   const [txnRef, setTxnRef] = useState('')
   const [copyMsg, setCopyMsg] = useState('')
+  const [receiptPreview, setReceiptPreview] = useState('')
+  const [receiptName, setReceiptName] = useState('')
 
   useEffect(() => {
     fetchPaymentConfig()
@@ -68,12 +74,15 @@ export default function SessionCheckout({ booking, parent, disabled, onError, on
 
   const useManualPkr = currency === 'PKR' && config.jazzcashManualEnabled && config.jazzcashManual
   const providerEnabled = currency === 'PKR' ? config.jazzcashEnabled : config.stripeEnabled
-  const checkoutBlocked = disabled || loading || !providerEnabled
+  const canOpenManual = providerEnabled && useManualPkr && !loading
+  const canSubmitManual =
+    formReady && Boolean(receiptPreview) && manualPhase === 'pay' && !loading
 
   async function handleCopy(value) {
     try {
       await copyText(value)
       setCopyMsg(t('payments.copied'))
+      toast.successT('toasts.copiedTitle', 'toasts.copiedMessage')
       window.setTimeout(() => setCopyMsg(''), 2000)
     } catch {
       setCopyMsg('')
@@ -81,14 +90,47 @@ export default function SessionCheckout({ booking, parent, disabled, onError, on
   }
 
   function handleStartManual() {
-    if (checkoutBlocked) return
+    if (!canOpenManual) return
     onError?.('')
     setManualPhase('pay')
     setTxnRef('')
+    setReceiptPreview('')
+    setReceiptName('')
+    if (fileInputRef.current) fileInputRef.current.value = ''
+    toast.infoT('toasts.paymentOptionsTitle', 'toasts.paymentOptionsMessage')
+  }
+
+  async function handleReceiptChange(event) {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    onError?.('')
+    setLoading(true)
+    try {
+      const dataUrl = await compressImageFile(file)
+      setReceiptPreview(dataUrl)
+      setReceiptName(file.name)
+      toast.successT('toasts.savedTitle', 'toasts.savedMessage')
+    } catch (err) {
+      setReceiptPreview('')
+      setReceiptName('')
+      onError?.(err.message || t('payments.receiptUploadError'))
+    } finally {
+      setLoading(false)
+    }
   }
 
   function handleConfirmPaid() {
-    if (checkoutBlocked || manualPhase !== 'pay') return
+    if (!canSubmitManual) {
+      if (!formReady) {
+        onError?.(t('payments.completeBookingFirst'))
+        toast.warningT('toasts.completeFormTitle', 'toasts.completeFormMessage')
+      } else if (!receiptPreview) {
+        onError?.(t('payments.receiptRequired'))
+        toast.warningT('toasts.receiptRequiredTitle', 'toasts.receiptRequiredMessage')
+      }
+      return
+    }
 
     setLoading(true)
     onError?.('')
@@ -114,10 +156,13 @@ export default function SessionCheckout({ booking, parent, disabled, onError, on
           amount: config.sessionPricePkr,
           paidAt: null,
           parentTxnRef: txnRef.trim() || '',
+          paymentReceiptImage: receiptPreview,
+          paymentReceiptName: receiptName,
           awaitingAdminConfirm: true,
         },
       })
       setManualPhase('submitted')
+      toast.successT('toasts.receiptSubmittedTitle', 'toasts.receiptSubmittedMessage')
       onBooked?.()
     } catch (err) {
       onError?.(err.message || t('payments.checkoutError'))
@@ -127,7 +172,13 @@ export default function SessionCheckout({ booking, parent, disabled, onError, on
   }
 
   async function handleStripePay() {
-    if (checkoutBlocked) return
+    if (!formReady || loading || !config.stripeEnabled) {
+      if (!formReady) {
+        onError?.(t('payments.completeBookingFirst'))
+        toast.warningT('toasts.completeFormTitle', 'toasts.completeFormMessage')
+      }
+      return
+    }
 
     setLoading(true)
     onError?.('')
@@ -177,23 +228,41 @@ export default function SessionCheckout({ booking, parent, disabled, onError, on
         <p className="session-checkout__price">{formatPrice('PKR', config)}</p>
         <p className="session-checkout__provider">{t('payments.manualInstructions')}</p>
 
-        <div className="session-checkout__account-box">
-          <p className="session-checkout__pay-at">{t('payments.manualPayAt')}</p>
-          <div className="session-checkout__copy-row">
-            <a href={`mailto:${manual.contactEmail}`} className="session-checkout__contact-email">
-              <HiMail aria-hidden="true" />
-              {manual.contactEmail}
-            </a>
-            <button
-              type="button"
-              className="btn btn--ghost btn--sm"
-              onClick={() => handleCopy(manual.contactEmail)}
-            >
-              <HiDuplicate /> {t('payments.copy')}
-            </button>
+        {manual.merchantAccount && (
+          <div className="session-checkout__account-box">
+            <p className="session-checkout__pay-at">{t('payments.manualPayAt')}</p>
+            <div className="session-checkout__copy-row">
+              <span className="session-checkout__account-number">{manual.merchantAccount}</span>
+              <button
+                type="button"
+                className="btn btn--ghost btn--sm"
+                onClick={() => handleCopy(manual.merchantAccount)}
+              >
+                <HiDuplicate /> {t('payments.copy')}
+              </button>
+            </div>
+            {copyMsg && <p className="session-checkout__copy-msg">{copyMsg}</p>}
           </div>
-          {copyMsg && <p className="session-checkout__copy-msg">{copyMsg}</p>}
-        </div>
+        )}
+
+        <label className="session-checkout__receipt">
+          {t('payments.receiptLabel')}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handleReceiptChange}
+          />
+          {receiptPreview ? (
+            <div className="session-checkout__receipt-preview">
+              <img src={receiptPreview} alt={t('payments.receiptPreviewAlt')} />
+              <p>{receiptName}</p>
+            </div>
+          ) : (
+            <p className="session-checkout__receipt-hint">{t('payments.receiptHint')}</p>
+          )}
+        </label>
 
         <label className="session-checkout__txn">
           {t('payments.manualTxnOptional')}
@@ -206,14 +275,18 @@ export default function SessionCheckout({ booking, parent, disabled, onError, on
           />
         </label>
 
+        {!formReady && (
+          <p className="session-checkout__form-hint">{t('payments.completeBookingFirst')}</p>
+        )}
+
         <button
           type="button"
           className="btn btn--primary btn--block"
-          disabled={loading}
+          disabled={!canSubmitManual}
           onClick={handleConfirmPaid}
         >
-          <HiCash />
-          {loading ? t('payments.saving') : t('payments.manualIPaid')}
+          <HiPhotograph />
+          {loading ? t('payments.saving') : t('payments.manualSubmitReceipt')}
         </button>
         <button
           type="button"
@@ -284,7 +357,7 @@ export default function SessionCheckout({ booking, parent, disabled, onError, on
       <button
         type="button"
         className="btn btn--primary btn--block"
-        disabled={checkoutBlocked}
+        disabled={useManualPkr ? !canOpenManual : !formReady || loading || !config.stripeEnabled}
         onClick={useManualPkr ? handleStartManual : handleStripePay}
       >
         {currency === 'PKR' ? <HiCash /> : <HiCurrencyDollar />}

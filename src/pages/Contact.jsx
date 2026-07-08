@@ -5,6 +5,7 @@ import Reveal from '../components/ui/Reveal'
 import { VoiceHelpBanner, VoiceLabel } from '../components/voice/VoiceInput'
 import { appendSpeechText } from '../hooks/useSpeechRecognition'
 import { useLanguage } from '../i18n/LanguageContext'
+import { useToast } from '../context/ToastContext'
 import { useLocalizedContent } from '../i18n/useLocalizedContent'
 import { SpeakHeading } from '../components/voice/SpeakAloud'
 
@@ -12,6 +13,7 @@ const EDUCATOR_PORTFOLIO_URL = 'https://maria-speech-therapist.vercel.app/'
 
 export default function Contact() {
   const { t } = useLanguage()
+  const toast = useToast()
   const { siteInfo } = useLocalizedContent()
   const [submitted, setSubmitted] = useState(false)
   const [form, setForm] = useState({
@@ -29,6 +31,7 @@ export default function Contact() {
   function handleSubmit(e) {
     e.preventDefault()
     setSubmitted(true)
+    toast.successT('toasts.contactSentTitle', 'toasts.contactSentMessage')
   }
 
   return (

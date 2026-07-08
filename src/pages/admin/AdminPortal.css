@@ -159,6 +159,24 @@
   font-weight: 400;
 }
 
+.admin-card__receipt {
+  margin: 0.75rem 0;
+}
+
+.admin-card__receipt img {
+  display: block;
+  max-width: min(100%, 320px);
+  max-height: 280px;
+  border-radius: var(--radius-sm, 0.5rem);
+  border: 1px solid var(--color-border);
+  object-fit: contain;
+  background: #fff;
+}
+
+.admin-card__receipt-link {
+  display: inline-block;
+}
+
 .admin-badge {
   background: rgba(26, 77, 109, 0.1);
   color: var(--color-primary);

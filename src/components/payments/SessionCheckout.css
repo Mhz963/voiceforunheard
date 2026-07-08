@@ -99,6 +99,63 @@
   text-decoration: underline;
 }
 
+.session-checkout__account-number {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-primary, #2563eb);
+  word-break: break-all;
+}
+
+.session-checkout__receipt {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.session-checkout__receipt input[type='file'] {
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.session-checkout__receipt-hint {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--color-muted, #64748b);
+}
+
+.session-checkout__receipt-preview {
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  background: #fff;
+}
+
+.session-checkout__receipt-preview img {
+  display: block;
+  max-width: 100%;
+  max-height: 220px;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.session-checkout__receipt-preview p {
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--color-muted, #64748b);
+  word-break: break-all;
+}
+
+.session-checkout__form-hint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #b45309;
+}
+
 .session-checkout__copy-row {
   display: flex;
   align-items: center;

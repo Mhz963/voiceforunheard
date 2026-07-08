@@ -14,6 +14,7 @@ import {
   HiX,
 } from 'react-icons/hi'
 import { useSuperAdminAuth } from '../../context/SuperAdminAuthContext'
+import { useToast } from '../../context/ToastContext'
 import { portalConfig as basePortalConfig } from '../../data/parentPortal'
 import { useLanguage } from '../../i18n/LanguageContext'
 import { usePortalConfig } from '../../i18n/usePortalConfig'
@@ -60,6 +61,7 @@ export default function SuperAdminDashboard() {
   const { t } = useLanguage()
   const portalConfig = usePortalConfig()
   const { superadmin, logout } = useSuperAdminAuth()
+  const toast = useToast()
   const navigate = useNavigate()
   const [tab, setTab] = useState('overview')
   const [refreshKey, setRefreshKey] = useState(0)
@@ -75,6 +77,7 @@ export default function SuperAdminDashboard() {
 
   const pendingParents = parents.filter((p) => !p.approved)
   const urgentConcerns = concerns.filter((c) => c.urgency === 'high' && c.status !== 'resolved')
+  const pendingPayments = meetings.filter((m) => m.status === 'pending_payment')
   const upcomingMeetings = meetings.filter(
     (m) => m.status !== 'cancelled' && m.status !== 'completed' && new Date(`${m.date}T${m.time}`) >= new Date(),
   )
@@ -101,6 +104,7 @@ export default function SuperAdminDashboard() {
   function handleApprove(parentId) {
     const p = parents.find((x) => x.id === parentId)
     approveParent(parentId)
+    toast.successT('toasts.parentApprovedTitle', 'toasts.parentApprovedMessage')
     act('Approved parent', `${p?.name} (${p?.email})`)
   }
 
@@ -108,6 +112,7 @@ export default function SuperAdminDashboard() {
     const p = parents.find((x) => x.id === parentId)
     if (window.confirm('Remove this family account permanently?')) {
       deleteParent(parentId)
+      toast.successT('toasts.parentRejectedTitle', 'toasts.parentRejectedMessage')
       act('Removed parent', `${p?.name} (${p?.email})`)
     }
   }
@@ -124,7 +129,7 @@ export default function SuperAdminDashboard() {
     { id: 'overview', label: t('superadminPortal.overview'), icon: HiViewGrid },
     { id: 'families', label: t('superadminPortal.families'), icon: HiUserGroup, badge: pendingParents.length },
     { id: 'concerns', label: t('superadminPortal.concerns'), icon: HiClipboardList, badge: urgentConcerns.length },
-    { id: 'meetings', label: t('superadminPortal.sessions'), icon: HiCalendar, badge: upcomingMeetings.length },
+    { id: 'meetings', label: t('superadminPortal.sessions'), icon: HiCalendar, badge: pendingPayments.length || upcomingMeetings.length || undefined },
     { id: 'system', label: t('superadminPortal.system'), icon: HiCog },
   ]
 
@@ -295,6 +300,7 @@ function FamilyCard({ parent, concerns, meetings, onApprove, onReject }) {
 
 function ConcernCard({ concern, onUpdate }) {
   const { t } = useLanguage()
+  const toast = useToast()
   const portalConfig = usePortalConfig()
   const [note, setNote] = useState(concern.adminNote || '')
 
@@ -318,14 +324,22 @@ function ConcernCard({ concern, onUpdate }) {
         <button
           type="button"
           className="btn btn--outline btn--sm"
-          onClick={() => { updateConcernStatus(concern.id, 'reviewed', note); onUpdate() }}
+          onClick={() => {
+            updateConcernStatus(concern.id, 'reviewed', note)
+            toast.successT('toasts.concernUpdatedTitle', 'toasts.concernReviewedMessage')
+            onUpdate()
+          }}
         >
           {t('adminPortal.markUnderReview')}
         </button>
         <button
           type="button"
           className="btn btn--primary btn--sm"
-          onClick={() => { updateConcernStatus(concern.id, 'resolved', note); onUpdate() }}
+          onClick={() => {
+            updateConcernStatus(concern.id, 'resolved', note)
+            toast.successT('toasts.concernUpdatedTitle', 'toasts.concernResolvedMessage')
+            onUpdate()
+          }}
         >
           <HiCheck /> {t('adminPortal.markResolved')}
         </button>
@@ -336,6 +350,7 @@ function ConcernCard({ concern, onUpdate }) {
 
 function MeetingCard({ meeting, onUpdate }) {
   const { t } = useLanguage()
+  const toast = useToast()
   const portalConfig = usePortalConfig()
   const [note, setNote] = useState(meeting.adminNote || '')
   const [txnRef, setTxnRef] = useState(meeting.payment?.parentTxnRef || '')
@@ -344,6 +359,7 @@ function MeetingCard({ meeting, onUpdate }) {
 
   function handleConfirmPayment() {
     confirmJazzCashManualPayment(meeting.id, { txnRef: txnRef.trim(), adminNote: note })
+    toast.successT('toasts.paymentConfirmedTitle', 'toasts.paymentConfirmedMessage')
     onUpdate()
   }
 
@@ -376,6 +392,22 @@ function MeetingCard({ meeting, onUpdate }) {
               {t('adminPortal.parentTxnRef')}: {payment.parentTxnRef}
             </p>
           )}
+          {payment?.paymentReceiptImage && (
+            <div className="admin-card__receipt">
+              <p className="admin-card__detail">{t('adminPortal.paymentReceipt')}</p>
+              <a
+                href={payment.paymentReceiptImage}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="admin-card__receipt-link"
+              >
+                <img
+                  src={payment.paymentReceiptImage}
+                  alt={payment.paymentReceiptName || t('adminPortal.paymentReceipt')}
+                />
+              </a>
+            </div>
+          )}
           <label className="admin-card__note">
             {t('adminPortal.txnRefLabel')}
             <input
@@ -397,7 +429,11 @@ function MeetingCard({ meeting, onUpdate }) {
           <button
             type="button"
             className="btn btn--primary btn--sm"
-            onClick={() => { updateMeetingStatus(meeting.id, 'confirmed', null, note); onUpdate() }}
+            onClick={() => {
+              updateMeetingStatus(meeting.id, 'confirmed', null, note)
+              toast.successT('toasts.sessionConfirmedTitle', 'toasts.sessionConfirmedMessage')
+              onUpdate()
+            }}
           >
             {t('adminPortal.confirm')}
           </button>
@@ -406,7 +442,11 @@ function MeetingCard({ meeting, onUpdate }) {
           <button
             type="button"
             className="btn btn--ghost btn--sm"
-            onClick={() => { updateMeetingStatus(meeting.id, 'cancelled', null, note); onUpdate() }}
+            onClick={() => {
+              updateMeetingStatus(meeting.id, 'cancelled', null, note)
+              toast.successT('toasts.meetingCancelledTitle', 'toasts.meetingCancelledMessage')
+              onUpdate()
+            }}
           >
             <HiX /> {t('common.cancel')}
           </button>
@@ -418,6 +458,7 @@ function MeetingCard({ meeting, onUpdate }) {
 
 function SystemTab({ accessCodes, activity, portalConfig, onCodesChange, onRefresh }) {
   const { t } = useLanguage()
+  const toast = useToast()
   const [newCode, setNewCode] = useState('')
   const [exportMsg, setExportMsg] = useState('')
 
@@ -426,12 +467,14 @@ function SystemTab({ accessCodes, activity, portalConfig, onCodesChange, onRefre
     if (!newCode.trim()) return
     addAccessCode(newCode)
     setNewCode('')
+    toast.successT('toasts.codeAddedTitle', 'toasts.codeAddedMessage')
     onCodesChange()
     onRefresh()
   }
 
   function handleRemove(code) {
     removeAccessCode(code)
+    toast.successT('toasts.codeRemovedTitle', 'toasts.codeRemovedMessage')
     onCodesChange()
     onRefresh()
   }
@@ -439,6 +482,7 @@ function SystemTab({ accessCodes, activity, portalConfig, onCodesChange, onRefre
   function handleResetCodes() {
     if (window.confirm('Reset access codes to defaults?')) {
       setAccessCodes([...basePortalConfig.accessCodes])
+      toast.successT('toasts.codesResetTitle', 'toasts.codesResetMessage')
       onCodesChange()
       onRefresh()
     }
@@ -460,6 +504,7 @@ function SystemTab({ accessCodes, activity, portalConfig, onCodesChange, onRefre
     a.click()
     URL.revokeObjectURL(url)
     setExportMsg(t('superadminPortal.exportSuccess'))
+    toast.successT('toasts.dataExportedTitle', 'toasts.dataExportedMessage')
     setTimeout(() => setExportMsg(''), 3000)
   }
 

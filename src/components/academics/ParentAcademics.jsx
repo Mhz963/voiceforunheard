@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { HiBell, HiBookOpen, HiCheck, HiPlus } from 'react-icons/hi'
 import { useLanguage } from '../../i18n/LanguageContext'
+import { useToast } from '../../context/ToastContext'
 import { usePortalConfig } from '../../i18n/usePortalConfig'
 import { SpeakButton, VoiceLabel } from '../voice/VoiceInput'
 import { appendSpeechText } from '../../hooks/useSpeechRecognition'
@@ -152,6 +153,7 @@ function LessonsSection({ lessons, portalConfig }) {
 
 function HomeworkSection({ parent, requests, portalConfig, onSubmitted }) {
   const { t } = useLanguage()
+  const toast = useToast()
   const [form, setForm] = useState({
     subject: portalConfig.subjects[0],
     requestType: 'homework',
@@ -185,6 +187,7 @@ function HomeworkSection({ parent, requests, portalConfig, onSubmitted }) {
       preferredTimes: '',
     })
     setSuccess(true)
+    toast.successT('toasts.savedTitle', 'toasts.savedMessage')
     onSubmitted()
     setTimeout(() => setSuccess(false), 4000)
   }
@@ -293,6 +296,7 @@ function TuitionRequestCard({ request, portalConfig }) {
 
 function GuidanceSection({ guidance, portalConfig, onRead, onReadAll }) {
   const { t } = useLanguage()
+  const toast = useToast()
   const unread = guidance.filter((g) => !g.read)
 
   if (guidance.length === 0) {
@@ -307,7 +311,10 @@ function GuidanceSection({ guidance, portalConfig, onRead, onReadAll }) {
     <div className="academics-panel__feed">
       {unread.length > 0 && (
         <div className="academics-panel__actions">
-          <button type="button" className="btn btn--outline btn--sm" onClick={onReadAll}>
+          <button type="button" className="btn btn--outline btn--sm" onClick={() => {
+            onReadAll()
+            toast.successT('toasts.allReadTitle', 'toasts.allReadMessage')
+          }}>
             <HiCheck /> {t('common.markAllRead')}
           </button>
         </div>
@@ -323,7 +330,10 @@ function GuidanceSection({ guidance, portalConfig, onRead, onReadAll }) {
               {labelFor(portalConfig.guidancePriorities, item.priority)}
             </span>
             {!item.read && (
-              <button type="button" className="btn btn--ghost btn--sm" onClick={() => onRead(item.id)}>
+              <button type="button" className="btn btn--ghost btn--sm" onClick={() => {
+                onRead(item.id)
+                toast.successT('toasts.markedReadTitle', 'toasts.markedReadMessage')
+              }}>
                 {t('common.markRead')}
               </button>
             )}
