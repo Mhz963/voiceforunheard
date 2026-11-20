@@ -23,14 +23,24 @@ export function stopUrduSpeech() {
   revokeObjectUrl()
 }
 
+// Give up after 8s so a slow or blocked voice service never leaves the
+// button "playing" in silence; the caller then falls back.
 async function fetchUrduAudio(chunk, rate) {
-  const response = await fetch('/api/tts', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: chunk, rate }),
-  })
-  if (!response.ok) throw new Error('Urdu TTS request failed')
-  return response.blob()
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), 8000)
+  try {
+    const response = await fetch('/api/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: chunk, rate }),
+      signal: controller.signal,
+    })
+    const type = response.headers.get('Content-Type') || ''
+    if (!response.ok || !type.startsWith('audio/')) throw new Error('Urdu TTS request failed')
+    return response.blob()
+  } finally {
+    clearTimeout(timer)
+  }
 }
 
 export function speakUrdu(text, { rate = 0.92, onEnd, onError } = {}) {

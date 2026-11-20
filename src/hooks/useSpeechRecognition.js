@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { isUrduSpeechAvailable, speakUrdu, stopUrduSpeech } from '../services/urduSpeech.js'
+import { clipUrl } from '../services/voiceClips.js'
 
 function getSpeechRecognition() {
   if (typeof window === 'undefined') return null
@@ -141,11 +142,48 @@ function clearSpeechUI() {
   speechUIListeners.forEach((listener) => listener())
 }
 
+let clipAudio = null
+
+function stopClip() {
+  if (clipAudio) {
+    clipAudio.onended = null
+    clipAudio.onerror = null
+    clipAudio.pause()
+    clipAudio.removeAttribute('src')
+    clipAudio = null
+  }
+}
+
 function cancelAudio() {
   if (typeof window !== 'undefined' && window.speechSynthesis) {
     window.speechSynthesis.cancel()
   }
   stopUrduSpeech()
+  stopClip()
+}
+
+// Plays a pre-recorded clip (same voices as the intro videos). Resolves to
+// false if it cannot play, so the caller can fall back to live speech.
+function playClip(url, { onEnd, isCurrent }) {
+  return new Promise((resolve) => {
+    const audio = new Audio(url)
+    clipAudio = audio
+    audio.onended = () => {
+      if (clipAudio === audio) clipAudio = null
+      if (isCurrent()) onEnd()
+    }
+    audio.onerror = () => {
+      if (clipAudio === audio) clipAudio = null
+      resolve(false)
+    }
+    audio.play().then(
+      () => resolve(true),
+      () => {
+        if (clipAudio === audio) clipAudio = null
+        resolve(false)
+      },
+    )
+  })
 }
 
 function stopAudioOnly() {
@@ -174,35 +212,66 @@ export function speakText(text, { lang = 'en-US', rate = 0.95, onEnd, onError } 
     onError?.()
   }
 
-  if (isUrdu) {
-    return Promise.resolve(
-      speakUrdu(trimmed, { rate, onEnd: wrappedEnd, onError: wrappedError }),
-    )
-  }
+  const isCurrent = () => session === speakSession
 
-  if (typeof window === 'undefined' || !window.speechSynthesis) {
-    return Promise.resolve(null)
-  }
-
-  return preloadSpeechVoices().then(() => {
-    if (session !== speakSession) return null
-
-    const start = () =>
-      speakWithSynthesis(trimmed, {
-        lang,
+  // Live speech: English uses the browser's voice; Urdu tries the server
+  // voice and falls back to the browser's Urdu voice if that fails.
+  const speakLive = () => {
+    if (!isCurrent()) return null
+    if (isUrdu) {
+      return speakUrdu(trimmed, {
         rate,
         onEnd: wrappedEnd,
-        onError: wrappedError,
-      })
-
-    if (typeof requestAnimationFrame === 'function') {
-      return new Promise((resolve) => {
-        requestAnimationFrame(() => resolve(start()))
+        onError: () => {
+          if (!isCurrent()) return
+          const urduVoice = typeof window !== 'undefined' && window.speechSynthesis ? pickSpeechVoice(lang) : null
+          if (urduVoice && urduVoice.lang?.toLowerCase().startsWith('ur')) {
+            speakWithSynthesis(trimmed, { lang, rate, onEnd: wrappedEnd, onError: wrappedError })
+          } else {
+            wrappedError()
+          }
+        },
       })
     }
+    return speakWithBrowser()
+  }
 
-    return start()
-  })
+  const url = clipUrl(isUrdu ? 'ur' : 'en', trimmed)
+  if (url) {
+    return playClip(url, { onEnd: wrappedEnd, isCurrent }).then((played) => (played ? true : speakLive()))
+  }
+
+  if (isUrdu) {
+    return Promise.resolve(speakLive())
+  }
+
+  return speakWithBrowser()
+
+  function speakWithBrowser() {
+    if (typeof window === 'undefined' || !window.speechSynthesis) {
+      return Promise.resolve(null)
+    }
+
+    return preloadSpeechVoices().then(() => {
+      if (session !== speakSession) return null
+
+      const start = () =>
+        speakWithSynthesis(trimmed, {
+          lang,
+          rate,
+          onEnd: wrappedEnd,
+          onError: wrappedError,
+        })
+
+      if (typeof requestAnimationFrame === 'function') {
+        return new Promise((resolve) => {
+          requestAnimationFrame(() => resolve(start()))
+        })
+      }
+
+      return start()
+    })
+  }
 }
 
 export function stopSpeech() {
@@ -332,6 +401,8 @@ export function isSpeechSynthesisSupported() {
 }
 
 export function isSpeakSupported(locale) {
+  // Recorded clips play in any browser with audio support.
+  if (typeof Audio !== 'undefined') return true
   if (locale === 'ur') return isUrduSpeechAvailable()
   return isSpeechSynthesisSupported()
 }

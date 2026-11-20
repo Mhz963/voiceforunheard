@@ -9,6 +9,23 @@ import {
   stopSpeech,
 } from '../../hooks/useSpeechRecognition'
 
+let collectQueue = []
+let collectTimer = null
+function collectSpeechText(locale, text) {
+  try {
+    if (localStorage.getItem('vfu_collect_speech') !== '1') return
+  } catch {
+    return
+  }
+  collectQueue.push({ lang: locale === 'ur' ? 'ur' : 'en', text })
+  clearTimeout(collectTimer)
+  collectTimer = setTimeout(() => {
+    const texts = collectQueue
+    collectQueue = []
+    fetch('/__speech-texts', { method: 'POST', body: JSON.stringify({ texts }) }).catch(() => {})
+  }, 300)
+}
+
 function textFromNode(node) {
   if (node == null || typeof node === 'boolean') return ''
   if (typeof node === 'string' || typeof node === 'number') return String(node)
@@ -50,6 +67,12 @@ export default function SpeakAloud({
   }, [])
 
   useEffect(() => registerSpeechUIListener(deactivate), [deactivate])
+
+  // Development only: with localStorage.vfu_collect_speech = '1', report every
+  // read-aloud text so scripts/generate_voice_clips.py can record it.
+  useEffect(() => {
+    if (import.meta.env.DEV && speakContent) collectSpeechText(locale, speakContent)
+  }, [locale, speakContent])
 
   if (!speakContent || !isSpeakSupported(locale)) return null
 

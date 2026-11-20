@@ -1,7 +1,7 @@
 import { Communicate, EdgeTTS } from 'edge-tts-universal'
 import { MAX_URDU_CHUNK_LENGTH, splitUrduText } from './splitUrduText.js'
 
-export const URDU_VOICE = 'ur-PK-UzmaNeural'
+export const URDU_VOICE = 'ur-IN-GulNeural'
 export const MAX_CHUNK_LENGTH = MAX_URDU_CHUNK_LENGTH
 
 export { splitUrduText }
