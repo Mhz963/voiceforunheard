@@ -98,12 +98,13 @@ export function SpeakHeading({
   speak,
   variant = 'default',
   align = 'start',
+  id,
 }) {
   const speakContent = speak ?? joinSpeakParts(children, body, extra)
 
   return (
     <div className={`speak-heading speak-heading--${align} ${className}`.trim()}>
-      <Tag className={`speak-heading__text ${headingClassName}`.trim()}>{children}</Tag>
+      <Tag id={id} className={`speak-heading__text ${headingClassName}`.trim()}>{children}</Tag>
       <SpeakAloud text={speakContent} variant={variant} />
     </div>
   )

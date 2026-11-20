@@ -1,9 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { portalConfig } from '../data/parentPortal'
 import {
   clearAdminSession,
   getAdminSession,
-  setAdminSession,
 } from '../services/parentStorage'
 import { seedDemoData } from '../services/seedDemoData'
 
@@ -20,18 +18,10 @@ export function AdminAuthProvider({ children }) {
     setLoading(false)
   }, [])
 
-  function login(email, password) {
-    const normalized = email.trim().toLowerCase()
-    const { admin } = portalConfig.roles
-
-    if (normalized !== admin.email || password !== admin.password) {
-      throw new Error('Invalid admin credentials.')
-    }
-
-    const account = { email: admin.email, name: 'Educator Admin' }
-    setAdminSession(account)
-    setAdmin(account)
-    return account
+  // Staff sign-in cannot be verified safely in the browser. It stays disabled
+  // until server-side authentication (e.g. Supabase Auth) is connected.
+  function login() {
+    throw new Error('Educator sign-in is not available yet. It will open once secure server sign-in is set up.')
   }
 
   function logout() {

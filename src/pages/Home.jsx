@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { HiArrowRight } from 'react-icons/hi'
-import { FaLayerGroup, FaQuoteLeft } from 'react-icons/fa'
+import { FaLayerGroup, FaCheckCircle } from 'react-icons/fa'
 import SectionHeader from '../components/ui/SectionHeader'
 import StatCard from '../components/ui/StatCard'
 import ProgramCard from '../components/ui/ProgramCard'
@@ -13,7 +13,8 @@ import SpeakAloud, { SpeakHeading } from '../components/voice/SpeakAloud'
 
 export default function Home() {
   const { t } = useLanguage()
-  const { siteInfo, heroStats, systemAdvantages, programCategories, testimonials } = useLocalizedContent()
+  const { siteInfo, heroStats, systemAdvantages, programCategories } = useLocalizedContent()
+  const trustPoints = t('home.trustPoints')
   const featuredPrograms = programCategories.slice(0, 6)
 
   return (
@@ -125,7 +126,7 @@ export default function Home() {
                 <p>{t('home.ctaText')}</p>
               </div>
               <div className="feature-banner__actions">
-                <Link to="/signin" className="btn btn--cta">
+                <Link to="/consultation" className="btn btn--cta">
                   <span>{t('common.startJourney')}</span>
                   <span className="btn__cta-icon">
                     <HiArrowRight />
@@ -140,28 +141,48 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section section--tight-top home-testimonials">
+      <section className="section section--tight-top home-trust" aria-labelledby="home-trust-title">
         <div className="container">
-          <SectionHeader
-            badge={t('home.testimonialsBadge')}
-            title={t('home.testimonialsTitle')}
-          />
-          <Reveal className="testimonials-grid stagger">
-            {testimonials.map((item) => (
-              <blockquote key={item.name} className="testimonial-card interactive-card card-shine">
-                <SpeakAloud
-                  text={[item.text, item.name, item.role].join('. ')}
-                  className="testimonial-card__speak"
-                  variant="subtle"
-                />
-                <FaQuoteLeft className="testimonial-card__icon" aria-hidden="true" />
-                <p>&ldquo;{item.text}&rdquo;</p>
-                <footer>
-                  <strong>{item.name}</strong>
-                  <span>{item.role}</span>
-                </footer>
-              </blockquote>
-            ))}
+          <Reveal className="trust-strip">
+            <img
+              className="trust-strip__photo"
+              src={siteInfo.educator.photo}
+              alt={t('educator.photoAlt')}
+              width="160"
+              height="200"
+              loading="lazy"
+            />
+            <div className="trust-strip__body">
+              <span className="section-header__badge">{t('home.trustBadge')}</span>
+              <SpeakHeading as="h2" id="home-trust-title" body={[t('home.trustRole'), ...trustPoints].join('. ')}>
+                {t('home.trustName')}
+              </SpeakHeading>
+              <p className="trust-strip__role">{t('home.trustRole')}</p>
+              <ul className="trust-strip__list">
+                {trustPoints.map((point) => (
+                  <li key={point}>
+                    <FaCheckCircle aria-hidden="true" /> {point}
+                  </li>
+                ))}
+              </ul>
+              <Link to="/educator" className="btn btn--outline">
+                {t('home.trustLink')} <HiArrowRight />
+              </Link>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="section section--compact home-practice">
+        <div className="container">
+          <Reveal className="practice-cta">
+            <div>
+              <SpeakHeading as="h2" body={t('home.practiceText')}>{t('home.practiceTitle')}</SpeakHeading>
+              <p>{t('home.practiceText')}</p>
+            </div>
+            <Link to="/practice" className="btn btn--primary">
+              {t('common.tryPractice')} <HiArrowRight />
+            </Link>
           </Reveal>
         </div>
       </section>

@@ -1,19 +1,19 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { FaWhatsapp } from 'react-icons/fa'
 import { HiMail, HiLocationMarker, HiCheckCircle, HiExternalLink } from 'react-icons/hi'
 import SectionHeader from '../components/ui/SectionHeader'
 import Reveal from '../components/ui/Reveal'
 import { VoiceHelpBanner, VoiceLabel } from '../components/voice/VoiceInput'
 import { appendSpeechText } from '../hooks/useSpeechRecognition'
 import { useLanguage } from '../i18n/LanguageContext'
-import { useToast } from '../context/ToastContext'
 import { useLocalizedContent } from '../i18n/useLocalizedContent'
 import { SpeakHeading } from '../components/voice/SpeakAloud'
-
-const EDUCATOR_PORTFOLIO_URL = 'https://maria-speech-therapist.vercel.app/'
+import { CONTACT_EMAIL, EDUCATOR_PORTFOLIO_URL } from '../config/site'
+import { buildMessageText, hasWhatsApp, mailtoUrl, openDeliveryLink, whatsappUrl } from '../utils/deliverMessage'
 
 export default function Contact() {
   const { t } = useLanguage()
-  const toast = useToast()
   const { siteInfo } = useLocalizedContent()
   const [submitted, setSubmitted] = useState(false)
   const [form, setForm] = useState({
@@ -22,16 +22,32 @@ export default function Contact() {
     email: '',
     role: '',
     message: '',
+    consent: false,
   })
 
   function update(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
+  function messageText() {
+    const roleLabel = form.role ? t(`pages.contact.role${form.role === 'slp' ? 'Slp' : form.role.charAt(0).toUpperCase() + form.role.slice(1)}`) : ''
+    return buildMessageText(`${siteInfo.name} — ${t('pages.contact.badge')}`, [
+      [t('pages.contact.firstName'), `${form.firstName} ${form.lastName}`],
+      [t('pages.contact.emailAddress'), form.email],
+      [t('pages.contact.role'), roleLabel],
+      [t('pages.contact.message'), form.message],
+    ])
+  }
+
+  function deliver(channel) {
+    const text = messageText()
+    openDeliveryLink(channel === 'whatsapp' ? whatsappUrl(text) : mailtoUrl(`${siteInfo.name} — ${t('pages.contact.badge')}`, text))
+    setSubmitted(true)
+  }
+
   function handleSubmit(e) {
     e.preventDefault()
-    setSubmitted(true)
-    toast.successT('toasts.contactSentTitle', 'toasts.contactSentMessage')
+    deliver('email')
   }
 
   return (
@@ -93,10 +109,10 @@ export default function Contact() {
             {submitted ? (
               <div className="contact-success">
                 <HiCheckCircle />
-                <SpeakHeading as="h3" body={t('pages.contact.thankYouText')}>
+                <SpeakHeading as="h3" body={t('pages.contact.thankYouText', { email: CONTACT_EMAIL })}>
                   {t('pages.contact.thankYou')}
                 </SpeakHeading>
-                <p>{t('pages.contact.thankYouText')}</p>
+                <p>{t('pages.contact.thankYouText', { email: CONTACT_EMAIL })}</p>
               </div>
             ) : (
               <form className="contact-form" onSubmit={handleSubmit}>
@@ -136,6 +152,7 @@ export default function Contact() {
                     onChange={(e) => update('email', e.target.value)}
                     required
                     placeholder="you@example.com"
+                    dir="ltr"
                   />
                 </label>
                 <label>
@@ -166,9 +183,34 @@ export default function Contact() {
                     required
                   />
                 </label>
-                <button type="submit" className="btn btn--primary btn--block">
-                  {t('common.sendMessage')}
-                </button>
+                <label className="contact-form__consent">
+                  <input
+                    type="checkbox"
+                    checked={form.consent}
+                    onChange={(e) => update('consent', e.target.checked)}
+                    required
+                  />
+                  <span>
+                    {t('pages.contact.consent')} <Link to="/privacy">{t('pages.contact.privacyLink')}</Link>
+                  </span>
+                </label>
+                <p className="contact-form__note">{t('pages.contact.deliveryNote')}</p>
+                <div className="contact-form__actions">
+                  <button type="submit" className="btn btn--primary btn--block">
+                    <HiMail aria-hidden="true" /> {t('pages.contact.sendEmail')}
+                  </button>
+                  {hasWhatsApp && (
+                    <button
+                      type="button"
+                      className="btn btn--outline btn--block"
+                      onClick={(e) => {
+                        if (e.currentTarget.form.reportValidity()) deliver('whatsapp')
+                      }}
+                    >
+                      <FaWhatsapp aria-hidden="true" /> {t('pages.contact.sendWhatsApp')}
+                    </button>
+                  )}
+                </div>
               </form>
             )}
           </Reveal>

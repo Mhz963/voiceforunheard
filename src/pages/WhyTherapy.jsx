@@ -10,7 +10,8 @@ import { SpeakHeading } from '../components/voice/SpeakAloud'
 
 export default function WhyTherapy() {
   const { t } = useLanguage()
-  const { whySpeechTherapy, systemAdvantages } = useLocalizedContent()
+  const { whySpeechTherapy } = useLocalizedContent()
+  const steps = t('whyTherapyPage.steps')
 
   return (
     <div className="page why-page">
@@ -27,10 +28,6 @@ export default function WhyTherapy() {
 
       <section className="section">
         <div className="container">
-          <SectionHeader
-            badge={t('pages.whyTherapy.badge')}
-            title={t('pages.whyTherapy.title')}
-          />
           <Reveal className="reasons-list stagger">
             {whySpeechTherapy.reasons.map((reason, index) => (
               <article key={reason.title} className="reason-card interactive-card card-shine">
@@ -56,10 +53,11 @@ export default function WhyTherapy() {
                 <IconBadge icon={FaChartLine} size="lg" variant="light" />
               </div>
               <div className="feature-banner__content">
-                <SpeakHeading as="h3" body={whySpeechTherapy.marketGrowth}>
-                  {t('whyTherapyPage.marketTitle')}
+                <SpeakHeading as="h2" body={t('whyTherapyPage.pakistanText')}>
+                  {t('whyTherapyPage.pakistanTitle')}
                 </SpeakHeading>
-                <p>{whySpeechTherapy.marketGrowth}</p>
+                <p>{t('whyTherapyPage.pakistanText')}</p>
+                <cite className="feature-banner__cite">{t('whyTherapyPage.pakistanSources')}</cite>
               </div>
             </div>
           </Reveal>
@@ -68,22 +66,21 @@ export default function WhyTherapy() {
 
       <section className="section">
         <div className="container">
-          <SectionHeader
-            badge={t('home.advantagesBadge')}
-            title={t('home.advantagesTitle')}
-            subtitle={t('home.advantagesSubtitle')}
-          />
-          <Reveal className="solution-grid stagger">
-            {systemAdvantages.map((item) => (
-              <article key={item.title} className="solution-card interactive-card card-shine">
-                <SpeakHeading as="h3" body={item.description}>{item.title}</SpeakHeading>
-                <p>{item.description}</p>
-              </article>
-            ))}
+          <Reveal>
+            <SpeakHeading as="h2" extra={steps} headingClassName="steps-title">
+              {t('whyTherapyPage.stepsTitle')}
+            </SpeakHeading>
+          </Reveal>
+          <Reveal>
+            <ol className="help-steps">
+              {steps.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
           </Reveal>
           <Reveal className="section-cta" delay={150}>
-            <Link to="/programs" className="btn btn--primary">
-              {t('common.explorePrograms')} <HiArrowRight />
+            <Link to="/consultation" className="btn btn--primary">
+              {t('common.startJourney')} <HiArrowRight />
             </Link>
           </Reveal>
         </div>

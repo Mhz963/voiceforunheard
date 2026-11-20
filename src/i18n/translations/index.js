@@ -1,5 +1,7 @@
 import en from './en'
 import ur from './ur'
+import enExtra from './extra.en'
+import urExtra from './extra.ur'
 import { toWesternDigits } from '../../utils/localeFormat'
 import { localizeLatinTermsForUrdu } from '../../utils/urduLatinTerms'
 
@@ -12,7 +14,19 @@ export const languages = {
   ur: { code: 'ur', label: 'Urdu', nativeLabel: 'اردو', lang: 'ur', dir: 'rtl' },
 }
 
-const catalogs = { en, ur }
+function deepMerge(base, extra) {
+  const out = { ...base }
+  for (const [key, value] of Object.entries(extra)) {
+    const current = out[key]
+    out[key] =
+      value && typeof value === 'object' && !Array.isArray(value) && current && typeof current === 'object' && !Array.isArray(current)
+        ? deepMerge(current, value)
+        : value
+  }
+  return out
+}
+
+const catalogs = { en: deepMerge(en, enExtra), ur: deepMerge(ur, urExtra) }
 
 function getByPath(obj, path) {
   return path.split('.').reduce((acc, part) => acc?.[part], obj)

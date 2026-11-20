@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import {
   HiEye,
   HiEyeOff,
-  HiKey,
   HiShieldCheck,
   HiUserGroup,
   HiAcademicCap,
@@ -25,7 +24,8 @@ const ROLE_ICONS = {
   superadmin: HiShieldCheck,
 }
 
-const ROLE_KEYS = ['parent', 'admin', 'superadmin']
+// Staff portals are not listed publicly.
+const ROLE_KEYS = ['parent']
 
 export default function SignIn() {
   const { t } = useLanguage()
@@ -86,14 +86,6 @@ export default function SignIn() {
     setModalOpen(false)
     setError('')
     setShake(false)
-  }
-
-  function fillDemo() {
-    if (!selectedRole) return
-    const creds = portalConfig.roles[selectedRole]
-    setEmail(creds.email)
-    setPassword(creds.password)
-    setError('')
   }
 
   async function handleSubmit(e) {
@@ -220,7 +212,6 @@ export default function SignIn() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder={roleConfig.email}
                     required
                     autoComplete="username"
                     autoFocus
@@ -253,17 +244,8 @@ export default function SignIn() {
                       ? t('signIn.signingIn')
                       : t('signIn.signInAs', { role: roleInfo.title })}
                   </button>
-                  <button type="button" className="btn btn--outline btn--block" onClick={fillDemo}>
-                    <HiKey aria-hidden="true" /> {t('signIn.useDemo')}
-                  </button>
                 </div>
               </form>
-
-              <div className="signin-demo-creds">
-                <p>
-                  <strong>{t('signIn.demoCreds')}</strong> {roleConfig.email} / {roleConfig.password}
-                </p>
-              </div>
 
               {selectedRole === 'parent' && (
                 <p className="signin-panel__switch">

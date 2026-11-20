@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import urduTtsPlugin from './server/urduTtsPlugin.js'
 import paymentsPlugin from './server/paymentsPlugin.js'
+import prerenderMetaPlugin from './server/prerenderMetaPlugin.js'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -34,6 +35,7 @@ export default defineConfig({
         },
       },
     },
+    prerenderMetaPlugin(),
   ],
   build: {
     outDir: 'dist',
