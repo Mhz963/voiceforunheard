@@ -1105,3 +1105,83 @@
 .resource-card__stretch:focus-visible {
   outline: none;
 }
+
+/* ---------- Urdu typography: Noto Nastaliq Urdu (same face as the Urdu
+   intro video). Google serves it by character range, so only pages showing
+   Urdu text download it. Latin words inside Urdu fall back to DM Sans. ---------- */
+html[lang='ur'] {
+  --font-body: 'Noto Nastaliq Urdu', 'DM Sans', system-ui, sans-serif;
+  --font-display: 'Noto Nastaliq Urdu', 'Fraunces', Georgia, serif;
+}
+
+html[lang='ur'] body,
+html[lang='ur'] button,
+html[lang='ur'] input,
+html[lang='ur'] select,
+html[lang='ur'] textarea {
+  font-family: var(--font-body);
+}
+
+/* Nastaliq is tall and slanted: give lines room so nothing overlaps or clips */
+html[lang='ur'] body {
+  line-height: 2.15;
+}
+
+html[lang='ur'] h1,
+html[lang='ur'] h2,
+html[lang='ur'] h3,
+html[lang='ur'] h4,
+html[lang='ur'] .hero__title,
+html[lang='ur'] .section-header__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.9;
+}
+
+html[lang='ur'] .hero__title {
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+/* Gradient text needs padding so the long descenders are not cut off */
+html[lang='ur'] .hero__highlight {
+  padding-block: 0.15em 0.35em;
+}
+
+html[lang='ur'] .section-header__title {
+  font-size: clamp(1.7rem, 3.4vw, 2.4rem);
+}
+
+html[lang='ur'] p,
+html[lang='ur'] li {
+  line-height: 2.2;
+}
+
+/* Letter-spacing and uppercase break the joins between Urdu letters */
+html[lang='ur'] *,
+html[lang='ur'] *::before,
+html[lang='ur'] *::after {
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+/* Small UI text (badges, buttons, nav) a touch larger so it stays legible */
+html[lang='ur'] .section-header__badge,
+html[lang='ur'] .hero__badge,
+html[lang='ur'] .header__link,
+html[lang='ur'] .btn,
+html[lang='ur'] .header__cta {
+  font-size: 0.95rem;
+  line-height: 1.9;
+}
+
+html[lang='ur'] .btn,
+html[lang='ur'] .header__cta {
+  padding-block: 0.55rem 0.75rem;
+}
+
+/* Form fields: room for tall letters */
+html[lang='ur'] input,
+html[lang='ur'] select,
+html[lang='ur'] textarea {
+  line-height: 2;
+}

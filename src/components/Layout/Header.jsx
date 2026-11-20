@@ -6,9 +6,9 @@ import BrandLogo from '../ui/BrandLogo'
 import LanguageSwitcher from '../ui/LanguageSwitcher'
 
 // `drawerOnly` links appear in the mobile/tablet menu but not in the desktop
-// bar, which only has room for the main sections (Home is the logo).
+// bar, which only has room for the main sections.
 const navLinks = [
-  { to: '/', labelKey: 'nav.home', end: true, drawerOnly: true },
+  { to: '/', labelKey: 'nav.home', end: true },
   { to: '/programs', labelKey: 'nav.programs' },
   { to: '/age-groups', labelKey: 'nav.ageGroups' },
   { to: '/methodology', labelKey: 'nav.methodology' },
