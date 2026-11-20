@@ -20,8 +20,7 @@ export const SITE_URL = (import.meta.env.VITE_SITE_URL || 'https://voiceforunhea
 // TODO: move to a platform address on a custom domain (e.g. contact@voiceforunheard.org).
 export const CONTACT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL || 'binteanayat@gmail.com'
 
-// WhatsApp number in international format, digits only (e.g. 923001234567).
-// When empty, the WhatsApp option is hidden and email is used instead.
-export const WHATSAPP_NUMBER = (import.meta.env.VITE_WHATSAPP_NUMBER || '').replace(/\D/g, '')
+// The educator's WhatsApp number is NOT configured here: it is a server-only
+// setting (WHATSAPP_TO) used by api/contact.js, so it never reaches visitors.
 
 export const EDUCATOR_PORTFOLIO_URL = 'https://maria-speech-therapist.vercel.app/'

@@ -1185,3 +1185,52 @@ html[lang='ur'] select,
 html[lang='ur'] textarea {
   line-height: 2;
 }
+
+/* Contact forms: hidden spam trap and failure state */
+.contact-form__hp {
+  position: absolute !important;
+  left: -10000px !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.contact-success--failed svg:first-child {
+  color: var(--color-accent);
+}
+
+.contact-success--failed .btn {
+  margin-top: var(--space-sm);
+  margin-inline-end: 0.5rem;
+}
+
+.contact-form .btn[disabled] {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+/* Icons inside buttons in the success/failure panel keep normal size */
+.contact-success .btn svg {
+  width: 1.1em;
+  height: 1.1em;
+  font-size: 1rem;
+  margin: 0;
+  color: currentColor;
+}
+
+.contact-success .speak-aloud svg {
+  width: 1em;
+  height: 1em;
+  font-size: 1rem;
+  margin: 0;
+  color: currentColor;
+}
+
+.contact-success .speak-heading {
+  justify-content: center;
+  align-items: center;
+}
+
+.contact-success .speak-heading__text {
+  flex: 0 1 auto;
+}

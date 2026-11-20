@@ -1,15 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { HiCheckCircle, HiMail, HiShieldCheck } from 'react-icons/hi'
-import { FaWhatsapp } from 'react-icons/fa'
+import { HiCheckCircle, HiExclamationCircle, HiMail, HiPaperAirplane, HiShieldCheck } from 'react-icons/hi'
 import SectionHeader from '../components/ui/SectionHeader'
 import Reveal from '../components/ui/Reveal'
 import { VoiceHelpBanner, VoiceLabel } from '../components/voice/VoiceInput'
 import { appendSpeechText } from '../hooks/useSpeechRecognition'
 import { useLanguage } from '../i18n/LanguageContext'
 import { SpeakHeading } from '../components/voice/SpeakAloud'
-import { CONTACT_EMAIL } from '../config/site'
-import { buildMessageText, hasWhatsApp, mailtoUrl, openDeliveryLink, whatsappUrl } from '../utils/deliverMessage'
+import { buildMessageText, mailtoUrl, sendMessage } from '../utils/deliverMessage'
 
 const AGE_BANDS = ['0-1', '1-3', '3-5', '6-12', '13-18', '18+']
 const CONCERNS = ['hearing', 'listening', 'speech', 'language', 'sign', 'school', 'other']
@@ -21,7 +19,7 @@ const EMPTY = {
   city: '',
   age: '',
   concern: '',
-  contactBy: hasWhatsApp ? 'whatsapp' : 'call',
+  contactBy: 'whatsapp',
   message: '',
   consent: false,
 }
@@ -30,7 +28,12 @@ export default function Consultation() {
   const { t } = useLanguage()
   const [form, setForm] = useState(EMPTY)
   const [error, setError] = useState('')
-  const [sent, setSent] = useState(false)
+  const [status, setStatus] = useState('idle') // idle | sending | sent | failed
+  const [website, setWebsite] = useState('') // honeypot: left empty by people
+  const startedAt = useRef(0)
+  useEffect(() => {
+    startedAt.current = Date.now()
+  }, [])
   const how = t('consult.how')
 
   function update(field, value) {
@@ -57,18 +60,44 @@ export default function Consultation() {
     return ''
   }
 
-  function send(channel) {
+  function contactByLabel() {
+    return t(`consult.contact${form.contactBy === 'whatsapp' ? 'WhatsApp' : form.contactBy === 'email' ? 'Email' : 'Call'}`)
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault()
     const problem = validate()
     setError(problem)
     if (problem) return
-    const text = buildText()
-    openDeliveryLink(channel === 'whatsapp' ? whatsappUrl(text) : mailtoUrl(t('consult.messageHeading'), text))
-    setSent(true)
+    setStatus('sending')
+    try {
+      // Field values are sent in English labels' order; the server formats the message.
+      await sendMessage({
+        kind: 'consultation',
+        consent: form.consent,
+        website,
+        startedAt: startedAt.current,
+        fields: {
+          name: form.name,
+          phone: form.phone,
+          email: form.email,
+          city: form.city,
+          age: form.age && t(`consult.ageBands.${form.age}`),
+          concern: form.concern && t(`consult.concerns.${form.concern}`),
+          contactBy: contactByLabel(),
+          message: form.message,
+        },
+      })
+      setStatus('sent')
+    } catch {
+      setStatus('failed')
+    }
   }
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    send(hasWhatsApp ? 'whatsapp' : 'email')
+  function reset() {
+    setForm(EMPTY)
+    setStatus('idle')
+    startedAt.current = Date.now()
   }
 
   return (
@@ -94,14 +123,25 @@ export default function Consultation() {
           </Reveal>
 
           <Reveal className="contact-form-wrap" variant="right" delay={100}>
-            {sent ? (
+            {status === 'sent' ? (
               <div className="contact-success" role="status">
                 <HiCheckCircle aria-hidden="true" />
                 <SpeakHeading as="h3" body={t('consult.doneText')}>{t('consult.doneTitle')}</SpeakHeading>
                 <p>{t('consult.doneText')}</p>
-                <p>{t('consult.doneFallback', { email: CONTACT_EMAIL })}</p>
-                <button type="button" className="btn btn--outline" onClick={() => { setForm(EMPTY); setSent(false) }}>
+                <button type="button" className="btn btn--outline" onClick={reset}>
                   {t('consult.again')}
+                </button>
+              </div>
+            ) : status === 'failed' ? (
+              <div className="contact-success contact-success--failed" role="alert">
+                <HiExclamationCircle aria-hidden="true" />
+                <h3>{t('consult.failTitle')}</h3>
+                <p>{t('consult.failText')}</p>
+                <a className="btn btn--primary" href={mailtoUrl(t('consult.messageHeading'), buildText())}>
+                  <HiMail aria-hidden="true" /> {t('consult.sendEmail')}
+                </a>
+                <button type="button" className="btn btn--outline" onClick={() => setStatus('idle')}>
+                  {t('consult.tryAgain')}
                 </button>
               </div>
             ) : (
@@ -160,11 +200,10 @@ export default function Consultation() {
                   <legend>{t('consult.contactBy')}</legend>
                   <div className="contact-form__radios">
                     {[
-                      hasWhatsApp && ['whatsapp', 'consult.contactWhatsApp'],
+                      ['whatsapp', 'consult.contactWhatsApp'],
                       ['call', 'consult.contactCall'],
                       ['email', 'consult.contactEmail'],
                     ]
-                      .filter(Boolean)
                       .map(([value, key]) => (
                         <label key={value} className="contact-form__radio">
                           <input
@@ -197,18 +236,13 @@ export default function Consultation() {
                   </p>
                 )}
                 <p className="contact-form__note">{t('pages.contact.deliveryNote')}</p>
+                <label className="contact-form__hp" aria-hidden="true">
+                  Website
+                  <input type="text" tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
+                </label>
                 <div className="contact-form__actions">
-                  {hasWhatsApp && (
-                    <button type="submit" className="btn btn--primary btn--block">
-                      <FaWhatsapp aria-hidden="true" /> {t('consult.sendWhatsApp')}
-                    </button>
-                  )}
-                  <button
-                    type={hasWhatsApp ? 'button' : 'submit'}
-                    className={`btn ${hasWhatsApp ? 'btn--outline' : 'btn--primary'} btn--block`}
-                    onClick={hasWhatsApp ? (e) => { if (e.currentTarget.form.reportValidity()) send('email') } : undefined}
-                  >
-                    <HiMail aria-hidden="true" /> {t('consult.sendEmail')}
+                  <button type="submit" className="btn btn--primary btn--block" disabled={status === 'sending'}>
+                    <HiPaperAirplane aria-hidden="true" /> {status === 'sending' ? t('consult.sending') : t('consult.send')}
                   </button>
                 </div>
               </form>

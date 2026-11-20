@@ -4,6 +4,7 @@ import urduTtsPlugin from './server/urduTtsPlugin.js'
 import paymentsPlugin from './server/paymentsPlugin.js'
 import prerenderMetaPlugin from './server/prerenderMetaPlugin.js'
 import speechCollectPlugin from './server/speechCollectPlugin.js'
+import contactPlugin from './server/contactPlugin.js'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -38,6 +39,7 @@ export default defineConfig({
     },
     prerenderMetaPlugin(),
     speechCollectPlugin(),
+    contactPlugin(),
   ],
   build: {
     outDir: 'dist',
