@@ -144,7 +144,7 @@ export default {
     programsTitle: 'Every Category. Every Age. Every Path.',
     programsSubtitle: 'From early intervention to adult rehabilitation, auditory verbal to sign language support.',
     ctaTitle: 'Ready to Bridge the Gap Between Hearing and Understanding?',
-    ctaText: 'Join families and educators who trust VoiceForUnheard for comprehensive, compassionate, and effective speech education.',
+    ctaText: 'Send a short message and Maria will reply.',
     testimonialsBadge: 'Community Voices',
     testimonialsTitle: 'What Families and Educators Say',
   },
@@ -162,7 +162,7 @@ export default {
     programs: {
       badge: '12 Specialized Tracks',
       title: 'Complete Program Categories',
-      subtitle: 'Every communication pathway, every developmental stage, every learning need. VoiceForUnheard offers the most comprehensive speech education system for hearing impaired learners available today.',
+      subtitle: 'An overview of the areas of support for deaf and hard of hearing learners.',
     },
     ageGroups: {
       badge: 'Developmental Stages',
@@ -239,8 +239,6 @@ export default {
     password: 'Password',
     showPassword: 'Show password',
     hidePassword: 'Hide password',
-    useDemo: 'Use demo credentials',
-    demoCreds: 'Demo:',
     noAccount: "Don't have an account?",
     roles: {
       parent: {
@@ -655,11 +653,11 @@ export default {
   educator: {
     philosophyBadge: 'Philosophy',
     philosophyTitle: 'Education Meets Clinical Excellence',
-    philosophySubtitle: 'Most speech therapy platforms are built by technologists. VoiceForUnheard is built by someone who has sat across from children, coached parents through tears of diagnosis, and celebrated first words in real classrooms.',
+    philosophySubtitle: 'VoiceForUnheard is built by a teacher who has sat across from deaf and hard of hearing children, coached parents through diagnosis, and celebrated first words in real classrooms.',
     uniqueBadge: 'Built Different',
     uniqueTitle: 'What Makes This System Unique',
     classroomTested: 'Classroom Tested',
-    classroomDesc: 'Every activity has been refined through years of teaching hearing impaired learners in educational settings, not just clinical rooms.',
+    classroomDesc: 'Activities draw on teaching deaf and hard of hearing learners in a government special-education school as well as clinical therapy practice.',
     familyFirst: 'Family First',
     familyDesc: 'Parents are the most important teachers. VoiceForUnheard equips families with confidence, knowledge, and daily tools to support their child.',
     inclusive: 'Inclusive by Design',

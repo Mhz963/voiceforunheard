@@ -1,25 +1,28 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { HiMenu, HiLogin, HiUserAdd, HiX } from 'react-icons/hi'
+import { HiMenu, HiChatAlt2, HiX } from 'react-icons/hi'
 import { useLanguage } from '../../i18n/LanguageContext'
 import BrandLogo from '../ui/BrandLogo'
 import LanguageSwitcher from '../ui/LanguageSwitcher'
 
+// `drawerOnly` links appear in the mobile/tablet menu but not in the desktop
+// bar, which only has room for the main sections.
 const navLinks = [
   { to: '/', labelKey: 'nav.home', end: true },
-  { to: '/statistics', labelKey: 'nav.statistics' },
-  { to: '/why-therapy', labelKey: 'nav.whyTherapy' },
   { to: '/programs', labelKey: 'nav.programs' },
   { to: '/age-groups', labelKey: 'nav.ageGroups' },
   { to: '/methodology', labelKey: 'nav.methodology' },
+  { to: '/practice', labelKey: 'nav.practice' },
   { to: '/educator', labelKey: 'nav.educator' },
+  { to: '/statistics', labelKey: 'nav.statistics', drawerOnly: true },
+  { to: '/why-therapy', labelKey: 'nav.whyTherapy', drawerOnly: true },
   { to: '/resources', labelKey: 'nav.resources' },
   { to: '/faq', labelKey: 'nav.faq' },
   { to: '/contact', labelKey: 'nav.contact' },
 ]
 
 export default function Header() {
-  const { t, locale } = useLanguage()
+  const { t, locale, setLocale } = useLanguage()
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const location = useLocation()
@@ -55,27 +58,31 @@ export default function Header() {
   return (
     <header className={`header ${scrolled ? 'header--scrolled' : ''} ${menuOpen ? 'header--menu-open' : ''}`}>
       <div className="header__inner">
-        <Link to="/" className="header__logo" onClick={() => setMenuOpen(false)}>
-          <BrandLogo className="header__logo-img" />
+        <Link to="/" className="header__logo" aria-label={`VoiceForUnheard — ${t('nav.home')}`} onClick={() => setMenuOpen(false)}>
+          <BrandLogo className="header__logo-img" horizontal />
         </Link>
 
         <div className="header__desktop-actions">
           <LanguageSwitcher />
           <div className="header__auth-actions">
-            <Link to="/signin" className="header__cta header__cta--outline header__cta--bar" onClick={() => setMenuOpen(false)}>
-              <span>{t('nav.signIn')}</span>
+            <Link to="/consultation" className="header__cta header__cta--bar" onClick={() => setMenuOpen(false)}>
+              <span>{t('nav.consultation')}</span>
               <span className="header__cta-icon">
-                <HiLogin aria-hidden="true" />
-              </span>
-            </Link>
-            <Link to="/signup" className="header__cta header__cta--bar" onClick={() => setMenuOpen(false)}>
-              <span>{t('nav.signUp')}</span>
-              <span className="header__cta-icon">
-                <HiUserAdd aria-hidden="true" />
+                <HiChatAlt2 aria-hidden="true" />
               </span>
             </Link>
           </div>
         </div>
+
+        <button
+          type="button"
+          className="header__lang-toggle"
+          onClick={() => setLocale(locale === 'ur' ? 'en' : 'ur')}
+          lang={locale === 'ur' ? 'en' : 'ur'}
+          aria-label={t('nav.switchLanguageLabel')}
+        >
+          {locale === 'ur' ? t('nav.switchToEnglish') : t('nav.switchToUrdu')}
+        </button>
 
         <button
           type="button"
@@ -107,7 +114,7 @@ export default function Header() {
                   to={link.to}
                   end={link.end}
                   className={({ isActive }) =>
-                    `header__link ${isActive ? 'header__link--active' : ''}`
+                    `header__link ${isActive ? 'header__link--active' : ''} ${link.drawerOnly ? 'header__link--drawer-only' : ''}`
                   }
                   onClick={() => setMenuOpen(false)}
                 >
@@ -118,16 +125,10 @@ export default function Header() {
             <LanguageSwitcher />
           </div>
           <div className="header__drawer-auth">
-            <Link to="/signin" className="header__cta header__cta--outline header__cta--drawer" onClick={() => setMenuOpen(false)}>
-              <span>{t('nav.signIn')}</span>
+            <Link to="/consultation" className="header__cta header__cta--drawer" onClick={() => setMenuOpen(false)}>
+              <span>{t('nav.consultation')}</span>
               <span className="header__cta-icon">
-                <HiLogin aria-hidden="true" />
-              </span>
-            </Link>
-            <Link to="/signup" className="header__cta header__cta--drawer" onClick={() => setMenuOpen(false)}>
-              <span>{t('nav.signUp')}</span>
-              <span className="header__cta-icon">
-                <HiUserAdd aria-hidden="true" />
+                <HiChatAlt2 aria-hidden="true" />
               </span>
             </Link>
           </div>

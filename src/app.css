@@ -28,6 +28,7 @@
 @import './pages/Educator.css';
 @import './pages/Resources.css';
 @import './pages/Contact.css';
+@import './styles/audit.css';
 
 /* Auth & portals */
 @import './pages/auth/SignIn.css';

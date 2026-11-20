@@ -21,6 +21,9 @@ function daysFromNow(n) {
 }
 
 export function seedDemoData() {
+  // Sample data is only for local development. Seeded accounts have no password
+  // and cannot be signed in to.
+  if (!import.meta.env.DEV) return
   ensureParentGrades()
   seedAcademicDemoData()
 
@@ -34,7 +37,6 @@ export function seedDemoData() {
       id: demoParentId,
       name: 'Maria Chen',
       email: parentPortalConfig.demoParent.email,
-      password: parentPortalConfig.demoParent.password,
       childName: 'Ethan',
       childAge: '7 years',
       childGrade: 2,
@@ -49,7 +51,6 @@ export function seedDemoData() {
       id: 'parent_demo_002',
       name: 'James Wilson',
       email: 'james.wilson@email.com',
-      password: 'parent2026',
       childName: 'Sophia',
       childAge: '5 years',
       childGrade: 1,
@@ -64,7 +65,6 @@ export function seedDemoData() {
       id: pendingParentId,
       name: 'Aisha Rahman',
       email: 'pending.family@email.com',
-      password: 'pending123',
       childName: 'Omar',
       childAge: '4 years',
       childGrade: 1,

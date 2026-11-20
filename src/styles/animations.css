@@ -156,29 +156,26 @@
 .stagger.reveal--visible > *:nth-child(12) { animation-delay: 0.48s; }
 
 /* Hero entrance (page load) */
-.animate-hero-badge {
-  animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both,
-    heroEntranceFailsafe 0s 1.5s forwards;
-}
-
-.animate-hero-title {
-  animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both,
-    heroEntranceFailsafe 0s 1.5s forwards;
-}
-
-.animate-hero-subtitle {
-  animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both,
-    heroEntranceFailsafe 0s 1.5s forwards;
-}
-
+/* Hero content is visible from the first paint (no opacity fade), so the
+   first screen is never blank on slow phones. It only slides in gently. */
+.animate-hero-badge,
+.animate-hero-title,
+.animate-hero-subtitle,
 .animate-hero-actions {
-  animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both,
-    heroEntranceFailsafe 0s 1.5s forwards;
+  animation: heroRise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .animate-hero-visual {
-  animation: fadeRight 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both,
-    heroEntranceFailsafe 0s 1.5s forwards;
+  animation: heroRise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes heroRise {
+  from {
+    transform: translateY(12px);
+  }
+  to {
+    transform: none;
+  }
 }
 
 @keyframes heroEntranceFailsafe {

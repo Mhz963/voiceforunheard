@@ -39,8 +39,29 @@ npm run preview
 | `/methodology` | VoiceForUnheard five pillar approach |
 | `/educator` | Meet the Speech Education Teacher |
 | `/resources` | Organizations, research, tools |
+| `/practice` | Free tools: Ling Six Sound check, milestone checklist |
 | `/faq` | Frequently asked questions |
-| `/contact` | Contact form |
+| `/contact` | Contact form (delivered via the visitor's email / WhatsApp) |
+| `/consultation` | Request a consultation (no account needed) |
+| `/privacy`, `/terms` | Privacy policy and terms of use (English + Urdu) |
+
+## Configuration and safety switches
+
+Copy `.env.example` to `.env.local`. Important flags:
+
+- `VITE_PORTAL_ENABLED` (default **off**): the parent/educator/admin portals store data in the
+  visitor's browser and cannot verify sign-in securely. They are excluded from the production
+  bundle until a real backend (server-side auth + database, e.g. Supabase) replaces them.
+  Staff sign-in is disabled in code, and no credentials are stored in the front end.
+- `PAYMENTS_ENABLED` (default **off**): every `/api/payments/*` endpoint returns 503 until this is
+  `true` on the server. Refunds additionally require `REFUND_ADMIN_TOKEN` as a Bearer token.
+- Contact and consultation forms post to `/api/contact`, which forwards each message to the
+  educator by WhatsApp (CallMeBot) and email (Resend). Set these **server** variables in Vercel:
+  `WHATSAPP_TO`, `CALLMEBOT_APIKEY`, `CONTACT_TO_EMAIL`, `RESEND_API_KEY`. The phone number is
+  never shipped to the browser. If neither channel is configured, the form offers an email fallback.
+
+`npm run build` also writes one HTML file per public route with its own title, description and
+Open Graph tags, plus `404.html`, `sitemap.xml` and `robots.txt` (see `server/prerenderMetaPlugin.js`).
 
 ## Tech Stack
 

@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { portalConfig } from '../data/parentPortal'
-import { clearSuperAdminSession, getSuperAdminSession, setSuperAdminSession } from '../services/parentStorage'
+import { clearSuperAdminSession, getSuperAdminSession } from '../services/parentStorage'
 import { seedDemoData } from '../services/seedDemoData'
 
 const SuperAdminAuthContext = createContext(null)
@@ -16,15 +15,10 @@ export function SuperAdminAuthProvider({ children }) {
     setLoading(false)
   }, [])
 
-  function login(email, password) {
-    const creds = portalConfig.roles.superadmin
-    if (email.trim().toLowerCase() !== creds.email || password !== creds.password) {
-      throw new Error('Invalid super admin credentials.')
-    }
-    const account = { email: creds.email, name: 'Super Administrator', role: 'superadmin' }
-    setSuperAdminSession(account)
-    setSuperadmin(account)
-    return account
+  // Admin sign-in cannot be verified safely in the browser. It stays disabled
+  // until server-side authentication (e.g. Supabase Auth) is connected.
+  function login() {
+    throw new Error('Admin sign-in is not available yet. It will open once secure server sign-in is set up.')
   }
 
   function logout() {

@@ -37,14 +37,16 @@ export default function Footer() {
 
         <div className="footer__col">
           <h4>{t('footer.connect')}</h4>
-          <Link to="/signin">{t('nav.signIn')}</Link>
-          <Link to="/signup">{t('nav.signUp')}</Link>
+          <Link to="/consultation">{t('nav.consultation')}</Link>
           <Link to="/contact">{t('footer.contactUs')}</Link>
+          <Link to="/practice">{t('nav.practice')}</Link>
+          <Link to="/privacy">{t('footer.privacy')}</Link>
+          <Link to="/terms">{t('footer.terms')}</Link>
+          <a href="https://new.psl.org.pk/resources" target="_blank" rel="noopener noreferrer">
+            {t('footer.pslResources')}
+          </a>
           <a href="https://www.who.int/news-room/fact-sheets/detail/deafness-and-hearing-loss" target="_blank" rel="noopener noreferrer">
             {t('footer.whoData')}
-          </a>
-          <a href="https://www.asha.org" target="_blank" rel="noopener noreferrer">
-            {t('footer.ashaResources')}
           </a>
         </div>
       </div>

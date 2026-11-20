@@ -1,5 +1,6 @@
 export const portalConfig = {
-  accessCodes: ['VFU-FAMILY-2026', 'VOICE-PARENT'],
+  // Access codes are issued by the educator from the admin portal; none ship in code.
+  accessCodes: [],
 
   googleMeetLink: 'https://meet.google.com/lookup/voiceforunheard-demo',
 
@@ -11,22 +12,16 @@ export const portalConfig = {
   roles: {
     parent: {
       label: 'Parent',
-      email: 'parent@demo.com',
-      password: 'demo123',
       dashboard: '/portal/parent',
       color: '#2a9d8f',
     },
     admin: {
       label: 'Educator Admin',
-      email: 'binteanayat@gmail.com',
-      password: 'admin123',
       dashboard: '/portal/admin',
       color: '#1a4d6d',
     },
     superadmin: {
       label: 'Super Admin',
-      email: 'super@voiceforunheard.org',
-      password: 'super123',
       dashboard: '/portal/superadmin',
       color: '#0f3349',
     },
@@ -62,7 +57,7 @@ export const portalConfig = {
     { id: 'cancelled', label: 'Cancelled' },
   ],
 
-  grades: Array.from({ length: 10 }, (_, i) => ({
+  grades: Array.from({ length: 12 }, (_, i) => ({
     id: i + 1,
     label: `Grade ${i + 1}`,
   })),
@@ -98,15 +93,9 @@ export const portalConfig = {
   ],
 }
 
-// Legacy aliases used by seed data and existing portals
+// Legacy alias used by seed data and existing portals.
+// No credentials are stored in front-end code: sign-in must be verified on a server.
 export const parentPortalConfig = {
   ...portalConfig,
-  demoParent: {
-    email: portalConfig.roles.parent.email,
-    password: portalConfig.roles.parent.password,
-  },
-  demoAdmin: {
-    email: portalConfig.roles.admin.email,
-    password: portalConfig.roles.admin.password,
-  },
+  demoParent: { email: 'demo.parent@example.invalid' },
 }

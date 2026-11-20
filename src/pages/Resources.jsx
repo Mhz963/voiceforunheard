@@ -1,13 +1,43 @@
-import { HiArrowRight } from 'react-icons/hi'
+import { Link } from 'react-router-dom'
+import { HiArrowRight, HiClock } from 'react-icons/hi'
 import SectionHeader from '../components/ui/SectionHeader'
 import Reveal from '../components/ui/Reveal'
 import { useLanguage } from '../i18n/LanguageContext'
 import { useLocalizedContent } from '../i18n/useLocalizedContent'
 import { SpeakHeading } from '../components/voice/SpeakAloud'
 
+// The whole card is clickable through the stretched link; the read-aloud
+// button sits above it, so no interactive element is nested in another.
+function ResourceCard({ item, t }) {
+  const isInternal = item.url.startsWith('/')
+  const label = (
+    <>
+      {isInternal ? t('resourcesPage.toolsReady') : t('resourcesPage.visitLink')} <HiArrowRight aria-hidden="true" />
+      <span className="visually-hidden">: {item.name}</span>
+    </>
+  )
+
+  return (
+    <article className="resource-card resource-card--stretched interactive-card card-shine">
+      <SpeakHeading as="h3" body={item.description}>{item.name}</SpeakHeading>
+      <p>{item.description}</p>
+      {isInternal ? (
+        <Link to={item.url} className="resource-card__link resource-card__stretch">
+          {label}
+        </Link>
+      ) : (
+        <a href={item.url} className="resource-card__link resource-card__stretch" target="_blank" rel="noopener noreferrer">
+          {label}
+        </a>
+      )}
+    </article>
+  )
+}
+
 export default function Resources() {
   const { t } = useLanguage()
   const { resources } = useLocalizedContent()
+  const roadmap = t('resourcesPage.roadmap')
 
   return (
     <div className="page resources-page">
@@ -33,25 +63,27 @@ export default function Resources() {
               </Reveal>
               <Reveal className="resource-grid stagger">
                 {group.items.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.url}
-                    className="resource-card interactive-card card-shine"
-                    target={item.url.startsWith('http') ? '_blank' : undefined}
-                    rel={item.url.startsWith('http') ? 'noopener noreferrer' : undefined}
-                  >
-                    <SpeakHeading as="h3" body={item.description}>{item.name}</SpeakHeading>
-                    <p>{item.description}</p>
-                    <span className="resource-card__link">
-                      {item.url === '#' ? item.comingSoon ?? t('resourcesPage.comingSoon') : (
-                        <>{t('resourcesPage.visitLink')} <HiArrowRight /></>
-                      )}
-                    </span>
-                  </a>
+                  <ResourceCard key={item.name} item={item} t={t} />
                 ))}
               </Reveal>
             </div>
           ))}
+
+          <div className="resource-group">
+            <Reveal>
+              <SpeakHeading as="h2" headingClassName="resource-group__title" extra={roadmap}>
+                {t('resourcesPage.roadmapTitle')}
+              </SpeakHeading>
+              <p className="roadmap__subtitle">{t('resourcesPage.roadmapSubtitle')}</p>
+              <ul className="roadmap-list">
+                {roadmap.map((item) => (
+                  <li key={item}>
+                    <HiClock aria-hidden="true" /> {item}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          </div>
         </div>
       </section>
     </div>

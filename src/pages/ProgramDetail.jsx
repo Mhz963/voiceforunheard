@@ -84,7 +84,7 @@ export default function ProgramDetail() {
                 {t('pages.programDetail.enrollTitle')}
               </SpeakHeading>
               <p>{t('pages.programDetail.enrollText')}</p>
-              <Link to="/signin" className="btn btn--cta btn--block">
+              <Link to="/consultation" className="btn btn--cta btn--block">
                 <span>{t('pages.programDetail.getStarted')}</span>
                 <span className="btn__cta-icon">
                   <HiArrowRight />

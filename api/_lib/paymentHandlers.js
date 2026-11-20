@@ -36,6 +36,40 @@ function getOrigin(req) {
   return `${protocol}://${host}`
 }
 
+// Payments stay switched off until bookings are stored server-side.
+// Set PAYMENTS_ENABLED=true in the server environment to turn them on.
+export function arePaymentsEnabled() {
+  return process.env.PAYMENTS_ENABLED === 'true'
+}
+
+function rejectWhenPaymentsDisabled(res) {
+  if (arePaymentsEnabled()) return false
+  res.statusCode = 503
+  res.setHeader('Content-Type', 'application/json')
+  res.end(JSON.stringify({ error: 'Online payments are not available yet.' }))
+  return true
+}
+
+function timingSafeEqualString(a, b) {
+  const bufA = Buffer.from(String(a))
+  const bufB = Buffer.from(String(b))
+  if (bufA.length !== bufB.length) return false
+  let diff = 0
+  for (let i = 0; i < bufA.length; i += 1) diff |= bufA[i] ^ bufB[i]
+  return diff === 0
+}
+
+// Refunds move money, so they require a server-side secret that is never
+// shipped to the browser. Without REFUND_ADMIN_TOKEN, refunds are only
+// possible from the Stripe dashboard.
+function isRefundAuthorized(req) {
+  const token = process.env.REFUND_ADMIN_TOKEN
+  if (!token || token.length < 24) return false
+  const header = req.headers.authorization || ''
+  const match = header.match(/^Bearer\s+(.+)$/i)
+  return Boolean(match) && timingSafeEqualString(match[1].trim(), token)
+}
+
 function createOrderId() {
   return `vfu_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
 }
@@ -55,6 +89,7 @@ function getJazzCashManualConfig() {
 
 export async function handlePaymentConfig(_req, res) {
   const prices = getSessionPricesFromEnv(process.env)
+  const enabled = arePaymentsEnabled()
   const jazzcashHosted = isJazzCashConfigured()
   const jazzcashManual = getJazzCashManualConfig()
   res.statusCode = 200
@@ -64,12 +99,12 @@ export async function handlePaymentConfig(_req, res) {
       sessionPricePkr: prices.pkr,
       sessionPriceUsd: prices.usd,
       refundPolicyDays: 7,
-      stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || '',
-      stripeEnabled: isStripeConfigured(),
-      jazzcashEnabled: jazzcashHosted || jazzcashManual.enabled,
-      jazzcashHostedEnabled: jazzcashHosted,
-      jazzcashManualEnabled: jazzcashManual.enabled && !jazzcashHosted,
-      jazzcashManual: jazzcashManual.enabled
+      stripePublishableKey: enabled ? process.env.STRIPE_PUBLISHABLE_KEY || '' : '',
+      stripeEnabled: enabled && isStripeConfigured(),
+      jazzcashEnabled: enabled && (jazzcashHosted || jazzcashManual.enabled),
+      jazzcashHostedEnabled: enabled && jazzcashHosted,
+      jazzcashManualEnabled: enabled && jazzcashManual.enabled && !jazzcashHosted,
+      jazzcashManual: enabled && jazzcashManual.enabled
         ? {
             merchantAccount: jazzcashManual.merchantAccount,
           }
@@ -79,6 +114,7 @@ export async function handlePaymentConfig(_req, res) {
 }
 
 export async function handleStripeCreateSession(req, res) {
+  if (rejectWhenPaymentsDisabled(res)) return
   if (req.method !== 'POST') {
     res.statusCode = 405
     res.end('Method not allowed')
@@ -153,6 +189,7 @@ export async function handleStripeCreateSession(req, res) {
 }
 
 export async function handleStripeVerify(req, res) {
+  if (rejectWhenPaymentsDisabled(res)) return
   if (req.method !== 'POST') {
     res.statusCode = 405
     res.end('Method not allowed')
@@ -218,6 +255,7 @@ export async function handleStripeVerify(req, res) {
 }
 
 export async function handleStripeWebhook(req, res) {
+  if (rejectWhenPaymentsDisabled(res)) return
   const stripe = getStripe()
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
   if (!stripe || !webhookSecret) {
@@ -254,6 +292,7 @@ function readRawBody(req) {
 }
 
 export async function handleJazzCashInitiate(req, res) {
+  if (rejectWhenPaymentsDisabled(res)) return
   if (req.method !== 'POST') {
     res.statusCode = 405
     res.end('Method not allowed')
@@ -300,6 +339,7 @@ export async function handleJazzCashInitiate(req, res) {
 }
 
 export async function handleJazzCashVerify(req, res) {
+  if (rejectWhenPaymentsDisabled(res)) return
   if (req.method !== 'POST') {
     res.statusCode = 405
     res.end('Method not allowed')
@@ -364,6 +404,7 @@ export async function handleJazzCashVerify(req, res) {
 }
 
 export async function handleJazzCashReturn(req, res) {
+  if (rejectWhenPaymentsDisabled(res)) return
   try {
     const origin = getOrigin(req)
 
@@ -405,6 +446,13 @@ function readFormBody(req) {
 }
 
 export async function handleRefund(req, res) {
+  if (rejectWhenPaymentsDisabled(res)) return
+  if (!isRefundAuthorized(req)) {
+    res.statusCode = 403
+    res.setHeader('Content-Type', 'application/json')
+    res.end(JSON.stringify({ error: 'Refunds are handled by the educator. Please contact us.' }))
+    return
+  }
   if (req.method !== 'POST') {
     res.statusCode = 405
     res.end('Method not allowed')

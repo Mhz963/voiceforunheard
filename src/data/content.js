@@ -7,11 +7,30 @@ export const siteInfo = {
   favicon: '/icon1.png',
   contactEmail: CONTACT_EMAIL,
   description:
-    'A complete speech education ecosystem designed by a Speech Education Teacher for hearing impaired children, families, and educators worldwide.',
+    'Speech, language and listening education for deaf and hard of hearing children in Pakistan, in Urdu and English. Created by special-education teacher Maria Anayat for families and teachers.',
   educator: {
-    title: 'Speech Education Teacher',
-    role: 'Founder & Lead Educator',
-    bio: 'With years of classroom experience and specialized training in auditory verbal therapy, sign supported communication, and inclusive education, I built VoiceForUnheard to close the gap between clinical speech therapy and real world learning. Every module reflects what works in practice: structured progression, family partnership, and respect for every communication choice.',
+    name: 'Maria Anayat',
+    photo: '/images/educator/maria-anayat.jpeg',
+    title: 'Special Education Teacher (Hearing Impairment)',
+    role: 'Gazetted Officer, Government of Punjab · Founder',
+    location: 'Gujrat, Punjab, Pakistan',
+    bio: 'Maria Anayat teaches girls with hearing impairment at the Government Secondary School of Special Education in Gujrat, where she serves as a Junior Special Education Teacher (BS-16). Before that she worked as a speech and language therapist in Lahore. She holds an MPhil in Special Education (Hearing Impairment) and a PGD in Speech and Language Therapy from the University of the Punjab, and researches AI-based speech therapy for young deaf children.',
+    education: [
+      { title: 'MPhil, Special Education (Hearing Impairment)', place: 'University of the Punjab', period: '2021–2023', note: 'Thesis on the impact of AI-based speech therapy on speech development of pre-primary children with hearing impairment. USAID scholarship.' },
+      { title: 'PGD, Speech and Language Therapy', place: 'University of the Punjab', period: '2020–2021' },
+      { title: 'MA, Special Education (Hearing Impairment)', place: 'University of the Punjab', period: '2018–2020' },
+      { title: "Improving Teachers' Skills in Sign Language (government certificate)", place: 'J.S.E.T (H.I) training', period: '2026' },
+    ],
+    experience: [
+      { title: 'Junior Special Education Teacher (BS-16)', place: 'Govt. Secondary School of Special Education for HI Girls, Gujrat', period: '2025–present' },
+      { title: 'Speech and Language Therapist', place: 'My Creation Clinic, Lahore', period: '2023–2025' },
+      { title: 'Research Assistant (special education)', place: 'Lahore, with Dr. Samina Ashraf', period: '2022–2024' },
+    ],
+    research: [
+      { title: 'AI-Based Speech Therapy for Hearing-Impaired Children', place: '3rd International Conference on Research in Special Education', period: '2023' },
+      { title: "Teachers' Knowledge and Strategies for Working Memory of Hearing-Impaired Students", place: 'ICORE 2022, University of the Punjab', period: '2022' },
+      { title: 'Strategies Used by Hearing-Impaired Graduates to Manage Working Memory Load', place: '2nd International Conference on Research in Special Education', period: '2022' },
+    ],
   },
 }
 
@@ -136,51 +155,39 @@ export const whySpeechTherapy = {
 
 export const systemAdvantages = [
   {
-    title: 'Educator Designed Curriculum',
+    title: 'Created by a qualified special-education teacher',
     description:
-      'Built by a Speech Education Teacher with real classroom experience. Every lesson, activity, and assessment reflects proven pedagogical methods, not generic templates.',
+      'Maria Anayat holds an MPhil in Special Education (Hearing Impairment) and a PGD in Speech and Language Therapy, and teaches deaf and hard of hearing girls in a Punjab government school.',
     icon: 'educator',
   },
   {
-    title: 'Complete Category Coverage',
+    title: 'Urdu and English, with read-aloud',
     description:
-      'From auditory training and articulation to sign language integration, social communication, and literacy support. All communication pathways in one unified system.',
-    icon: 'categories',
-  },
-  {
-    title: 'Age Adaptive Learning Paths',
-    description:
-      'Specialized tracks for infants, preschoolers, school age children, adolescents, and adults. Content grows with the learner at every developmental stage.',
-    icon: 'ages',
-  },
-  {
-    title: 'Family Partnership Model',
-    description:
-      'Parent dashboards, home practice guides, and video demonstrations empower families to reinforce therapy goals daily between sessions.',
-    icon: 'family',
-  },
-  {
-    title: 'Progress Tracking and Analytics',
-    description:
-      'Visual progress reports, milestone tracking, and customizable goals help educators and families celebrate growth and identify areas needing focus.',
-    icon: 'analytics',
-  },
-  {
-    title: 'Inclusive Communication Choice',
-    description:
-      'Supports auditory verbal, oral communication, total communication, and bilingual bimodal approaches. Respects individual family decisions without judgment.',
-    icon: 'inclusive',
-  },
-  {
-    title: 'Accessible Digital Platform',
-    description:
-      'Visual captions, high contrast modes, screen reader compatibility, and video demonstrations designed for diverse learning needs.',
+      'Every page works in Urdu and English. Tap Listen to hear any section read aloud, or Speak to fill in a form with your voice.',
     icon: 'accessibility',
   },
   {
-    title: 'Evidence Based Methods',
+    title: 'Free practice tools for home',
     description:
-      'Grounded in WHO guidelines, Auditory Verbal Therapy principles, and peer reviewed research on linguistic development in hearing impaired populations.',
+      'The Ling Six Sound check and age-based milestone checklists, free to use and print. More activities are on the way.',
+    icon: 'ages',
+  },
+  {
+    title: "Your family's communication choice",
+    description:
+      'Listening and spoken language, Pakistan Sign Language, or both. We support the path your family chooses.',
+    icon: 'inclusive',
+  },
+  {
+    title: 'Talk to the educator directly',
+    description:
+      'Request a consultation by WhatsApp or email. No account, no payment and no access code needed.',
+    icon: 'family',
+  },
+  {
+    title: 'Grounded in research',
+    description:
+      "Based on WHO guidance, auditory-verbal principles and Maria's own research on AI-assisted speech therapy for young deaf children.",
     icon: 'evidence',
   },
 ]
@@ -200,7 +207,7 @@ export const programCategories = [
       'Natural conversation development',
     ],
     ages: 'Birth to 5 years',
-    duration: '12 to 24 month intensive programs',
+    duration: 'Often 1 to 2 years of regular sessions; varies by child',
   },
   {
     id: 'articulation',
@@ -239,9 +246,9 @@ export const programCategories = [
     title: 'Sign Language and Visual Communication',
     summary: 'Master sign language as a primary or supporting communication mode.',
     description:
-      'For families choosing sign language, this program offers structured American Sign Language or local sign language instruction alongside speech development. Bilingual bimodal approaches support children who use both signing and spoken language.',
+      'For families choosing sign language, this program offers Pakistan Sign Language (PSL) alongside spoken Urdu development, using free PSL resources from Deaf Reach where helpful. Bilingual bimodal approaches support children who use both signing and spoken language.',
     features: [
-      'ASL or local sign curriculum',
+      'Pakistan Sign Language (PSL) vocabulary',
       'Fingerspelling and classifier skills',
       'Sign supported speech techniques',
       'Deaf culture and community connection',
@@ -296,7 +303,7 @@ export const programCategories = [
       'Conflict resolution skills',
     ],
     ages: '5 years to adult',
-    duration: '8 week social skills groups',
+    duration: 'Individual sessions; group sessions planned',
   },
   {
     id: 'early-intervention',
@@ -473,18 +480,18 @@ export const methodology = {
       title: 'Teach',
       description:
         'Evidence based instruction using multi sensory techniques, play based learning for young children, and structured drills for skill acquisition.',
-      steps: ['Interactive lessons', 'Video modeling', 'Parent coaching', 'Peer group activities', 'Real world application'],
+      steps: ['Interactive lessons', 'Modelling and demonstration', 'Parent coaching', 'Peer group activities', 'Real world application'],
     },
     {
       title: 'Practice',
       description:
-        'Daily home activities, digital practice tools, and community based assignments reinforce session goals. Consistency accelerates progress.',
-      steps: ['Home activity kits', 'Digital practice apps', 'Community outings', 'School collaboration', 'Sibling involvement'],
+        'Daily home activities, printable practice tools, and everyday routines reinforce session goals. Consistency accelerates progress.',
+      steps: ['Home activity ideas', 'Printable practice sheets', 'Community outings', 'School collaboration', 'Sibling involvement'],
     },
     {
       title: 'Measure',
       description:
-        'Regular progress monitoring with visual dashboards, reassessment intervals, and goal adjustment. Data informs every decision.',
+        'Regular progress monitoring through session notes, reassessment and goal adjustment. What we observe informs every decision.',
       steps: ['Weekly session notes', 'Monthly progress reports', 'Quarterly reassessment', 'Annual review meetings', 'Outcome documentation'],
     },
   ],
@@ -502,10 +509,23 @@ export const methodology = {
 
 export const resources = [
   {
+    category: 'Free tools',
+    items: [
+      { name: 'Ling Six Sound Check', description: 'A two-minute daily check that your child can hear the full range of speech sounds', url: '/practice' },
+      { name: 'Milestone Checklist', description: 'Age-based communication milestones you can tick and print', url: '/practice#milestones' },
+    ],
+  },
+  {
+    category: 'Pakistan',
+    items: [
+      { name: 'Pakistan Sign Language (Deaf Reach)', description: 'Free PSL resources, including a video dictionary of signs', url: 'https://new.psl.org.pk/resources' },
+      { name: 'Family Educational Services Foundation', description: 'Deaf Reach schools and programs across Pakistan', url: 'https://fesf.org.pk/programs/' },
+    ],
+  },
+  {
     category: 'Organizations',
     items: [
       { name: 'World Health Organization', description: 'Global hearing loss data and policy guidance', url: 'https://www.who.int/news-room/fact-sheets/detail/deafness-and-hearing-loss' },
-      { name: 'ASHA', description: 'American Speech Language Hearing Association professional standards', url: 'https://www.asha.org' },
       { name: 'Hands & Voices', description: 'Parent driven support for families of deaf children', url: 'https://www.handsandvoices.org' },
       { name: 'AG Bell', description: 'Listening and spoken language resources and advocacy', url: 'https://www.agbell.org' },
     ],
@@ -518,67 +538,42 @@ export const resources = [
       { name: 'PMC Cochrane Reviews', description: 'Systematic reviews on speech therapy interventions', url: 'https://www.ncbi.nlm.nih.gov/pmc/' },
     ],
   },
-  {
-    category: 'Tools',
-    items: [
-      { name: 'Hearing Level Simulator', description: 'Understand how different hearing levels affect speech perception', url: '#' },
-      { name: 'Milestone Tracker', description: 'Age based communication development checklist', url: '#' },
-      { name: 'Home Practice Library', description: 'Downloadable activities for daily reinforcement', url: '#' },
-      { name: 'Device Care Guides', description: 'Step by step hearing aid and cochlear implant maintenance', url: '#' },
-    ],
-  },
 ]
 
 export const faqItems = [
   {
     question: 'When should my child start speech therapy after a hearing loss diagnosis?',
     answer:
-      'As soon as possible. Research shows that intervention beginning before 12 months of age produces significantly better language outcomes. The brain\'s auditory pathways are most receptive in the first three years of life. VoiceForUnheard offers immediate early intervention support from the point of diagnosis.',
+      "As soon as possible. Research shows that support beginning before 12 months of age leads to much better language outcomes, because the brain's hearing pathways are most receptive in the first three years. If your child has just been diagnosed, request a consultation and we will help you plan the first steps.",
   },
   {
-    question: 'Does VoiceForUnheard support sign language families?',
+    question: 'Does VoiceForUnheard support families who use sign language?',
     answer:
-      'Absolutely. We respect every family\'s communication choice. Our sign language program offers structured ASL instruction, and our total communication track integrates signing with speech development. There is no single right path, only the right path for your family.',
+      "Yes. We respect every family's communication choice. For signing families we focus on Pakistan Sign Language (PSL), alongside spoken Urdu if you wish, and we point you to the free PSL video dictionary from Deaf Reach. There is no single right path, only the right path for your family.",
   },
   {
     question: 'How is VoiceForUnheard different from clinic based speech therapy?',
     answer:
-      'VoiceForUnheard was designed by an educator who understands classroom realities. We bridge clinical therapy with educational needs, offering school transition support, teacher training materials, literacy integration, and progress tracking designed for long term academic success, not just session by session goals.',
+      'VoiceForUnheard was created by a teacher who works in a government special-education school and has also worked as a clinical speech and language therapist. The focus is on what helps at home and in the classroom: daily practice, school support and literacy, not only session-by-session goals.',
   },
   {
     question: 'Can my child use VoiceForUnheard alongside their current therapist?',
     answer:
-      'Yes. VoiceForUnheard complements existing services. Our platform provides home practice materials, progress documentation, and specialized modules that extend what happens in clinical sessions. Many families use VoiceForUnheard to maintain consistency between appointments.',
+      'Yes. The free practice tools, such as the Ling Six Sound check and milestone checklist, are designed to support the work you already do with your therapist or school.',
   },
   {
-    question: 'What technology do we need to get started?',
+    question: 'What do we need to get started?',
     answer:
-      'A computer or tablet with internet access is sufficient to begin. Optimal hearing technology (hearing aids or cochlear implants) should be fitted and programmed by your audiologist. VoiceForUnheard includes device management training to help you maintain and troubleshoot equipment.',
+      'A phone with WhatsApp or email is enough to request a consultation, and the practice tools work on any phone. Hearing aids or cochlear implants should be fitted and programmed by your audiologist.',
   },
   {
-    question: 'How do you measure progress?',
+    question: 'How is progress measured?',
     answer:
-      'We use standardized assessments, session data, parent reports, and video samples to track growth across listening, speech, language, and social communication domains. Visual dashboards show milestone achievement and areas needing additional focus.',
-  },
-]
-
-export const testimonials = [
-  {
-    name: 'Sarah M.',
-    role: 'Parent of a 4 year old with cochlear implants',
-    text: 'VoiceForUnheard gave us structure when we felt overwhelmed after diagnosis. The home activities made therapy part of our daily routine, not just a weekly appointment.',
-    rating: 5,
+      'In consultations, progress is followed through observation, session notes and what parents report, across listening, speech, language and social communication. At home, the milestone checklist helps you see what your child can already do and what to work on next.',
   },
   {
-    name: 'James T.',
-    role: 'Elementary school teacher',
-    text: 'The classroom accommodation guides and teacher training materials helped me support my student effectively. I finally understood how to modify my instruction.',
-    rating: 5,
-  },
-  {
-    name: 'Priya K.',
-    role: 'Speech Language Pathologist',
-    text: 'I recommend VoiceForUnheard to families because it extends therapy into the home with evidence based activities. The progress tracking aligns with clinical standards.',
-    rating: 5,
+    question: 'Is my information kept private?',
+    answer:
+      'Yes. The website does not store what you type in its forms. Your message goes directly to the educator through your own WhatsApp or email app. See the privacy policy for details.',
   },
 ]
