@@ -72,7 +72,7 @@ export default function WhyTherapy() {
             </SpeakHeading>
           </Reveal>
           <Reveal>
-            <ol className="help-steps">
+            <ol className="help-steps help-steps--cards">
               {steps.map((step) => (
                 <li key={step}>{step}</li>
               ))}

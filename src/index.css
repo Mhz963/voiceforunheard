@@ -32,7 +32,7 @@
   --space-2xl: 3.5rem;
 
   --header-height: 92px;
-  --container-max: 1200px;
+  --container-max: 1320px;
   --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-smooth: 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }

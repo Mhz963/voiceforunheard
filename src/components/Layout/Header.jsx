@@ -5,15 +5,17 @@ import { useLanguage } from '../../i18n/LanguageContext'
 import BrandLogo from '../ui/BrandLogo'
 import LanguageSwitcher from '../ui/LanguageSwitcher'
 
+// `drawerOnly` links appear in the mobile/tablet menu but not in the desktop
+// bar, which only has room for the main sections (Home is the logo).
 const navLinks = [
-  { to: '/', labelKey: 'nav.home', end: true },
-  { to: '/statistics', labelKey: 'nav.statistics' },
-  { to: '/why-therapy', labelKey: 'nav.whyTherapy' },
+  { to: '/', labelKey: 'nav.home', end: true, drawerOnly: true },
   { to: '/programs', labelKey: 'nav.programs' },
   { to: '/age-groups', labelKey: 'nav.ageGroups' },
   { to: '/methodology', labelKey: 'nav.methodology' },
-  { to: '/educator', labelKey: 'nav.educator' },
   { to: '/practice', labelKey: 'nav.practice' },
+  { to: '/educator', labelKey: 'nav.educator' },
+  { to: '/statistics', labelKey: 'nav.statistics', drawerOnly: true },
+  { to: '/why-therapy', labelKey: 'nav.whyTherapy', drawerOnly: true },
   { to: '/resources', labelKey: 'nav.resources' },
   { to: '/faq', labelKey: 'nav.faq' },
   { to: '/contact', labelKey: 'nav.contact' },
@@ -56,8 +58,8 @@ export default function Header() {
   return (
     <header className={`header ${scrolled ? 'header--scrolled' : ''} ${menuOpen ? 'header--menu-open' : ''}`}>
       <div className="header__inner">
-        <Link to="/" className="header__logo" onClick={() => setMenuOpen(false)}>
-          <BrandLogo className="header__logo-img" />
+        <Link to="/" className="header__logo" aria-label={`VoiceForUnheard — ${t('nav.home')}`} onClick={() => setMenuOpen(false)}>
+          <BrandLogo className="header__logo-img" horizontal />
         </Link>
 
         <div className="header__desktop-actions">
@@ -112,7 +114,7 @@ export default function Header() {
                   to={link.to}
                   end={link.end}
                   className={({ isActive }) =>
-                    `header__link ${isActive ? 'header__link--active' : ''}`
+                    `header__link ${isActive ? 'header__link--active' : ''} ${link.drawerOnly ? 'header__link--drawer-only' : ''}`
                   }
                   onClick={() => setMenuOpen(false)}
                 >

@@ -24,7 +24,7 @@ export const routeMeta = {
     ur: { title: 'گفتار کا علاج کیوں ضروری ہے', description: 'سماعت سے محروم بچوں کے لیے جلد گفتار و زبان کی مدد کیوں ضروری ہے، اور پاکستان میں مدد کیسے حاصل کریں۔' },
   },
   '/programs': {
-    en: { title: 'Programme areas', description: '12 areas of support, from auditory-verbal therapy and articulation to Pakistan Sign Language, literacy and school transition.' },
+    en: { title: 'Program areas', description: '12 areas of support, from auditory-verbal therapy and articulation to Pakistan Sign Language, literacy and school transition.' },
     ur: { title: 'پروگرام', description: 'مدد کے ۱۲ شعبے — آڈیٹری وربل تھراپی اور تلفظ سے پاکستانی اشاراتی زبان، پڑھائی اور اسکول تک۔' },
   },
   '/age-groups': {

@@ -706,3 +706,402 @@
     background: none;
   }
 }
+
+/* ---------- Section headers: badge always sits on its own line ---------- */
+.section-header__title-row {
+  display: flex;
+}
+
+.educator-hero .section-header__title-row {
+  justify-content: flex-start;
+}
+
+/* ---------- Home hero: full width, content aligned to the site grid ---------- */
+.hero {
+  max-width: none;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  padding-top: calc(var(--header-height) + clamp(1.5rem, 4vw, 3.5rem));
+  padding-bottom: clamp(2rem, 5vw, 4.5rem);
+  padding-inline: max(var(--space-md), calc((100% - var(--container-max)) / 2 + var(--space-md)));
+}
+
+.hero__bg {
+  background:
+    radial-gradient(ellipse at 15% 40%, rgba(42, 157, 143, 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 25%, rgba(224, 122, 95, 0.12) 0%, transparent 45%),
+    radial-gradient(ellipse at 60% 90%, rgba(26, 77, 109, 0.08) 0%, transparent 55%),
+    linear-gradient(180deg, #fbfaf8 0%, var(--color-bg) 100%);
+}
+
+.hero__subtitle {
+  max-width: 560px;
+}
+
+.hero__visual {
+  min-height: 0;
+}
+
+/* ---------- Intro video ---------- */
+.intro-video {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem;
+  box-shadow: 0 30px 70px var(--color-shadow-strong);
+}
+
+.intro-video__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.25rem 0.35rem 0.75rem;
+}
+
+.intro-video__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--color-primary-dark);
+  text-align: start;
+}
+
+.intro-video__langs {
+  display: inline-flex;
+  padding: 3px;
+  background: var(--color-bg-alt);
+  border-radius: 100px;
+  flex-shrink: 0;
+}
+
+.intro-video__lang {
+  border: 0;
+  background: transparent;
+  padding: 0.35rem 0.9rem;
+  border-radius: 100px;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  min-height: 34px;
+}
+
+.intro-video__lang.is-active {
+  background: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: 0 2px 8px var(--color-shadow);
+}
+
+.intro-video__lang:focus-visible,
+.intro-video__play:focus-visible {
+  outline: 3px solid var(--color-teal);
+  outline-offset: 2px;
+}
+
+.intro-video__frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: calc(var(--radius-lg) - 0.5rem);
+  overflow: hidden;
+  background: #eef3f2;
+}
+
+.intro-video__media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #eef3f2;
+}
+
+.intro-video__play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: 0.85rem;
+  padding: clamp(0.85rem, 3vw, 1.5rem);
+  border: 0;
+  cursor: pointer;
+  background: linear-gradient(180deg, transparent 45%, rgba(15, 51, 73, 0.55) 100%);
+  color: #fff;
+  font: inherit;
+  text-align: start;
+}
+
+.intro-video__play-icon {
+  display: grid;
+  place-items: center;
+  width: clamp(52px, 7vw, 68px);
+  height: clamp(52px, 7vw, 68px);
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 10px 30px rgba(224, 122, 95, 0.45);
+  font-size: clamp(1.8rem, 3vw, 2.3rem);
+  transition: transform var(--transition);
+  flex-shrink: 0;
+}
+
+.intro-video__play:hover .intro-video__play-icon {
+  transform: scale(1.08);
+}
+
+[dir='rtl'] .intro-video__play-icon svg {
+  transform: scaleX(-1);
+}
+
+.intro-video__play-text {
+  display: grid;
+  font-weight: 700;
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+}
+
+.intro-video__play-text small {
+  font-weight: 500;
+  font-size: 0.85rem;
+  opacity: 0.92;
+}
+
+@media (max-width: 1024px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding-inline: var(--space-sm);
+    padding-top: calc(var(--header-height) + var(--space-md));
+  }
+
+  .hero__visual {
+    width: 100%;
+    max-width: 720px;
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .intro-video {
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+  }
+
+  .intro-video__bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Larger, easier-to-tap radios and checkboxes */
+.contact-form .contact-form__radio input,
+.contact-form .contact-form__consent input {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.contact-form .contact-form__radio {
+  min-height: 44px;
+  align-items: center;
+}
+
+.contact-form .contact-form__radio input {
+  margin-top: 0;
+}
+
+/* Header: horizontal logo lockup, sized to stay legible */
+.header__logo-img.brand-logo--horizontal {
+  height: 44px;
+  max-height: none;
+  width: auto;
+  max-width: none;
+}
+
+@media (max-width: 1280px) {
+  .header__logo-img.brand-logo--horizontal {
+    height: 38px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header__logo-img.brand-logo--horizontal {
+    height: 34px;
+  }
+}
+
+/* Educator hero text uses the full column instead of the 720px header cap */
+.educator-hero .section-header {
+  max-width: none;
+}
+
+/* FAQ: read-aloud button sits beside (not inside) the question button */
+.accordion__header {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding-inline-end: var(--space-sm);
+}
+
+.accordion__header .accordion__trigger {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.accordion__question {
+  flex: 1 1 auto;
+  text-align: start;
+}
+
+.accordion__speak {
+  flex-shrink: 0;
+}
+
+/* Desktop header: no logo stretching; secondary links live in the drawer */
+.header__logo-img.brand-logo--horizontal,
+.header__logo:hover .header__logo-img.brand-logo--horizontal {
+  transform: none;
+}
+
+.header__logo:hover .header__logo-img.brand-logo--horizontal {
+  filter: drop-shadow(0 4px 12px rgba(26, 77, 109, 0.18));
+}
+
+@media (min-width: 1201px) {
+  .header__link--drawer-only {
+    display: none;
+  }
+
+  .header__inner {
+    padding-inline: max(1.25rem, calc((100% - var(--container-max)) / 2));
+    gap: 1rem;
+  }
+}
+
+/* ---------- Grid balance on wide screens ---------- */
+@media (min-width: 1025px) {
+  /* 6 findings: 3 x 2 instead of 4 + 2 orphans */
+  .info-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  /* 6 reasons: two readable columns instead of very long single lines */
+  .reasons-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* "How to get help" steps as numbered cards */
+.help-steps--cards {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-md) 0 0;
+  counter-reset: step;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.help-steps--cards li {
+  counter-increment: step;
+  position: relative;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 3.25rem var(--space-md) var(--space-md);
+  box-shadow: 0 8px 24px var(--color-shadow);
+}
+
+.help-steps--cards li::before {
+  content: counter(step);
+  position: absolute;
+  top: var(--space-md);
+  inset-inline-start: var(--space-md);
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-teal);
+  color: #fff;
+  font-weight: 700;
+}
+
+@media (max-width: 1024px) {
+  .help-steps--cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .help-steps--cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Age groups: milestones in two columns on wide screens; tracker link */
+@media (min-width: 900px) {
+  .age-card__content ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-lg);
+  }
+}
+
+/* Resources: group titles keep their read-aloud button beside the text;
+   three even columns so groups of 2-3 cards look balanced */
+.resource-group .speak-heading__text {
+  flex: 0 1 auto;
+}
+
+@media (min-width: 1025px) {
+  .resource-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Section-level headings keep the read-aloud button next to the text */
+.speak-heading > h2.speak-heading__text {
+  flex: 0 1 auto;
+}
+
+/* Home: 6 offers as a balanced 3 x 2 grid */
+@media (min-width: 1025px) {
+  .advantages-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Resource cards: stretched link covers the card; read-aloud stays clickable */
+.resource-card--stretched {
+  position: relative;
+  cursor: pointer;
+}
+
+.resource-card__stretch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+.resource-card--stretched .speak-aloud {
+  position: relative;
+  z-index: 2;
+}
+
+.resource-card--stretched:focus-within {
+  outline: 3px solid var(--color-teal);
+  outline-offset: 2px;
+}
+
+.resource-card__stretch:focus-visible {
+  outline: none;
+}

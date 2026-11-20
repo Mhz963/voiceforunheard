@@ -13,19 +13,21 @@ export default function Accordion({ items }) {
           className={`accordion__item ${openIndex === index ? 'accordion__item--open' : ''}`}
           style={{ '--item-index': index }}
         >
-          <button
-            type="button"
-            className="accordion__trigger"
-            onClick={() => setOpenIndex(openIndex === index ? -1 : index)}
-            aria-expanded={openIndex === index}
-          >
-            <span className="accordion__trigger-inner">
-              <span>{item.question}</span>
-              <SpeakAloud text={[item.question, item.answer].join('. ')} />
-            </span>
-            <HiChevronDown className="accordion__icon" />
-          </button>
-          <div className="accordion__panel">
+          <div className="accordion__header">
+            <button
+              type="button"
+              id={`faq-q-${index}`}
+              className="accordion__trigger"
+              onClick={() => setOpenIndex(openIndex === index ? -1 : index)}
+              aria-expanded={openIndex === index}
+              aria-controls={`faq-a-${index}`}
+            >
+              <span className="accordion__question">{item.question}</span>
+              <HiChevronDown className="accordion__icon" aria-hidden="true" />
+            </button>
+            <SpeakAloud text={[item.question, item.answer].join('. ')} className="accordion__speak" />
+          </div>
+          <div className="accordion__panel" id={`faq-a-${index}`} role="region" aria-labelledby={`faq-q-${index}`}>
             <div className="accordion__panel-inner">
               <p>{item.answer}</p>
             </div>

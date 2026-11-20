@@ -12,7 +12,7 @@ export default {
   common: {
     startJourney: 'Request a consultation',
     workWithUs: 'Request a consultation',
-    viewAllPrograms: 'View all 12 programme areas',
+    viewAllPrograms: 'View all 12 program areas',
     tryPractice: 'Try the free practice tools',
     print: 'Print',
   },
@@ -24,12 +24,12 @@ export default {
     copyright: 'Made in Pakistan for deaf and hard of hearing children and their families.',
   },
   home: {
-    heroCardTitle: '12 programme areas',
+    heroCardTitle: '12 program areas',
     heroCardDesc: 'Listening, speech, language, PSL and school support, explained for families',
     advantagesBadge: 'What you get today',
     advantagesTitle: 'What VoiceForUnheard Offers Now',
     advantagesSubtitle: 'Designed by Maria Anayat, a Gazetted special-education teacher with clinical speech and language therapy training.',
-    programsBadge: 'Programme areas',
+    programsBadge: 'Program areas',
     programsTitle: 'Every Age. Every Communication Choice.',
     ctaTitle: 'Not sure where to start?',
     ctaText: 'Tell us about your child in a short message. Maria will reply on WhatsApp or email. No account and no payment needed.',
@@ -48,7 +48,7 @@ export default {
   },
   pages: {
     programs: {
-      badge: '12 programme areas',
+      badge: '12 program areas',
       subtitle: 'An overview of the areas of support for deaf and hard of hearing learners, from early listening to school and adult life. Request a consultation to discuss which areas fit your child.',
     },
     educator: {
@@ -312,12 +312,19 @@ export default {
       ],
     },
   },
+  video: {
+    title: 'VoiceForUnheard in one minute',
+    chooseLanguage: 'Choose video language',
+    play: 'Watch the introduction',
+    ariaEnglish: 'Introduction to VoiceForUnheard, in English',
+    ariaUrdu: 'Introduction to VoiceForUnheard, in Urdu',
+  },
   notFound: {
     badge: '404',
     title: 'Page not found',
     text: 'The page you are looking for does not exist or has moved.',
     home: 'Go to the home page',
-    programs: 'See programme areas',
+    programs: 'See program areas',
     contact: 'Contact us',
   },
 }

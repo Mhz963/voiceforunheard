@@ -6,30 +6,31 @@ import { useLanguage } from '../i18n/LanguageContext'
 import { useLocalizedContent } from '../i18n/useLocalizedContent'
 import { SpeakHeading } from '../components/voice/SpeakAloud'
 
+// The whole card is clickable through the stretched link; the read-aloud
+// button sits above it, so no interactive element is nested in another.
 function ResourceCard({ item, t }) {
   const isInternal = item.url.startsWith('/')
-  const body = (
+  const label = (
     <>
-      <SpeakHeading as="h3" body={item.description}>{item.name}</SpeakHeading>
-      <p>{item.description}</p>
-      <span className="resource-card__link">
-        {isInternal ? t('resourcesPage.toolsReady') : t('resourcesPage.visitLink')} <HiArrowRight aria-hidden="true" />
-      </span>
+      {isInternal ? t('resourcesPage.toolsReady') : t('resourcesPage.visitLink')} <HiArrowRight aria-hidden="true" />
+      <span className="visually-hidden">: {item.name}</span>
     </>
   )
 
-  if (isInternal) {
-    return (
-      <Link to={item.url} className="resource-card interactive-card card-shine">
-        {body}
-      </Link>
-    )
-  }
-
   return (
-    <a href={item.url} className="resource-card interactive-card card-shine" target="_blank" rel="noopener noreferrer">
-      {body}
-    </a>
+    <article className="resource-card resource-card--stretched interactive-card card-shine">
+      <SpeakHeading as="h3" body={item.description}>{item.name}</SpeakHeading>
+      <p>{item.description}</p>
+      {isInternal ? (
+        <Link to={item.url} className="resource-card__link resource-card__stretch">
+          {label}
+        </Link>
+      ) : (
+        <a href={item.url} className="resource-card__link resource-card__stretch" target="_blank" rel="noopener noreferrer">
+          {label}
+        </a>
+      )}
+    </article>
   )
 }
 

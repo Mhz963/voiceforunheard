@@ -519,7 +519,7 @@ export const resources = [
     category: 'Pakistan',
     items: [
       { name: 'Pakistan Sign Language (Deaf Reach)', description: 'Free PSL resources, including a video dictionary of signs', url: 'https://new.psl.org.pk/resources' },
-      { name: 'Family Educational Services Foundation', description: 'Deaf Reach schools and programmes across Pakistan', url: 'https://fesf.org.pk/programs/' },
+      { name: 'Family Educational Services Foundation', description: 'Deaf Reach schools and programs across Pakistan', url: 'https://fesf.org.pk/programs/' },
     ],
   },
   {

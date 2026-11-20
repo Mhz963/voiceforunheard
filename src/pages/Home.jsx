@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
 import { HiArrowRight } from 'react-icons/hi'
-import { FaLayerGroup, FaCheckCircle } from 'react-icons/fa'
+import { FaCheckCircle } from 'react-icons/fa'
 import SectionHeader from '../components/ui/SectionHeader'
 import StatCard from '../components/ui/StatCard'
 import ProgramCard from '../components/ui/ProgramCard'
 import IconBadge from '../components/ui/IconBadge'
+import IntroVideo from '../components/IntroVideo'
 import Reveal from '../components/ui/Reveal'
 import { getAdvantageIcon } from '../utils/icons'
 import { useLanguage } from '../i18n/LanguageContext'
@@ -36,25 +37,18 @@ export default function Home() {
           </div>
           <p className="hero__subtitle animate-hero-subtitle">{siteInfo.description}</p>
           <div className="hero__actions animate-hero-actions">
-            <Link to="/programs" className="btn btn--primary">
-              {t('common.explorePrograms')} <HiArrowRight />
+            <Link to="/consultation" className="btn btn--primary">
+              {t('nav.consultation')} <HiArrowRight />
             </Link>
-            <Link to="/statistics" className="btn btn--outline">
-              {t('common.viewStatistics')}
+            <Link to="/programs" className="btn btn--outline">
+              {t('common.explorePrograms')}
             </Link>
           </div>
         </div>
         <div className="hero__visual animate-hero-visual">
           <div className="hero__orb hero__orb--1" />
           <div className="hero__orb hero__orb--2" />
-          <div className="hero__card interactive-card card-shine">
-            <IconBadge icon={FaLayerGroup} size="lg" variant="accent" />
-            <div className="hero-card__title-row">
-              <strong>{t('home.heroCardTitle')}</strong>
-              <SpeakAloud text={[t('home.heroCardTitle'), t('home.heroCardDesc')].join('. ')} />
-            </div>
-            <p>{t('home.heroCardDesc')}</p>
-          </div>
+          <IntroVideo className="hero__video" />
         </div>
       </section>
 
