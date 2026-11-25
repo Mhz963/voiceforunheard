@@ -84,7 +84,11 @@ export default {
     experienceTitle: 'Where she works',
     researchBadge: 'Research',
     researchTitle: 'Conference presentations',
-    portfolioCta: 'View certificates and full portfolio',
+    portfolioBadge: 'Professional portfolio',
+    portfolioTitle: 'Maria Anayat’s portfolio',
+    portfolioText: 'Her speech and language therapy practice, qualifications, experience and research, all in one place.',
+    portfolioCta: 'Open the portfolio',
+    portfolioHeroCta: 'View her professional portfolio',
   },
   whyTherapyPage: {
     pakistanTitle: 'In Pakistan, many children are identified late',
@@ -260,7 +264,7 @@ export default {
             'Fonts are loaded from Google Fonts.',
             'The "Speak" voice-input button uses your browser\'s speech recognition. Some browsers, such as Chrome, send the audio to their provider to turn it into text.',
             'Read-aloud plays recordings stored on this website. For text without a recording, your browser\'s own voice may be used.',
-            'Form messages are delivered to Maria through Resend (email) and CallMeBot (a WhatsApp notification service), and then handled under WhatsApp\'s and Gmail\'s own privacy terms.',
+            'Form messages are delivered to Maria through Resend (email) and the WhatsApp Business Platform (Meta), and then handled under WhatsApp\'s and Gmail\'s own privacy terms.',
           ],
         },
         {

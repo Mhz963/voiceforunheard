@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { HiArrowRight } from 'react-icons/hi'
+import { HiArrowRight, HiExternalLink } from 'react-icons/hi'
+import { EDUCATOR_PORTFOLIO_URL } from '../config/site'
 import { FaCheckCircle } from 'react-icons/fa'
 import SectionHeader from '../components/ui/SectionHeader'
 import StatCard from '../components/ui/StatCard'
@@ -159,9 +160,19 @@ export default function Home() {
                   </li>
                 ))}
               </ul>
-              <Link to="/educator" className="btn btn--outline">
-                {t('home.trustLink')} <HiArrowRight />
-              </Link>
+              <div className="trust-strip__actions">
+                <a
+                  href={EDUCATOR_PORTFOLIO_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn--primary"
+                >
+                  {t('educator.portfolioHeroCta')} <HiExternalLink aria-hidden="true" />
+                </a>
+                <Link to="/educator" className="btn btn--outline">
+                  {t('home.trustLink')} <HiArrowRight />
+                </Link>
+              </div>
             </div>
           </Reveal>
         </div>
