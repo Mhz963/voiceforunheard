@@ -10,6 +10,8 @@ import { useLocalizedContent } from '../i18n/useLocalizedContent'
 import { SpeakHeading } from '../components/voice/SpeakAloud'
 import { EDUCATOR_PORTFOLIO_URL } from '../config/site'
 
+const EDUCATOR_PORTFOLIO_HOST = new URL(EDUCATOR_PORTFOLIO_URL).host
+
 const PHILOSOPHY_KEYS = [
   { key: 'classroom', titleKey: 'educator.classroomTested', descKey: 'educator.classroomDesc' },
   { key: 'family', titleKey: 'educator.familyFirst', descKey: 'educator.familyDesc' },
@@ -69,6 +71,12 @@ export default function Educator() {
               <span><FaAward aria-hidden="true" /> {educator.role}</span>
               <span><FaMapMarkerAlt aria-hidden="true" /> {educator.location}</span>
             </Reveal>
+            <Reveal delay={150} className="educator-hero__portfolio">
+              <a href={EDUCATOR_PORTFOLIO_URL} target="_blank" rel="noopener noreferrer" className="btn btn--cta">
+                <span>{t('educator.portfolioHeroCta')}</span>
+                <span className="btn__cta-icon"><HiExternalLink aria-hidden="true" /></span>
+              </a>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -94,10 +102,32 @@ export default function Educator() {
             items={educator.research}
           />
         </div>
-        <div className="container section-cta">
-          <a href={EDUCATOR_PORTFOLIO_URL} target="_blank" rel="noopener noreferrer" className="btn btn--outline">
-            {t('educator.portfolioCta')} <HiExternalLink aria-hidden="true" />
-          </a>
+        <div className="container">
+          <Reveal className="portfolio-banner">
+            <img
+              className="portfolio-banner__photo"
+              src={educator.photo}
+              alt=""
+              width="96"
+              height="96"
+              loading="lazy"
+            />
+            <div className="portfolio-banner__body">
+              <span className="portfolio-banner__badge">{t('educator.portfolioBadge')}</span>
+              <h2 className="portfolio-banner__title">{t('educator.portfolioTitle')}</h2>
+              <p className="portfolio-banner__text">{t('educator.portfolioText')}</p>
+              <span className="portfolio-banner__url" dir="ltr">{EDUCATOR_PORTFOLIO_HOST}</span>
+            </div>
+            <a
+              href={EDUCATOR_PORTFOLIO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn--cta portfolio-banner__cta"
+            >
+              <span>{t('educator.portfolioCta')}</span>
+              <span className="btn__cta-icon"><HiExternalLink aria-hidden="true" /></span>
+            </a>
+          </Reveal>
         </div>
       </section>
 
